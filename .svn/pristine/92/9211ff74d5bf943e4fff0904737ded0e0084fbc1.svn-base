@@ -1,0 +1,2 @@
+#!/bin/sh
+python3  @CMAKE_SOURCE_DIR@/bin/changename.py $*

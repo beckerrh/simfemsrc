@@ -1,0 +1,35 @@
+#include  "FadalightMesh/patchinfo.hpp"
+#include  <cassert>
+
+using namespace FadalightMesh;
+
+/*--------------------------------------------------------------------------*/
+PatchInfo::~PatchInfo() 
+{
+}
+
+PatchInfo::PatchInfo() 
+{
+}
+
+PatchInfo::PatchInfo( const PatchInfo& patchinfo) 
+{
+(*this).operator=(patchinfo);
+}
+
+PatchInfo& PatchInfo::operator=( const PatchInfo& patchinfo) 
+{assert(0);
+return *this;
+}
+
+std::string PatchInfo::getClassName() const 
+{
+return "PatchInfo";
+}
+
+PatchInfo* PatchInfo::clone() const 
+{
+return new PatchInfo(*this);
+}
+
+/*--------------------------------------------------------------------------*/

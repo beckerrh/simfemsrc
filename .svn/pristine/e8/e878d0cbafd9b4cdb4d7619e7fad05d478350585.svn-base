@@ -1,0 +1,11 @@
+#!/usr/bin/env python3
+
+import sys, os
+from argparse import ArgumentParser
+
+simfempythondir = '@CMAKE_SOURCE_DIR@'
+simfemsrcdir = os.path.dirname(simfempythondir)
+
+sys.path.append(simfempythondir)
+import tools.simfem
+tools.simfem.SimFemRun(simfemsrcdir)
