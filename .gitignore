@@ -1,4 +1,9 @@
-.DS_store
+.DS_Store
+*.aux
+*.out
+*.log
+*.synctex.tgz
+*.run.xml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
