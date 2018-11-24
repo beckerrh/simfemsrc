@@ -62,11 +62,11 @@ void TraditionalIntegration::residualCell(solvers::PdePartData::vec& floc, const
   for(int ii=0;ii<_nlocal;ii++)
   {
     double betadphi = delta * arma::dot(fem.dphi.col(ii),_beta);
-    floc[_ivar](0,ii) += fem.weight* fem.phi(ii)*Fu[0];
-    floc[_ivar](0,ii) += fem.weight* fem.phi(ii)*advection;
-    floc[_ivar](0,ii) += fem.weight* betadphi*Fu[0];
-    floc[_ivar](0,ii) += fem.weight* betadphi*advection;
-    floc[_ivar](0,ii) += d* arma::dot(fem.dphi.col(ii),fem.ugrad.col(0));
+    floc[_ivar][ii] += fem.weight* fem.phi(ii)*Fu[0];
+    floc[_ivar][ii] += fem.weight* fem.phi(ii)*advection;
+    floc[_ivar][ii] += fem.weight* betadphi*Fu[0];
+    floc[_ivar][ii] += fem.weight* betadphi*advection;
+    floc[_ivar][ii] += d* arma::dot(fem.dphi.col(ii),fem.ugrad.col(0));
   }
 }
 /*--------------------------------------------------------------------------*/

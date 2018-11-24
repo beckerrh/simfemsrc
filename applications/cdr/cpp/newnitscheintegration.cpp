@@ -41,7 +41,7 @@ void NewNitscheIntegration::rhsBdry(solvers::PdePartData::vec& floc, const solve
     _application->getDirichlet(_ivar)(dir, fem.x, fem.y, fem.z);
     for(int ii=0;ii<_nlocal;ii++)
     {
-      floc[_ivar](0,ii) -= fem.weight*bn*fem.phi[ii]*dir[0];
+      floc[_ivar][ii] -= fem.weight*bn*fem.phi[ii]*dir[0];
     }
   }
 }
@@ -54,7 +54,7 @@ void NewNitscheIntegration::residualBdry(solvers::PdePartData::vec& floc, const 
   {
     for(int ii=0;ii<_nlocal;ii++)
     {
-      floc[_ivar](0,ii) -= fem.weight*bn*fem.phi[ii]*fem.u[0];
+      floc[_ivar][ii] -= fem.weight*bn*fem.phi[ii]*fem.u[0];
     }
   }
 }
@@ -84,7 +84,7 @@ void NewNitscheIntegration::prepareRhsCellBdry(int iK) const
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::armavec dir(1);
-  _udirloc.set_size(_ncomp, _nlocal);
+  _udirloc.set_size(_ncomp*_nlocal);
   _udirgrad.set_size(3, _ncomp);
   _udir.set_size(_ncomp);
   _udirloc.fill(arma::fill::zeros);
@@ -97,14 +97,14 @@ void NewNitscheIntegration::prepareRhsCellBdry(int iK) const
       {
         int iN = _meshinfo->nodes_of_cells(ii,iK);
         _application->getDirichlet(_ivar)(dir, _meshinfo->nodes(0,iN), _meshinfo->nodes(1,iN), _meshinfo->nodes(2,iN));
-        _udirloc(0,ii) = dir[0];
+        _udirloc[ii] = dir[0];
       }
       else if((*_fems)[_ivar]->getType()==solverEnums::fem::CR1)
       {
         int iS = _meshinfo->sides_of_cells(ii,iK);
         alat::Node xS = _mesh->getNodeOfSide(iS);
         _application->getDirichlet(_ivar)(dir, xS.x(), xS.y(), xS.z());
-        _udirloc(0,ii) = dir[0];
+        _udirloc[ii] = dir[0];
       }
       else
       {
@@ -169,13 +169,13 @@ void NewNitscheIntegration::residualBdryCell(solvers::PdePartData::vec& floc, co
     {
       if(_symmetric)
       {
-        floc[_ivar](0,ii) -= d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
+        floc[_ivar][ii] -= d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
       }
     }
     else
     {
-      floc[_ivar](0,ii) -= d* arma::dot(fem.dphi.col(ii),fem.uIgrad.col(0));
-      floc[_ivar](0,ii) += (_gamma-1.0)*d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
+      floc[_ivar][ii] -= d* arma::dot(fem.dphi.col(ii),fem.uIgrad.col(0));
+      floc[_ivar][ii] += (_gamma-1.0)*d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
     }
   }
 }

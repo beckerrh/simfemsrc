@@ -41,12 +41,12 @@ void NitscheIntegration::rhsBdry(solvers::PdePartData::vec& floc, const solvers:
     double dphin = arma::dot(fem.dphi.col(ii),fem.normal);
     if(_symmetric)
     {
-      floc[_ivar](0,ii) -= d* dphin*dir[0];
+      floc[_ivar][ii] -= d* dphin*dir[0];
     }
-    floc[_ivar](0,ii) += gamma*d* fem.phi[ii]*dir[0];
+    floc[_ivar][ii] += gamma*d* fem.phi[ii]*dir[0];
     if(bn<0.0)
     {
-      floc[_ivar](0,ii) -= fem.weight*bn*fem.phi[ii]*dir[0];
+      floc[_ivar][ii] -= fem.weight*bn*fem.phi[ii]*dir[0];
     }
   }
 }
@@ -62,15 +62,15 @@ void NitscheIntegration::residualBdry(solvers::PdePartData::vec& floc, const sol
   for(int ii=0;ii<_nlocal;ii++)
   {
     double dphin = arma::dot(fem.dphi.col(ii),fem.normal);
-    floc[_ivar](0,ii) -= d* fem.phi[ii]*dun;
+    floc[_ivar][ii] -= d* fem.phi[ii]*dun;
     if(_symmetric)
     {
-      floc[_ivar](0,ii) -= d* dphin*fem.u[0];
+      floc[_ivar][ii] -= d* dphin*fem.u[0];
     }
-    floc[_ivar](0,ii) += gamma*d* fem.phi[ii]*fem.u[0];
+    floc[_ivar][ii] += gamma*d* fem.phi[ii]*fem.u[0];
     if(bn<0.0)
     {
-      floc[_ivar](0,ii) -= fem.weight*bn*fem.phi[ii]*fem.u[0];
+      floc[_ivar][ii] -= fem.weight*bn*fem.phi[ii]*fem.u[0];
     }
   }
 }

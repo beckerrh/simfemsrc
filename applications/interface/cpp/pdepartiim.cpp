@@ -154,7 +154,7 @@ void PdePartIIM::computeResidualCellCut(int iK, solvers::PdePartData::vec& floc,
   alat::armavec fin = Last*uuloc.t();
   for(int ii=0; ii<_nlocal;ii++)
   {
-    floc[_ivar](0,ii) += fin[ii];
+    floc[_ivar][ii] += fin[ii];
   }
 }
 /*--------------------------------------------------------------------------*/
@@ -306,8 +306,8 @@ void PdePartIIM::computeResidualInteriorSide(int iS, int iKin, int iKex, solvers
   // std::cerr << "fex="<<fex.t();
   for(int ii=0; ii<_nlocal;ii++)
   {
-    flocin[_ivar](0,ii) += fin[ii];
-    flocex[_ivar](0,ii) += fex[ii];
+    flocin[_ivar][ii] += fin[ii];
+    flocex[_ivar][ii] += fex[ii];
   }
 }
 /*--------------------------------------------------------------------------*/
