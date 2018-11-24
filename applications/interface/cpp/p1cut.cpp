@@ -157,7 +157,7 @@ void P1Cut::computeBeta(int iK)
 
     // std::cerr << "cut " << iN0 <<  ":" << iN1 << " -> " << cutcoeff<<"\n";
 
-    arma::vec xc, x0, x1;
+    alat::armavec xc, x0, x1;
     x0 = _meshinfo->nodes.col(iN0);
     x1 = _meshinfo->nodes.col(iN1);
     xc = (1.0-cutcoeff) *x0  + cutcoeff*x1;

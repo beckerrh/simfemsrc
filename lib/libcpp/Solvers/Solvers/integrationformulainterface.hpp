@@ -13,7 +13,7 @@ namespace solvers
   {
 protected:
     alat::Vector<alat::Node> _c;
-    arma::vec _w;
+    alat::armavec _w;
     std::string getInterfaceName() const;
 
 public:

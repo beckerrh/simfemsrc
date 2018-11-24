@@ -64,7 +64,7 @@ void MatrixOneVariableArma::rowIdentity(int index)
   }
 }
 /*--------------------------------------------------------------------------*/
-void MatrixOneVariableArma::assemble(const arma::vec& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj)
+void MatrixOneVariableArma::assemble(const alat::armamat& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj)
 {
   for(int ii=0;ii<Alocal.size();ii++)
   {
@@ -90,8 +90,8 @@ void MatrixOneVariableArma::assemble(const arma::vec& Alocal, const alat::armaiv
 /*--------------------------------------------------------------------------*/
 void MatrixOneVariableArma::matrixVectorProduct(alat::VectorOneVariableInterface* out, const alat::VectorOneVariableInterface* in, double d) const
 {
-  arma::vec* outv = dynamic_cast<arma::vec*>(out); assert(outv);
-  const arma::vec* inv = dynamic_cast<const arma::vec*>(in); assert(inv);
+  alat::armavec* outv = dynamic_cast<alat::armavec*>(out); assert(outv);
+  const alat::armavec* inv = dynamic_cast<const alat::armavec*>(in); assert(inv);
 
   (*outv) += d*static_cast<const arma::sp_mat&>(*this)*(*inv);
 }

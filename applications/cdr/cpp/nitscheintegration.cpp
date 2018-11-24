@@ -30,7 +30,7 @@ void NitscheIntegration::rhsBdry(solvers::PdePartData::vec& floc, const solvers:
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   assert(floc.n_rows==1);
-  arma::vec dir(1);
+  alat::armavec dir(1);
   _application->getDirichlet(_ivar)(dir, fem.x, fem.y, fem.z);
   double d = fem.weight*_localmodel->diffusion(fem.x, fem.y, fem.z);
   double gamma = _gamma*fem.G/fem.J;
@@ -90,15 +90,15 @@ void NitscheIntegration::matrixBdry(solvers::PdePartData::mat& mat, const solver
       double dphjn = arma::dot(fem.normal,fem.dphi.col(jj));
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        mat(_ivar,_ivar)[count] -= d* fem.phi[ii]*dphjn;
+        mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= d* fem.phi[ii]*dphjn;
         if(_symmetric)
         {
-          mat(_ivar,_ivar)[count] -= d* dphin*fem.phi[jj];
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= d* dphin*fem.phi[jj];
         }
-        mat(_ivar,_ivar)[count] += gamma*d* fem.phi[ii]*fem.phi[jj];
+        mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += gamma*d* fem.phi[ii]*fem.phi[jj];
         if(bn<0.0)
         {
-          mat(_ivar,_ivar)[count] -= fem.weight*bn*fem.phi[ii]*fem.phi[jj];
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= fem.weight*bn*fem.phi[ii]*fem.phi[jj];
         }
         count++;
       }

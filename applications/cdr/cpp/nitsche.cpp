@@ -36,7 +36,7 @@ const solver_options::pdepart::opts Nitsche::setOptions()
 /*--------------------------------------------------------------------------*/
 void Nitsche::computeRhsBdry(int color, int iK, int iS, int iil, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const
 {
-  arma::vec dir(_ncomp), dir2(_ncomp);
+  alat::armavec dir(_ncomp), dir2(_ncomp);
 
   const arma::subview_col<double> normal = _meshinfo->normals.col(iS);
   alat::Node xS = _mesh->getNodeOfSide(iS);
@@ -44,7 +44,7 @@ void Nitsche::computeRhsBdry(int color, int iK, int iS, int iil, solvers::PdePar
 
 
   arma::mat udir(_ncomp, _nlocal);
-  arma::vec uhelp(_ncomp);
+  alat::armavec uhelp(_ncomp);
   for(int ii=0; ii<_nlocal;ii++)
   {
     int iN = _meshinfo->nodes_of_cells(ii,iK);
@@ -68,13 +68,13 @@ void Nitsche::computeRhsBdry(int color, int iK, int iS, int iil, solvers::PdePar
     double dni = scalediff*arma::dot(_meshinfo->normals.col(iSi), normal)*_meshinfo->sigma(ii,iK);
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += dir[icomp]*dni;
+      floc[_ivar][icomp*_nlocal + ii] += dir[icomp]*dni;
     }
     if(ii==iil) continue;
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += udir(icomp,ii)*scalegamma;
-      if(beta<0.0) floc[_ivar](icomp,ii) -= beta*udir(icomp,ii);
+      floc[_ivar][icomp*_nlocal + ii] += udir[icomp*_nlocal + ii]*scalegamma;
+      if(beta<0.0) floc[_ivar][icomp*_nlocal + ii] -= beta*udir[icomp*_nlocal + ii];
     }
   }
 }
@@ -105,27 +105,27 @@ void Nitsche::computeResidualBdry(int color, int iK, int iS, int iil, solvers::P
       {
         for(int icomp=0;icomp<_ncomp;icomp++)
         {
-          floc[_ivar](icomp,ii) += dni*uloc[_ivar](icomp, jj)/_meshinfo->dim;
+          floc[_ivar][icomp*_nlocal + ii] += dni*uloc[_ivar][icomp*_nlocal+jj]/_meshinfo->dim;
         }
       }
       if(ii!=iil)
       {
         for(int icomp=0;icomp<_ncomp;icomp++)
         {
-          floc[_ivar](icomp,ii) += dnj*uloc[_ivar](icomp, jj)/_meshinfo->dim;
-          if(beta>0.0) if(ii==jj) floc[_ivar](icomp,ii) += beta*uloc[_ivar](icomp, ii);
+          floc[_ivar][icomp*_nlocal + ii] += dnj*uloc[_ivar][icomp*_nlocal+jj]/_meshinfo->dim;
+          if(beta>0.0) if(ii==jj) floc[_ivar][icomp*_nlocal + ii] += beta*uloc[_ivar][icomp*_nlocal+ii];
         }
       }
     }
     if(ii==iil) continue;
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += uloc[_ivar](icomp, ii)*scalegamma;
+      floc[_ivar][icomp*_nlocal + ii] += uloc[_ivar][icomp*_nlocal+ii]*scalegamma;
     }
   }
 }
 /*--------------------------------------------------------------------------*/
-void Nitsche::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void Nitsche::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   alat::Node xK = _mesh->getNodeOfCell(iK);
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
@@ -151,12 +151,12 @@ void Nitsche::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::Pde
       double dnj = scalediff*arma::dot(_meshinfo->normals.col(iSj), normal)*_meshinfo->sigma(jj,iK);
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        if(jj!=iil) mat(_ivar,_ivar)[count] += dni/_meshinfo->dim;
-        if(ii!=iil) mat(_ivar,_ivar)[count] += dnj/_meshinfo->dim;
+        if(jj!=iil) mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += dni/_meshinfo->dim;
+        if(ii!=iil) mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += dnj/_meshinfo->dim;
         if(ii!=iil && ii==jj)
         {
           mat  (_ivar,_ivar)[count] += scalegamma;
-          if(beta>0.0) mat(_ivar,_ivar)[count] += beta;
+          if(beta>0.0) mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += beta;
         }
         count++;
       }

@@ -422,10 +422,10 @@ void MeshUnitWithData::initFemAndMemoryAndDataAndPdeParts()
               _fems[jvar]->setCell(iK);
               int nloci = _fems[ivar]->getNPerCell(iK);
               int nlocj = _fems[jvar]->getNPerCell(iK);
-              alat::armaimat vec_i(ncompi, nloci);
-              alat::armaimat vec_j(ncompj, nlocj);
-              _fems[ivar]->setVectorIndices(iK, vec_i);
-              _fems[jvar]->setVectorIndices(iK, vec_j);
+              alat::armaivec vec_i(ncompi*nloci);
+              alat::armaivec vec_j(ncompj*nlocj);
+              _fems[ivar]->setVectorIndices(iK, vec_i, ncompi);
+              _fems[jvar]->setVectorIndices(iK, vec_j, ncompj);
               for(alat::armaimat::const_iterator p=vec_i.begin();p!=vec_i.end();p++)
               {
                 for(alat::armaimat::const_iterator q=vec_j.begin();q!=vec_j.end();q++)
@@ -452,14 +452,14 @@ void MeshUnitWithData::initFemAndMemoryAndDataAndPdeParts()
               int nlocj_in = _fems[jvar]->getNPerCell(iKin);
               int nloci_ex = _femsex[ivar]->getNPerCell(iKex);
               int nlocj_ex = _femsex[jvar]->getNPerCell(iKex);
-              alat::armaimat vec_i_in(ncompi, nloci_in);
-              alat::armaimat vec_j_in(ncompj, nlocj_in);
-              alat::armaimat vec_i_ex(ncompi, nloci_ex);
-              alat::armaimat vec_j_ex(ncompj, nlocj_ex);
-              _fems[ivar]->setVectorIndices(iKin, vec_i_in);
-              _fems[jvar]->setVectorIndices(iKin, vec_j_in);
-              _femsex[ivar]->setVectorIndices(iKex, vec_i_ex);
-              _femsex[jvar]->setVectorIndices(iKex, vec_j_ex);
+              alat::armaivec vec_i_in(ncompi*nloci_in);
+              alat::armaivec vec_j_in(ncompj*nlocj_in);
+              alat::armaivec vec_i_ex(ncompi*nloci_ex);
+              alat::armaivec vec_j_ex(ncompj*nlocj_ex);
+              _fems[ivar]->setVectorIndices(iKin, vec_i_in, ncompi);
+              _fems[jvar]->setVectorIndices(iKin, vec_j_in, ncompj);
+              _femsex[ivar]->setVectorIndices(iKex, vec_i_ex, ncompi);
+              _femsex[jvar]->setVectorIndices(iKex, vec_j_ex, ncompj);
               for(alat::armaimat::const_iterator p=vec_i_in.begin();p!=vec_i_in.end();p++)
               {
                 for(alat::armaimat::const_iterator q=vec_j_ex.begin();q!=vec_j_ex.end();q++)
@@ -585,37 +585,29 @@ void MeshUnitWithData::computeErrors(solvers::ErrorsMap& errormaps, std::string 
   const FunctionInterface& exactsolutions = _application->getExactSolution(ivar);
 
   // std::cerr << "errormaps="<<errormaps;
+  int ncomp = _vars[ivar].getNcomp();
   for(int iK=0; iK<_meshinfo->ncells;iK++)
   {
-    _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ivar]);
+    _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ivar], ncomp);
     u[ivar]->extract(_pdepartdata.vec_i[ivar], _pdepartdata.uloc[ivar]);
     _fems[ivar]->computeErrors(iK, errormaps, _pdepartdata.uloc[ivar], exactsolutions);
   }
   // std::cerr << "errormaps="<<errormaps;
 }
 /*--------------------------------------------------------------------------*/
-void MeshUnitWithData::preparePdePartsData(int iK, const alat::armaivec& ivars) const
+void MeshUnitWithData::preparePdePartsData(const alat::armaivec& ivars) const
 {
-  _nlocals.set_size(ivars.size());
-  _ncomps.set_size(ivars.size());
   for(int ii=0; ii<ivars.size(); ii++)
   {
     int ivar = ivars[ii];
-    _nlocals[ii] = _fems[ivar]->getNPerCell(iK);
-    _ncomps[ii] = _vars[ivar].getNcomp();
+    assert(_fems[ivar]->getNPerCellConstant());
   }
-  _pdepartdata.set_size(_ncomps, _nlocals);
-}
-/*--------------------------------------------------------------------------*/
-void MeshUnitWithData::preparePdePartsData(int iKin, int iKex, const alat::armaivec& ivars) const
-{
   _nlocals.set_size(ivars.size());
   _ncomps.set_size(ivars.size());
   for(int ii=0; ii<ivars.size(); ii++)
   {
     int ivar = ivars[ii];
-    _nlocals[ii] = _fems[ivar]->getNPerCell(iKin);
-    assert(_nlocals[ii] == _femsex[ivar]->getNPerCell(iKex));
+    _nlocals[ii] = _fems[ivar]->getNPerCell();
     _ncomps[ii] = _vars[ivar].getNcomp();
   }
   _pdepartdata.set_sizes(_ncomps, _nlocals);
@@ -632,15 +624,16 @@ void MeshUnitWithData::computeRhs(alat::GhostVector gf, const alat::GhostVector 
   for(PdePartsMap::const_iterator p=_pdeparts.begin(); p!=_pdeparts.end();p++)
   {
     const alat::armaivec& ivars = p->second->getIvars();
+    preparePdePartsData(ivars);
     if(p->second->loopCells())
     {
       for(int iK=0; iK<_meshinfo->ncells;iK++)
       {
-        preparePdePartsData(iK, ivars);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
-          _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii]);
+          int ncomp = _vars[ivar].getNcomp();
+          _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii], ncomp);
           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
           _fems[ivar]->setCell(iK);
           _pdepartdata.floc[ii].fill(arma::fill::zeros);
@@ -667,6 +660,7 @@ void MeshUnitWithData::computeRhs(alat::GhostVector gf, const alat::GhostVector 
     // }
     if(p->second->loopBoundary())
     {
+      preparePdePartsData(ivars);
       for(mesh::MeshUnitInterface::BoundaryInformationMap::const_iterator pbdry=_meshinfo->bdrymesheunitsmap.begin();pbdry!=_meshinfo->bdrymesheunitsmap.end();pbdry++)
       {
         int color = pbdry->first;
@@ -676,11 +670,11 @@ void MeshUnitWithData::computeRhs(alat::GhostVector gf, const alat::GhostVector 
           int iK = cells_on_bdry(0,i);
           int iS = cells_on_bdry(1,i);
           int iil = cells_on_bdry(2,i);
-          preparePdePartsData(iK, ivars);
           for(int ii=0; ii<ivars.size(); ii++)
           {
             int ivar = ivars[ii];
-            _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii]);
+            int ncomp = _vars[ivar].getNcomp();
+            _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii], ncomp);
             u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
             _fems[ivar]->setCellBdry(iK, iS, iil);
             _pdepartdata.floc[ii].fill(arma::fill::zeros);
@@ -741,6 +735,7 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
   for(PdePartsMap::const_iterator p=_pdeparts.begin(); p!=_pdeparts.end();p++)
   {
     const alat::armaivec& ivars = p->second->getIvars();
+    preparePdePartsData(ivars);
     // std::cerr << "MeshUnitWithData::residual() ivars="<<ivars.t();
     // Cells
     if(p->second->loopCells())
@@ -748,11 +743,11 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
       for(int iK=0; iK<_meshinfo->ncells;iK++)
       {
         // std::cerr << "*** MeshUnitWithData::residual() iK= << "<< iK << "\n";
-        preparePdePartsData(iK, ivars);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
-          _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii]);
+          int ncomp = _vars[ivar].getNcomp();
+          _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii], ncomp);
           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
           _fems[ivar]->setCell(iK);
           _pdepartdata.floc[ii].fill(arma::fill::zeros);
@@ -770,6 +765,7 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
     // InteriorSides
     if(p->second->loopInteriorSides())
     {
+      preparePdePartsData(ivars);
       // assert(0);
       for(int iS=0; iS<_meshinfo->nsides;iS++)
       {
@@ -779,13 +775,13 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
         // std::cerr << "*** MeshUnitWithData::residual() iKin, iKex= << "<< iKin << ","<<iKex<<"\n";
         if(not p->second->interiorsidecoupling(iKin, iKex)) continue;
         // std::cerr << "iS="<<iS<< " iKin="<<iKin<< " iKex="<<iKex << " nocoupling="<<nocoupling<<"\n";
-        preparePdePartsData(iKin, iKex, ivars);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
-          _fems[ivar]->setVectorIndices(iKin, _pdepartdata.vec_i[ii]);
+          int ncomp = _vars[ivar].getNcomp();
+          _fems[ivar]->setVectorIndices(iKin, _pdepartdata.vec_i[ii], ncomp);
           assert(_femsex[ivar]);
-          _femsex[ivar]->setVectorIndices(iKex, _pdepartdata.vec_iex[ii]);
+          _femsex[ivar]->setVectorIndices(iKex, _pdepartdata.vec_iex[ii], ncomp);
           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
           u[ivar]->extract(_pdepartdata.vec_iex[ii], _pdepartdata.ulocex[ii]);
           _fems[ivar]->setCell(iKin);
@@ -807,6 +803,7 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
     // Boundary
     if(p->second->loopBoundary())
     {
+      preparePdePartsData(ivars);
       for(mesh::MeshUnitInterface::BoundaryInformationMap::const_iterator pbdry=_meshinfo->bdrymesheunitsmap.begin();pbdry!=_meshinfo->bdrymesheunitsmap.end();pbdry++)
       {
         int color = pbdry->first;
@@ -814,13 +811,13 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
         for(int i = 0; i < cells_on_bdry.n_cols; i++)
         {
           int iK = cells_on_bdry(0,i);
-          preparePdePartsData(iK, ivars);
           int iS = cells_on_bdry(1,i);
           int iil = cells_on_bdry(2,i);
           for(int ii=0; ii<ivars.size(); ii++)
           {
             int ivar = ivars[ii];
-            _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii]);
+            int ncomp = _vars[ivar].getNcomp();
+            _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii], ncomp);
             u[ivar]->extract(_pdepartdata.vec_i[ivar], _pdepartdata.uloc[ii]);
             _fems[ivar]->setCellBdry(iK, iS, iil);
             _pdepartdata.floc[ii].fill(arma::fill::zeros);
@@ -844,248 +841,113 @@ void MeshUnitWithData::residual(perulanganEnums::residualstatus& status, alat::G
   // std::cerr << "MeshUnitWithData::residual() r="<< *rv << "\n";
 }
 
-/*--------------------------------------------------------------------------*/
-void MeshUnitWithData::prepareCellMatrix(int iK, const alat::armaivec& ivars) const
-{
-  _pdepartdata.aloc.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_i.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_j.set_size(ivars.size(),ivars.size());
-  for(int ii=0; ii<ivars.size(); ii++)
-  {
-    int ivar = ivars[ii];
-    int ncompi = _fems[ivar]->getNcomp();
-    int nglobi = _fems[ivar]->getN();
-    int nloccelli = _fems[ivar]->getNPerCell(iK);
-    alat::armaivec indicesi(nloccelli);
-    _fems[ivar]->indicesOfCell(iK, indicesi);
-    for(int jj=0; jj<ivars.size(); jj++)
-    {
-      int jvar = ivars[jj];
-      int ncompj = _fems[jvar]->getNcomp();
-      int nglobj = _fems[jvar]->getN();
-      int nloccellj = _fems[jvar]->getNPerCell(iK);
-      alat::armaivec indicesj(nloccellj);
-      _fems[jvar]->indicesOfCell(iK, indicesj);
-      _pdepartdata.aloc(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
-      _pdepartdata.aloc(ii,jj).fill(arma::fill::zeros);
-      int count=0;
-      for(int iloc=0; iloc<nloccelli;iloc++)
-      {
-        int i = indicesi[iloc];
-        for(int jloc=0; jloc<nloccellj;jloc++)
-        {
-          int j = indicesj[jloc];
-          for(int icomp=0;icomp<ncompi;icomp++)
-          {
-            for(int jcomp=0;jcomp<ncompj;jcomp++)
-            {
-              _pdepartdata.aloc_i(ii,jj)[count] = icomp*nglobi + i;
-              _pdepartdata.aloc_j(ii,jj)[count] = jcomp*nglobj + j;
-              count++;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-/*--------------------------------------------------------------------------*/
-void MeshUnitWithData::prepareCellMatrix(int iKin, int iKex, const alat::armaivec& ivars) const
-{
-  _pdepartdata.aloc.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_inex.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_exin.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_exex.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_i.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_j.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_i_ex.set_size(ivars.size(),ivars.size());
-  _pdepartdata.aloc_j_ex.set_size(ivars.size(),ivars.size());
-  for(int ii=0; ii<ivars.size(); ii++)
-  {
-    int ivar = ivars[ii];
-    int ncompi = _fems[ivar]->getNcomp();
-    int nglobi = _fems[ivar]->getN();
-    int nloccelli = _fems[ivar]->getNPerCell(iKin);
-    alat::armaivec indicesi_in(nloccelli), indicesi_ex(nloccelli);
-    _fems[ivar]->indicesOfCell(iKin, indicesi_in);
-    _femsex[ivar]->indicesOfCell(iKex, indicesi_ex);
-    for(int jj=0; jj<ivars.size(); jj++)
-    {
-      int jvar = ivars[jj];
-      int ncompj = _fems[jvar]->getNcomp();
-      int nglobj = _fems[jvar]->getN();
-      int nloccellj = _fems[jvar]->getNPerCell(iKin);
-      alat::armaivec indicesj_in(nloccellj), indicesj_ex(nloccellj);
-      _fems[jvar]->indicesOfCell(iKin, indicesj_in);
-      _femsex[jvar]->indicesOfCell(iKex, indicesj_ex);
-      _pdepartdata.aloc     (ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
-      _pdepartdata.aloc     (ii,jj).fill(arma::fill::zeros);
-      _pdepartdata.aloc_inex(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
-      _pdepartdata.aloc_inex(ii,jj).fill(arma::fill::zeros);
-      _pdepartdata.aloc_exin(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
-      _pdepartdata.aloc_exin(ii,jj).fill(arma::fill::zeros);
-      _pdepartdata.aloc_exex(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
-      _pdepartdata.aloc_exex(ii,jj).fill(arma::fill::zeros);
-      int count=0;
-      for(int iloc=0; iloc<nloccelli;iloc++)
-      {
-        int iin = indicesi_in[iloc];
-        int iex = indicesi_ex[iloc];
-        for(int jloc=0; jloc<nloccellj;jloc++)
-        {
-          int jin = indicesj_in[jloc];
-          int jex = indicesj_ex[jloc];
-          for(int icomp=0;icomp<ncompi;icomp++)
-          {
-            for(int jcomp=0;jcomp<ncompj;jcomp++)
-            {
-              _pdepartdata.aloc_i   (ii, jj)[count] = icomp*nglobi + iin;
-              _pdepartdata.aloc_j   (ii, jj)[count] = jcomp*nglobj + jin;
-              _pdepartdata.aloc_i_ex(ii, jj)[count] = icomp*nglobi + iex;
-              _pdepartdata.aloc_j_ex(ii, jj)[count] = jcomp*nglobj + jex;
-              count++;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-/*--------------------------------------------------------------------------*/
-// void MeshUnitWithData::computeJacobian(perulanganEnums::matrixstatus& status, alat::GhostMatrix gA, const alat::GhostVector gu) const
+// /*--------------------------------------------------------------------------*/
+// void MeshUnitWithData::prepareCellMatrix(int iK, const alat::armaivec& ivars) const
 // {
-//   // std::cerr << "*** MeshUnitWithData::computeJacobian()\n";
-//   alat::MatrixAllVariables& A = *getMatrix(gA);
-//   const alat::VectorAllVariables& u = *getVector(gu);
-//   int nvars = _vars.size();
-//   A.fillzeros();
-//
-//   // const alat::MatrixOneVariable* Av = dynamic_cast<const alat::MatrixOneVariable*>(A(0,0).get());
-//   // std::cerr << "MeshUnitWithData::computeJacobian A=" << *Av << "\n";
-//
-//   for(PdePartsMap::const_iterator p=_pdeparts.begin(); p!=_pdeparts.end();p++)
+//   _pdepartdata.aloc.set_size(ivars.size(),ivars.size());
+//   // _pdepartdata.aloc_i.set_size(ivars.size(),ivars.size());
+//   // _pdepartdata.aloc_j.set_size(ivars.size(),ivars.size());
+//   for(int ii=0; ii<ivars.size(); ii++)
 //   {
-//     const alat::armaivec& ivars = p->second->getIvars();
-//     // Cells
-//     if(p->second->loopCells())
+//     int ivar = ivars[ii];
+//     int ncompi = _fems[ivar]->getNcomp();
+//     int nglobi = _fems[ivar]->getN();
+//     int nloccelli = _fems[ivar]->getNPerCell(iK);
+//     alat::armaivec indicesi(nloccelli);
+//     _fems[ivar]->indicesOfCell(iK, indicesi);
+//     for(int jj=0; jj<ivars.size(); jj++)
 //     {
-//       for(int iK=0; iK<_meshinfo->ncells;iK++)
+//       int jvar = ivars[jj];
+//       int ncompj = _fems[jvar]->getNcomp();
+//       int nglobj = _fems[jvar]->getN();
+//       int nloccellj = _fems[jvar]->getNPerCell(iK);
+//       alat::armaivec indicesj(nloccellj);
+//       _fems[jvar]->indicesOfCell(iK, indicesj);
+//       _pdepartdata.aloc(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
+//       _pdepartdata.aloc(ii,jj).fill(arma::fill::zeros);
+//       int count=0;
+//       for(int iloc=0; iloc<nloccelli;iloc++)
 //       {
-//         preparePdePartsData(iK, ivars);
-//         for(int ii=0; ii<ivars.size(); ii++)
+//         int i = indicesi[iloc];
+//         for(int jloc=0; jloc<nloccellj;jloc++)
 //         {
-//           int ivar = ivars[ii];
-//           _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii]);
-//           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
-//           _fems[ivar]->setCell(iK);
-//         }
-//         prepareCellMatrix(iK, ivars);
-//         p->second->computeMatrixCell(iK, _pdepartdata.aloc, _pdepartdata.aloc_i, _pdepartdata.aloc_j,_pdepartdata.uloc);
-//         for(int ii=0; ii<ivars.size(); ii++)
-//         {
-//           int ivar = ivars[ii];
-//           for(int jj=0; jj<ivars.size(); jj++)
+//           int j = indicesj[jloc];
+//           for(int icomp=0;icomp<ncompi;icomp++)
 //           {
-//             int jvar = ivars[jj];
-//             A(ivar,jvar)->assemble(_pdepartdata.aloc(ii,jj), _pdepartdata.aloc_i(ii,jj), _pdepartdata.aloc_j(ii,jj));
-//           }
-//         }
-//       }
-//     }
-//     // InteriorSides
-//     if(p->second->loopInteriorSides())
-//     {
-//       for(int iS=0; iS<_meshinfo->nsides;iS++)
-//       {
-//         int iKin = _meshinfo->cells_of_sides(0,iS);
-//         int iKex = _meshinfo->cells_of_sides(1,iS);
-//         if(iKex<0) continue;
-//         if(not p->second->interiorsidecoupling(iKin, iKex)) continue;
-//         preparePdePartsData(iKin, iKex, ivars);
-//         for(int ii=0; ii<ivars.size(); ii++)
-//         {
-//           int ivar = ivars[ii];
-//           _fems[ivar]->setVectorIndices(iKin, _pdepartdata.vec_i[ii]);
-//           _femsex[ivar]->setVectorIndices(iKex, _pdepartdata.vec_iex[ii]);
-//           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
-//           u[ivar]->extract(_pdepartdata.vec_iex[ii], _pdepartdata.ulocex[ii]);
-//           _fems[ivar]->setCell(iKin);
-//           _femsex[ivar]->setCell(iKex);
-//           _pdepartdata.floc[ii].fill(arma::fill::zeros);
-//           _pdepartdata.flocex[ii].fill(arma::fill::zeros);
-//         }
-//         prepareCellMatrix(iKin, iKex, ivars);
-//         p->second->computeMatrixInteriorSide(iS, iKin, iKex, _pdepartdata.aloc, _pdepartdata.aloc_inex, _pdepartdata.aloc_exin, _pdepartdata.aloc_exex, _pdepartdata.aloc_i, _pdepartdata.aloc_j , _pdepartdata.aloc_i_ex, _pdepartdata.aloc_j_ex,_pdepartdata.uloc, _pdepartdata.ulocex);
-//         for(int ii=0; ii<ivars.size(); ii++)
-//         {
-//           int ivar = ivars[ii];
-//           for(int jj=0; jj<ivars.size(); jj++)
-//           {
-//             int jvar = ivars[jj];
-//             A(ivar,jvar)->assemble(_pdepartdata.aloc     (ii,jj), _pdepartdata.aloc_i   (ii,jj), _pdepartdata.aloc_j   (ii,jj));
-//             A(ivar,jvar)->assemble(_pdepartdata.aloc_inex(ii,jj), _pdepartdata.aloc_i   (ii,jj), _pdepartdata.aloc_j_ex(ii,jj));
-//             A(ivar,jvar)->assemble(_pdepartdata.aloc_exin(ii,jj), _pdepartdata.aloc_i_ex(ii,jj), _pdepartdata.aloc_j   (ii,jj));
-//             A(ivar,jvar)->assemble(_pdepartdata.aloc_exex(ii,jj), _pdepartdata.aloc_i_ex(ii,jj), _pdepartdata.aloc_j_ex(ii,jj));
-//           }
-//         }
-//       }
-//     }
-//     // Boundary
-//     if(p->second->loopBoundary())
-//     {
-//       for(mesh::MeshUnitInterface::BoundaryInformationMap::const_iterator pbdry=_meshinfo->bdrymesheunitsmap.begin();pbdry!=_meshinfo->bdrymesheunitsmap.end();pbdry++)
-//       {
-//         int color = pbdry->first;
-//         const alat::armaimat& cells_on_bdry = pbdry->second.getCellsOnBdryOfPlain();
-//         for(int i = 0; i < cells_on_bdry.n_cols; i++)
-//         {
-//           int iK = cells_on_bdry(0,i);
-//           preparePdePartsData(iK, ivars);
-//           int iS = cells_on_bdry(1,i);
-//           int iil = cells_on_bdry(2,i);
-//           for(int ivar=0; ivar<nvars; ivar++)
-//           {
-//             _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ivar]);
-//             u[ivar]->extract(_pdepartdata.vec_i[ivar], _pdepartdata.uloc[ivar]);
-//             _fems[ivar]->setCellBdry(iK, iS, iil);
-//           }
-//           prepareCellMatrix(iK, ivars);
-//           p->second->computeMatrixBdry(color, iK, iS, iil, _pdepartdata.aloc, _pdepartdata.aloc_i, _pdepartdata.aloc_j,_pdepartdata.uloc);
-//           for(int ii=0; ii<ivars.size(); ii++)
-//           {
-//             int ivar = ivars[ii];
-//             for(int jj=0; jj<ivars.size(); jj++)
+//             for(int jcomp=0;jcomp<ncompj;jcomp++)
 //             {
-//               int jvar = ivars[jj];
-//               A(ivar,jvar)->assemble(_pdepartdata.aloc(ii,jj), _pdepartdata.aloc_i(ii,jj), _pdepartdata.aloc_j(ii,jj));
+//               _pdepartdata.aloc_i(ii,jj)[count] = icomp*nglobi + i;
+//               _pdepartdata.aloc_j(ii,jj)[count] = jcomp*nglobj + j;
+//               count++;
 //             }
 //           }
 //         }
 //       }
 //     }
-//     // Global
-//     p->second->computeMatrixGlobal(A, u);
 //   }
-//   for(int ivar=0; ivar<nvars; ivar++)
+// }
+//
+// /*--------------------------------------------------------------------------*/
+// void MeshUnitWithData::prepareCellMatrix(int iKin, int iKex, const alat::armaivec& ivars) const
+// {
+//   _pdepartdata.aloc.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_inex.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_exin.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_exex.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_i.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_j.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_i_ex.set_size(ivars.size(),ivars.size());
+//   _pdepartdata.aloc_j_ex.set_size(ivars.size(),ivars.size());
+//   for(int ii=0; ii<ivars.size(); ii++)
 //   {
-//     for(int jvar=0; jvar<nvars; jvar++)
+//     int ivar = ivars[ii];
+//     int ncompi = _fems[ivar]->getNcomp();
+//     int nglobi = _fems[ivar]->getN();
+//     int nloccelli = _fems[ivar]->getNPerCell(iKin);
+//     alat::armaivec indicesi_in(nloccelli), indicesi_ex(nloccelli);
+//     _fems[ivar]->indicesOfCell(iKin, indicesi_in);
+//     _femsex[ivar]->indicesOfCell(iKex, indicesi_ex);
+//     for(int jj=0; jj<ivars.size(); jj++)
 //     {
-//       if(ivar==jvar)
+//       int jvar = ivars[jj];
+//       int ncompj = _fems[jvar]->getNcomp();
+//       int nglobj = _fems[jvar]->getN();
+//       int nloccellj = _fems[jvar]->getNPerCell(iKin);
+//       alat::armaivec indicesj_in(nloccellj), indicesj_ex(nloccellj);
+//       _fems[jvar]->indicesOfCell(iKin, indicesj_in);
+//       _femsex[jvar]->indicesOfCell(iKex, indicesj_ex);
+//       _pdepartdata.aloc     (ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
+//       _pdepartdata.aloc     (ii,jj).fill(arma::fill::zeros);
+//       _pdepartdata.aloc_inex(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
+//       _pdepartdata.aloc_inex(ii,jj).fill(arma::fill::zeros);
+//       _pdepartdata.aloc_exin(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
+//       _pdepartdata.aloc_exin(ii,jj).fill(arma::fill::zeros);
+//       _pdepartdata.aloc_exex(ii,jj).set_size(ncompi*ncompj*nloccelli*nloccellj);
+//       _pdepartdata.aloc_exex(ii,jj).fill(arma::fill::zeros);
+//       int count=0;
+//       for(int iloc=0; iloc<nloccelli;iloc++)
 //       {
-//         _fems[ivar]->strongDirichlet(ivar, A, _application->getStrongDirichletColor());
+//         int iin = indicesi_in[iloc];
+//         int iex = indicesi_ex[iloc];
+//         for(int jloc=0; jloc<nloccellj;jloc++)
+//         {
+//           int jin = indicesj_in[jloc];
+//           int jex = indicesj_ex[jloc];
+//           for(int icomp=0;icomp<ncompi;icomp++)
+//           {
+//             for(int jcomp=0;jcomp<ncompj;jcomp++)
+//             {
+//               _pdepartdata.aloc_i   (ii, jj)[count] = icomp*nglobi + iin;
+//               _pdepartdata.aloc_j   (ii, jj)[count] = jcomp*nglobj + jin;
+//               _pdepartdata.aloc_i_ex(ii, jj)[count] = icomp*nglobi + iex;
+//               _pdepartdata.aloc_j_ex(ii, jj)[count] = jcomp*nglobj + jex;
+//               count++;
+//             }
+//           }
+//         }
 //       }
 //     }
 //   }
-//   // for(int ivar=0; ivar<nvars; ivar++)
-//   // {
-//   //   for(int jvar=0; jvar<nvars; jvar++)
-//   //   {
-//   //     const alat::MatrixOneVariable* Av = dynamic_cast<const alat::MatrixOneVariable*>(A(ivar,jvar).get());
-//   //     std::cerr << "MeshUnitWithData::computeJacobian A= ivar/jvar" <<ivar << "/" << jvar << " "<< *Av << "\n";
-//   //   }
-//   // }
 // }
 /*--------------------------------------------------------------------------*/
 void MeshUnitWithData::computeJacobian(perulanganEnums::matrixstatus& status, alat::GhostMatrix gA, const alat::GhostVector gu) const
@@ -1102,29 +964,34 @@ void MeshUnitWithData::computeJacobian(perulanganEnums::matrixstatus& status, al
   for(PdePartsMap::const_iterator p=_pdeparts.begin(); p!=_pdeparts.end();p++)
   {
     const alat::armaivec& ivars = p->second->getIvars();
+    preparePdePartsData(ivars);
     // Cells
     if(p->second->loopCells())
     {
       for(int iK=0; iK<_meshinfo->ncells;iK++)
       {
-        preparePdePartsData(iK, ivars);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
-          _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii]);
+          int ncomp = _vars[ivar].getNcomp();
+          _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ii], ncomp);
           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
           _fems[ivar]->setCell(iK);
-          _pdepartdata.floc[ii].fill(arma::fill::zeros);
+          for(int jj=0; jj<ivars.size(); jj++)
+          {
+            _pdepartdata.aloc(ii,jj).fill(arma::fill::zeros);
+          }
         }
-        prepareCellMatrix(iK, ivars);
-        p->second->computeMatrixCell(iK, _pdepartdata.aloc, _pdepartdata.aloc_i, _pdepartdata.aloc_j,_pdepartdata.uloc);
+        p->second->computeMatrixCell(iK, _pdepartdata.aloc,_pdepartdata.uloc);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
           for(int jj=0; jj<ivars.size(); jj++)
           {
             int jvar = ivars[jj];
-            A(ivar,jvar)->assemble(_pdepartdata.aloc(ii,jj), _pdepartdata.aloc_i(ii,jj), _pdepartdata.aloc_j(ii,jj));
+            // std::cerr << "_pdepartdata.vec_i[ii]="<<_pdepartdata.vec_i[ii];
+            // std::cerr << "_pdepartdata.aloc(ii,jj)="<<_pdepartdata.aloc(ii,jj);
+            A(ivar,jvar)->assemble(_pdepartdata.aloc(ii,jj), _pdepartdata.vec_i[ii], _pdepartdata.vec_i[jj]);
           }
         }
       }
@@ -1132,37 +999,44 @@ void MeshUnitWithData::computeJacobian(perulanganEnums::matrixstatus& status, al
     // InteriorSides
     if(p->second->loopInteriorSides())
     {
+      preparePdePartsData(ivars);
       for(int iS=0; iS<_meshinfo->nsides;iS++)
       {
         int iKin = _meshinfo->cells_of_sides(0,iS);
         int iKex = _meshinfo->cells_of_sides(1,iS);
         if(iKex<0) continue;
         if(not p->second->interiorsidecoupling(iKin, iKex)) continue;
-        preparePdePartsData(iKin, iKex, ivars);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
-          _fems[ivar]->setVectorIndices(iKin, _pdepartdata.vec_i[ii]);
-          _femsex[ivar]->setVectorIndices(iKex, _pdepartdata.vec_iex[ii]);
+          int ncomp = _vars[ivar].getNcomp();
+          _fems[ivar]->setVectorIndices(iKin, _pdepartdata.vec_i[ii], ncomp);
+          _femsex[ivar]->setVectorIndices(iKex, _pdepartdata.vec_iex[ii], ncomp);
           u[ivar]->extract(_pdepartdata.vec_i[ii], _pdepartdata.uloc[ii]);
           u[ivar]->extract(_pdepartdata.vec_iex[ii], _pdepartdata.ulocex[ii]);
           _fems[ivar]->setCell(iKin);
           _femsex[ivar]->setCell(iKex);
           _pdepartdata.floc[ii].fill(arma::fill::zeros);
           _pdepartdata.flocex[ii].fill(arma::fill::zeros);
+          for(int jj=0; jj<ivars.size(); jj++)
+          {
+            _pdepartdata.aloc     (ii,jj).fill(arma::fill::zeros);
+            _pdepartdata.aloc_inex(ii,jj).fill(arma::fill::zeros);
+            _pdepartdata.aloc_exin(ii,jj).fill(arma::fill::zeros);
+            _pdepartdata.aloc_exex(ii,jj).fill(arma::fill::zeros);
+          }
         }
-        prepareCellMatrix(iKin, iKex, ivars);
-        p->second->computeMatrixInteriorSide(iS, iKin, iKex, _pdepartdata.aloc, _pdepartdata.aloc_inex, _pdepartdata.aloc_exin, _pdepartdata.aloc_exex, _pdepartdata.aloc_i, _pdepartdata.aloc_j , _pdepartdata.aloc_i_ex, _pdepartdata.aloc_j_ex,_pdepartdata.uloc, _pdepartdata.ulocex);
+        p->second->computeMatrixInteriorSide(iS, iKin, iKex, _pdepartdata.aloc, _pdepartdata.aloc_inex, _pdepartdata.aloc_exin, _pdepartdata.aloc_exex,_pdepartdata.uloc, _pdepartdata.ulocex);
         for(int ii=0; ii<ivars.size(); ii++)
         {
           int ivar = ivars[ii];
           for(int jj=0; jj<ivars.size(); jj++)
           {
             int jvar = ivars[jj];
-            A(ivar,jvar)->assemble(_pdepartdata.aloc     (ii,jj), _pdepartdata.aloc_i   (ii,jj), _pdepartdata.aloc_j   (ii,jj));
-            A(ivar,jvar)->assemble(_pdepartdata.aloc_inex(ii,jj), _pdepartdata.aloc_i   (ii,jj), _pdepartdata.aloc_j_ex(ii,jj));
-            A(ivar,jvar)->assemble(_pdepartdata.aloc_exin(ii,jj), _pdepartdata.aloc_i_ex(ii,jj), _pdepartdata.aloc_j   (ii,jj));
-            A(ivar,jvar)->assemble(_pdepartdata.aloc_exex(ii,jj), _pdepartdata.aloc_i_ex(ii,jj), _pdepartdata.aloc_j_ex(ii,jj));
+            A(ivar,jvar)->assemble(_pdepartdata.aloc     (ii,jj), _pdepartdata.vec_i[ii]  , _pdepartdata.vec_i[jj]);
+            A(ivar,jvar)->assemble(_pdepartdata.aloc_inex(ii,jj), _pdepartdata.vec_i[ii]  , _pdepartdata.vec_iex[jj]);
+            A(ivar,jvar)->assemble(_pdepartdata.aloc_exin(ii,jj), _pdepartdata.vec_iex[ii], _pdepartdata.vec_i[jj]);
+            A(ivar,jvar)->assemble(_pdepartdata.aloc_exex(ii,jj), _pdepartdata.vec_iex[ii], _pdepartdata.vec_iex[jj]);
           }
         }
       }
@@ -1170,6 +1044,7 @@ void MeshUnitWithData::computeJacobian(perulanganEnums::matrixstatus& status, al
     // Boundary
     if(p->second->loopBoundary())
     {
+      preparePdePartsData(ivars);
       for(mesh::MeshUnitInterface::BoundaryInformationMap::const_iterator pbdry=_meshinfo->bdrymesheunitsmap.begin();pbdry!=_meshinfo->bdrymesheunitsmap.end();pbdry++)
       {
         int color = pbdry->first;
@@ -1177,24 +1052,28 @@ void MeshUnitWithData::computeJacobian(perulanganEnums::matrixstatus& status, al
         for(int i = 0; i < cells_on_bdry.n_cols; i++)
         {
           int iK = cells_on_bdry(0,i);
-          preparePdePartsData(iK, ivars);
           int iS = cells_on_bdry(1,i);
           int iil = cells_on_bdry(2,i);
-          for(int ivar=0; ivar<nvars; ivar++)
+          for(int ii=0; ii<ivars.size(); ii++)
           {
-            _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ivar]);
+            int ivar = ivars[ii];
+            int ncomp = _vars[ivar].getNcomp();
+            _fems[ivar]->setVectorIndices(iK, _pdepartdata.vec_i[ivar], ncomp);
             u[ivar]->extract(_pdepartdata.vec_i[ivar], _pdepartdata.uloc[ivar]);
             _fems[ivar]->setCellBdry(iK, iS, iil);
+            for(int jj=0; jj<ivars.size(); jj++)
+            {
+              _pdepartdata.aloc(ii,jj).fill(arma::fill::zeros);
+            }
           }
-          prepareCellMatrix(iK, ivars);
-          p->second->computeMatrixBdry(color, iK, iS, iil, _pdepartdata.aloc, _pdepartdata.aloc_i, _pdepartdata.aloc_j,_pdepartdata.uloc);
+          p->second->computeMatrixBdry(color, iK, iS, iil, _pdepartdata.aloc,_pdepartdata.uloc);
           for(int ii=0; ii<ivars.size(); ii++)
           {
             int ivar = ivars[ii];
             for(int jj=0; jj<ivars.size(); jj++)
             {
               int jvar = ivars[jj];
-              A(ivar,jvar)->assemble(_pdepartdata.aloc(ii,jj), _pdepartdata.aloc_i(ii,jj), _pdepartdata.aloc_j(ii,jj));
+              A(ivar,jvar)->assemble(_pdepartdata.aloc(ii,jj), _pdepartdata.vec_i[ii], _pdepartdata.vec_i[jj]);
             }
           }
         }

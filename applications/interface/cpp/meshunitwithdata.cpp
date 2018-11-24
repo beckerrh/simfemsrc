@@ -124,7 +124,7 @@ void MeshUnitWithData::constructPhiBySplines(std::string applicationname)
 double MeshUnitWithData::_residualcorrectPhi(const solvers::FunctionInterface& phi, const alat::VectorOneVariable& phivector, int& ncutedges) const
 {
   double res = 0.0;
-  arma::vec x0(3), x1(3), xbeta(3), uphi(1);
+  alat::armavec x0(3), x1(3), xbeta(3), uphi(1);
   ncutedges=0;
   for(int i=0;i<_meshinfo->nedges;i++)
   {
@@ -151,7 +151,7 @@ void MeshUnitWithData::constructPhiByHand()
   _phivector.set_size(_meshinfo->nnodes);
 
 
-  arma::vec x0(3), x1(3), xbeta0(3), xbeta(3), xdiff(3), uphi(1), uphix(1), uphiy(1), uphiz(1);
+  alat::armavec x0(3), x1(3), xbeta0(3), xbeta(3), xdiff(3), uphi(1), uphix(1), uphiy(1), uphiz(1);
   for(int i=0;i<_meshinfo->nnodes;i++)
   {
     phi(uphi, _meshinfo->nodes(0,i), _meshinfo->nodes(1,i), _meshinfo->nodes(2,i));
@@ -162,7 +162,7 @@ void MeshUnitWithData::constructPhiByHand()
 
   int ncutedges;
   _residualcorrectPhi(phi, _phivector, ncutedges);
-  arma::vec betagood(ncutedges);
+  alat::armavec betagood(ncutedges);
   int count=0;
   for(int i=0;i<_meshinfo->nedges;i++)
   {
@@ -250,7 +250,7 @@ void MeshUnitWithData::constructPhiByHand()
   // std::cerr << "MeshUnitWithData::constructPhi() END\n";
 }
 /*--------------------------------------------------------------------------*/
-void MeshUnitWithData::_writeVtkCut(std::ofstream& file, const alat::armaivec& nodeintonode, const alat::IntMap& cellintocell, const alat::IntMap& nodetonodein, const arma::vec& u)
+void MeshUnitWithData::_writeVtkCut(std::ofstream& file, const alat::armaivec& nodeintonode, const alat::IntMap& cellintocell, const alat::IntMap& nodetonodein, const alat::armavec& u)
 {
   file<<"# vtk DataFile Version 4.0 "<<std::endl<<"output from SimFem"<<std::endl;
   file<<"ASCII"<<std::endl<<"DATASET UNSTRUCTURED_GRID"<<std::endl<<std::endl;
@@ -403,7 +403,7 @@ void MeshUnitWithData::writeVtkCut(std::string varname, std::string filename)
   // }
   int ncomp = u0->ncomp();
   assert(ncomp==1);
-  arma::vec uin(nodeintonode.size()), uex(nodeextonode.size());
+  alat::armavec uin(nodeintonode.size()), uex(nodeextonode.size());
 
   for(int i=0; i< nodeintonode.size(); i++)
   {
@@ -549,7 +549,7 @@ void MeshUnitWithData::writeVtkIIM(std::string varname, std::string filename)
   // }
   int ncomp = u0->ncomp();
   assert(ncomp==1);
-  arma::vec uin(nodeintonode.size()), uex(nodeextonode.size());
+  alat::armavec uin(nodeintonode.size()), uex(nodeextonode.size());
 
   for(int i=0; i< nodeintonode.size(); i++)
   {

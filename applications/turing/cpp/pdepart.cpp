@@ -75,9 +75,9 @@ void PdePart::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const solv
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
       // mass
-      floc[_ivar](icomp,ii) += (lmass/_dt)*uloc[_ivar](icomp, ii);
+      floc[_ivar][icomp*_nlocal + ii] += (lmass/_dt)*uloc[_ivar][icomp*_nlocal+ii];
       // reaction
-      floc[_ivar](icomp,ii) += 0.5*lmass*Fu(icomp, ii);
+      floc[_ivar][icomp*_nlocal + ii] += 0.5*lmass*Fu(icomp, ii);
 
       for(int jj=0; jj<_meshinfo->nnodespercell;jj++)
       {
@@ -85,7 +85,7 @@ void PdePart::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const solv
         int jS = _meshinfo->sides_of_cells(jj,iK);
         double dot = arma::dot(_meshinfo->normals.col(iS), _meshinfo->normals.col(jS));
         double d = dot*scalediff*_meshinfo->sigma(ii,iK)*_meshinfo->sigma(jj,iK);
-        floc[_ivar](icomp,ii) -= 0.5*_k[icomp]*d*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] -= 0.5*_k[icomp]*d*uloc[_ivar][icomp*_nlocal+jj];
       }
     }
   }
@@ -113,9 +113,9 @@ void PdePart::computeResidualCell(int iK, solvers::PdePartData::vec& floc, const
     // mass
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += (lmass/_dt)*uloc[_ivar](icomp, ii);
+      floc[_ivar][icomp*_nlocal + ii] += (lmass/_dt)*uloc[_ivar][icomp*_nlocal+ii];
       // reaction
-      floc[_ivar](icomp,ii) -= 0.5*lmass*Fu(icomp, ii);
+      floc[_ivar][icomp*_nlocal + ii] -= 0.5*lmass*Fu(icomp, ii);
 
       for(int jj=0; jj<_meshinfo->nnodespercell;jj++)
       {
@@ -124,20 +124,20 @@ void PdePart::computeResidualCell(int iK, solvers::PdePartData::vec& floc, const
         double dot = arma::dot(_meshinfo->normals.col(iS), _meshinfo->normals.col(jS));
         double d = dot*scalediff*_meshinfo->sigma(ii,iK)*_meshinfo->sigma(jj,iK);
         // mass
-        // if(ii==jj) {floc[0](icomp,ii) += 2.0*dmass*uloc[0](icomp, jj);}
-        // else {floc[0](icomp,ii) += dmass*uloc[0](icomp, jj);}
+        // if(ii==jj) {floc[0][icomp*_nlocal + ii] += 2.0*dmass*uloc[0](icomp, jj);}
+        // else {floc[0][icomp*_nlocal + ii] += dmass*uloc[0](icomp, jj);}
         // reaction
-        // if(ii==jj) {floc[0](icomp,ii) -= mass*Fu(icomp, jj);}
-        // else {floc[0](icomp,ii) -= 0.5*mass*Fu(icomp, jj);}
+        // if(ii==jj) {floc[0][icomp*_nlocal + ii] -= mass*Fu(icomp, jj);}
+        // else {floc[0][icomp*_nlocal + ii] -= 0.5*mass*Fu(icomp, jj);}
         // diffusion
-        floc[_ivar](icomp,ii) += 0.5*_k[icomp]*d*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] += 0.5*_k[icomp]*d*uloc[_ivar][icomp*_nlocal+jj];
       }
     }
   }
 }
 
 /*--------------------------------------------------------------------------*/
-void PdePart::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void PdePart::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   // std::cerr << "mat _dt="<<_dt << " ";
   // std::cerr << "mat uloc="<<uloc[0];
@@ -169,7 +169,7 @@ void PdePart::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers:
         // mass
         if(icomp==jcomp)
         {
-          mat(_ivar,_ivar)[count] += (lmass/_dt);
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += (lmass/_dt);
         }
         mat  (_ivar,_ivar)[count] -= 0.5*lmass*DF(icomp,jcomp, ii);
         mat_i(_ivar,_ivar)[count] = icomp*_meshinfo->nnodes + iN;

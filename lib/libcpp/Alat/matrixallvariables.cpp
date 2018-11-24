@@ -146,7 +146,7 @@ void MatrixAllVariables::compute(MatrixInOne& matrixinone) const
 {
   int nvars = n();
   const alat::SparsityPattern* sparsitypattern = matrixinone.matrix.getSparsityPattern();
-  arma::vec&  values = *matrixinone.matrix.getValues();
+  alat::armavec&  values = *matrixinone.matrix.getValues();
   values.fill(arma::fill::zeros);
   for(int i = 0; i < nvars; i++)
   {
@@ -183,7 +183,7 @@ void MatrixAllVariables::compute(MatrixInOne& matrixinone) const
 //   _sparsematrix.initSparsityPattern(sparsitypatternsoft);
 //
 //   const alat::SparsityPattern* sparsitypattern = _sparsematrix.getSparsityPattern();
-//   arma::vec&  values = *_sparsematrix.getValues();
+//   alat::armavec&  values = *_sparsematrix.getValues();
 //   values.fill(arma::fill::zeros);
 //   for(int i = 0; i < n; i++)
 //   {

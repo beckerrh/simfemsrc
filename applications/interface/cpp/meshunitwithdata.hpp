@@ -26,7 +26,7 @@ public:
 
   protected:
     double _residualcorrectPhi(const solvers::FunctionInterface& phi, const alat::VectorOneVariable& phivector, int& ncutedges) const;
-    void _writeVtkCut(std::ofstream& file, const alat::armaivec& nodeintonode, const alat::IntMap& cellintocell, const alat::IntMap& nodetonodein, const arma::vec& u);
+    void _writeVtkCut(std::ofstream& file, const alat::armaivec& nodeintonode, const alat::IntMap& cellintocell, const alat::IntMap& nodetonodein, const alat::armavec& u);
 
 public:
     ~MeshUnitWithData();

@@ -132,7 +132,7 @@ void Normals::construct(const mesh::MeshUnitInterface* mesh, const GeometryConst
 	// for(int iS=0;iS<nsides;iS++)
 	// {
 	// 	arma::subview_col<double> normal = _normals.col(iS);
-	// 	// arma::vec& normal = _normals.col(iS);
+	// 	// alat::armavec& normal = _normals.col(iS);
 	// 	mesh->computeNormal(normal, iS);
 	// 	// std::cerr << "normal = "<< normal << "\n";
 	// }

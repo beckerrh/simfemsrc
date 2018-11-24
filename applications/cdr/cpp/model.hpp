@@ -21,9 +21,9 @@ public:
   void initModel(const mesh::MeshUnitInterface* mesh, const solvers::Parameters& parameters);
 
   double diffusion(double x, double y, double z)const;
-  void beta(arma::vec& beta, double x, double y, double z, double t=0)const;
-  void reaction(arma::subview_col<double> f, const arma::subview_col<double> u)const;
-  void reaction_d(arma::mat& df, const arma::subview_col<double> u)const;
+  void beta(alat::armavec& beta, double x, double y, double z, double t=0)const;
+  void reaction(alat::armavec& f, const alat::armavec& u)const;
+  void reaction_d(arma::mat& df, const alat::armavec& u)const;
   std::shared_ptr<solvers::InitialConditionInterface> getBeta() const {return _beta;}
 };
 

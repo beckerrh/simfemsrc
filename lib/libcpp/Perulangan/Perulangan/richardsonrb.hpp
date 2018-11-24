@@ -20,7 +20,7 @@ protected:
     mutable const alat::GhostMatrix* _ghostmatrix;
     mutable double _condition, _conditionmax, _conditionmean;
     mutable arma::mat _H;
-    mutable arma::vec _b, _x;
+    mutable alat::armavec _b, _x;
     alat::GhostVector& getV(int i) const;
     alat::GhostVector& getAV(int i, int ivar = 0) const;
     void _solveSmallSystem(perulanganEnums::iterationstatus& status) const;

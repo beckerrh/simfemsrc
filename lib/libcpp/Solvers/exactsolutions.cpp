@@ -7,51 +7,51 @@ using namespace std;
 /*---------------------------------------------------------*/
 ConstantSolution::ConstantSolution(double d) : _d(d) {}
 string ConstantSolution::getName() const{return "ConstantSolution";}
-void ConstantSolution::operator()(arma::vec& u, double x, double y, double z, double t) const{u[0] = _d;}
-void ConstantSolution::x (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void ConstantSolution::y (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void ConstantSolution::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void ConstantSolution::t (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void ConstantSolution::xx(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void ConstantSolution::yy(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void ConstantSolution::zz(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.;}
+void ConstantSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const{u[0] = _d;}
+void ConstantSolution::x (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void ConstantSolution::y (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void ConstantSolution::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void ConstantSolution::t (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void ConstantSolution::xx(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void ConstantSolution::yy(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void ConstantSolution::zz(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.;}
 
 /*---------------------------------------------------------*/
 LinearSolution::LinearSolution(double a, double b, double c, double d) : _a(a), _b(b), _c(c), _d(d) {}
 string LinearSolution::getName() const{return "LinearSolution";}
-void LinearSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void LinearSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _a+_b*x+_c*y+_d*z;
 }
-void LinearSolution::x (arma::vec& u, double x, double y, double z, double t) const{u[0] = _b;}
-void LinearSolution::y (arma::vec& u, double x, double y, double z, double t) const{u[0] = _c;}
-void LinearSolution::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = _d;}
-void LinearSolution::xx(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void LinearSolution::yy(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void LinearSolution::zz(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.;}
+void LinearSolution::x (alat::armavec& u, double x, double y, double z, double t) const{u[0] = _b;}
+void LinearSolution::y (alat::armavec& u, double x, double y, double z, double t) const{u[0] = _c;}
+void LinearSolution::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = _d;}
+void LinearSolution::xx(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void LinearSolution::yy(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void LinearSolution::zz(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.;}
 
 /*---------------------------------------------------------*/
 QuadraticSolution::QuadraticSolution(double a, double b, double c, double d, double e, double f, double g, double h, double i) : _a(a), _b(b), _c(c), _d(d), _e(e), _f(f), _g(g), _h(h), _i(i) {}
 string QuadraticSolution::getName() const{return "QuadraticSolution";}
-void QuadraticSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void QuadraticSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _a+_b*x+_c*y+_d*x*x+_e*y*y+_f*x*y + _g*x*z + _h*y*z + _i*z*z;
 }
-void QuadraticSolution::x(arma::vec& u, double x, double y, double z, double t) const
+void QuadraticSolution::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _b+2.0*_d*x+_f*y + _g*z;
 }
-void QuadraticSolution::y(arma::vec& u, double x, double y, double z, double t) const
+void QuadraticSolution::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _c+2.0*_e*y+_f*x + _h*z;
 }
-void QuadraticSolution::z(arma::vec& u, double x, double y, double z, double t) const
+void QuadraticSolution::z(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _g*x + _h*y + 2.0*_i*z;
 }
-void QuadraticSolution::xx(arma::vec& u, double x, double y, double z, double t) const{u[0] = 2.0*_d;}
-void QuadraticSolution::yy(arma::vec& u, double x, double y, double z, double t) const{u[0] = 2.0*_e;}
-void QuadraticSolution::zz(arma::vec& u, double vx, double vy, double vz, double t) const{u[0] = 2.0*_i;}
+void QuadraticSolution::xx(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 2.0*_d;}
+void QuadraticSolution::yy(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 2.0*_e;}
+void QuadraticSolution::zz(alat::armavec& u, double vx, double vy, double vz, double t) const{u[0] = 2.0*_i;}
 
 /*---------------------------------------------------------*/
 CubicSolution::CubicSolution(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, double k, double l, double m, double n, double o, double p, double r, double s, double t, double u) : _a(a), _b(b), _c(c), _d(d), _e(e), _f(f), _g(g), _h(h), _i(i), _j(j), _k(k), _l(l), _m(m), _n(n), _o(o), _p(p), _r(r), _s(s), _t(t), _u(u) {}
@@ -61,37 +61,37 @@ string CubicSolution::getName() const
   return "CubicSolution";
 }
 
-void CubicSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _a+_b*x+_c*y+_d*x*x+_e*y*y+_f*x*y+_g*x*x*x+_h*x*x*y+_i*x*y*y+_j*y*y*y+_k*z+_l*z*z+_m*x*z+_n*y*z+_o*z*z*z+_p*x*x*z+_r*y*y*z+_s*x*y*z+_t*x*z*z+_u*y*z*z;
 }
 
-void CubicSolution::x(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _b+2.0*_d*x+_f*y+3.0*_g*x*x+2.0*_h*x*y+_i*y*y+_m*z+2.0*_p*x*z+_s*y*z+_t*z*z;
 }
 
-void CubicSolution::y(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _c+2.0*_e*y+_f*x+_h*x*x+2.0*_i*x*y+3.0*_j*y*y+_n*z+2.0*_r*y*z+_s*x*z+_u*z*z;
 }
 
-void CubicSolution::z(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::z(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _k+2.0*_l*z+_m*x+_n*y+3.0*_o*z*z+_p*x*x+_r*y*y+_s*x*y+2.0*_t*x*z+2.0*_u*y*z;
 }
 
-void CubicSolution::xx(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::xx(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = 2.0*_d+6.0*_g*x+2.0*_h*y+2.0*_p*z;
 }
 
-void CubicSolution::yy(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::yy(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = 2.0*_e+2.0*_i*x+6.0*_j*y+2.0*_r*z;
 }
 
-void CubicSolution::zz(arma::vec& u, double x, double y, double z, double t) const
+void CubicSolution::zz(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = 2.0*_l+6.0*_o*z+2.0*_t*x+2.0*_u*y;
 }
@@ -102,31 +102,31 @@ string CosinusSolution::getName() const
 {
   return "CosinusSolution";
 }
-void CosinusSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _a*cos(_b*M_PI*x)*cos(_c*M_PI*y)*cos(_d*M_PI*z);
 }
-void CosinusSolution::x(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -_a*_b*M_PI*sin(_b*M_PI*x)*cos(_c*M_PI*y)*cos(_d*M_PI*z);
 }
-void CosinusSolution::y(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -_a*_c*M_PI*cos(_b*M_PI*x)*sin(_c*M_PI*y)*cos(_d*M_PI*z);
 }
-void CosinusSolution::z(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::z(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -_a*_d*M_PI*cos(_b*M_PI*x)*cos(_c*M_PI*y)*sin(_d*M_PI*z);
 }
-void CosinusSolution::xx(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::xx(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -_a*_b*M_PI*_b*M_PI*cos(_b*M_PI*x)*cos(_c*M_PI*y)*cos(_d*M_PI*z);
 }
-void CosinusSolution::yy(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::yy(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -_a*_c*M_PI*_c*M_PI*cos(_b*M_PI*x)*cos(_c*M_PI*y)*cos(_d*M_PI*z);
 }
-void CosinusSolution::zz(arma::vec& u, double x, double y, double z, double t) const
+void CosinusSolution::zz(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -_a*_d*M_PI*_d*M_PI*cos(_b*M_PI*x)*cos(_c*M_PI*y)*cos(_d*M_PI*z);
 }
@@ -146,37 +146,37 @@ string ExponentialSolution::getName() const
 {
   return "ExponentialSolution";
 }
-void ExponentialSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = exp(-_r);
 }
-void ExponentialSolution::x(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = -_rx* exp(-_r)/_eps;
 }
-void ExponentialSolution::y(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = -_ry* exp(-_r)/_eps;
 }
-void ExponentialSolution::z(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::z(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = -_rz* exp(-_r)/_eps;
 }
-void ExponentialSolution::xx(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::xx(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = ( _rx*_rx/_eps-1.0 )*exp(-_r)/_eps;
 }
-void ExponentialSolution::yy(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::yy(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = ( _ry*_ry/_eps-1.0 )*exp(-_r)/_eps;
 }
-void ExponentialSolution::zz(arma::vec& u, double x, double y, double z, double t) const
+void ExponentialSolution::zz(alat::armavec& u, double x, double y, double z, double t) const
 {
   _init(x, y, z);
   u[0] = ( _rz*_rz/_eps-1.0 )*exp(-_r)/_eps;
@@ -200,19 +200,19 @@ string LDomainSolution::getName() const
   return "LDomainSolution";
 }
 
-void LDomainSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void LDomainSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   double r2 = x*x+y*y;
   u[0] = pow(r2, 1.0/3.0)*sin(2.0*_theta(x, y, z)/3.0);
 }
 
-void LDomainSolution::x(arma::vec& u, double x, double y, double z, double t) const
+void LDomainSolution::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   double r2 = x*x+y*y;
   u[0] = ( 2.0/3.0 )*pow(r2, -2.0/3.0)*( sin(2.0*_theta(x, y, z)/3.0)*x-cos(2.0*_theta(x, y, z)/3.0)*y );
 }
 
-void LDomainSolution::y(arma::vec& u, double x, double y, double z, double t) const
+void LDomainSolution::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   double r2 = x*x+y*y;
   u[0] = ( 2.0/3.0 )*pow(r2, -2.0/3.0)*( sin(2.0*_theta(x, y, z)/3.0)*y+cos(2.0*_theta(x, y, z)/3.0)*x );
@@ -225,19 +225,19 @@ string SlitDomainSolution::getName() const
   return "SlitDomainSolution";
 }
 
-void SlitDomainSolution::operator()(arma::vec& u, double x, double y, double z, double t) const
+void SlitDomainSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   double r2 = x*x+y*y;
   u[0] = pow(r2, 1.0/4.0)*sin(_theta(x, y, z)/2.0);
 }
 
-void SlitDomainSolution::x(arma::vec& u, double x, double y, double z, double t) const
+void SlitDomainSolution::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   double r2 = x*x+y*y;
   u[0] = ( 1.0/2.0 )*pow(r2, -3.0/4.0)*( sin(_theta(x, y, z)/2.0)*x-cos(_theta(x, y, z)/2.0)*y );
 }
 
-void SlitDomainSolution::y(arma::vec& u, double x, double y, double z, double t) const
+void SlitDomainSolution::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   double r2 = x*x+y*y;
   u[0] = ( 1.0/2.0 )*pow(r2, -3.0/4.0)*( sin(_theta(x, y, z)/2.0)*y+cos(_theta(x, y, z)/2.0)*x );

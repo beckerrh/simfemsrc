@@ -34,7 +34,7 @@ class BetaZero : public solvers::InitialConditionInterface
 {
 public:
   std::string getClassName()const {return "BetaZero";}
-  void operator()(arma::vec& beta, double x, double y, double z, double t)const{
+  void operator()(alat::armavec& beta, double x, double y, double z, double t)const{
     for(int i=0;i<_dim;i++) {beta[i] = 0.0;}
   }
 };
@@ -42,7 +42,7 @@ class BetaConstant : public solvers::InitialConditionInterface
 {
 public:
   std::string getClassName()const {return "BetaConstant";}
-  void operator()(arma::vec& beta, double x, double y, double z, double t)const{
+  void operator()(alat::armavec& beta, double x, double y, double z, double t)const{
     for(int i=0;i<_dim;i++) {beta[i] = (double) _dim;}
   }
 };
@@ -50,7 +50,7 @@ class BetaEast : public solvers::InitialConditionInterface
 {
 public:
   std::string getClassName()const {return "BetaEast";}
-  void operator()(arma::vec& beta, double x, double y, double z, double t)const{
+  void operator()(alat::armavec& beta, double x, double y, double z, double t)const{
     assert(beta.size()==3);
     beta[0]=1.0;
     beta[1]=0.0;
@@ -88,15 +88,15 @@ double Model::diffusion(double x, double y, double z)const
 {
   return _diff;
 }
-void Model::beta(arma::vec& beta, double x, double y, double z, double t)const
+void Model::beta(alat::armavec& beta, double x, double y, double z, double t)const
 {
   (*_beta)(beta, x, y, z, t);
 }
-void Model::reaction(arma::subview_col<double> f, const arma::subview_col<double> u)const
+void Model::reaction(arma::subview_col<double> f, const alat::armavec& u)const
 {
   f[0] = _alpha*u[0];
 }
-void Model::reaction_d(arma::mat& df, const arma::subview_col<double> u)const
+void Model::reaction_d(arma::mat& df, const alat::armavec& u)const
 {
   df(0,0) = _alpha;
 }

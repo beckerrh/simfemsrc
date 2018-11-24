@@ -144,7 +144,7 @@ void VectorAllVariables::add(const double& d, const alat::VectorAllVariables* v)
   }
 }
 /*--------------------------------------------------------------------------*/
-// void VectorAllVariables::scalePerVariables(const alat::Vector<arma::vec>& scales)
+// void VectorAllVariables::scalePerVariables(const alat::Vector<alat::armavec>& scales)
 // {
 //   for(int i=0; i < this->size(); i++)
 //   {
@@ -152,7 +152,7 @@ void VectorAllVariables::add(const double& d, const alat::VectorAllVariables* v)
 //   }
 // }
 //
-// void VectorAllVariables::scalePerVariablesInverse(const alat::Vector<arma::vec>& scales)
+// void VectorAllVariables::scalePerVariablesInverse(const alat::Vector<alat::armavec>& scales)
 // {
 //   for(int i=0; i < this->size(); i++)
 //   {

@@ -84,7 +84,7 @@ void P1::computeMatrices(int iK)
 {
   arma::mat& mass = _femdata.mass;
   arma::mat& laplace = _femdata.laplace;
-  arma::vec& mass_lumped = _femdata.mass_lumped;
+  alat::armavec& mass_lumped = _femdata.mass_lumped;
   double moc=_meshinfo->measure_of_cells[iK];
   double d = _meshinfo->dim;
   double scalediff = 1.0/(d*d*moc);
@@ -250,7 +250,7 @@ void P1::strongDirichlet(alat::VectorOneVariableInterface* u, const solvers::Dir
 {
   alat::VectorOneVariable* uv = dynamic_cast<alat::VectorOneVariable*>(u); assert(uv);
   // std::cerr << "P1::strongDirichlet() u=" << *uv << "\n";
-  arma::vec udir(_ncomp);
+  alat::armavec udir(_ncomp);
   for(alat::IntSet::const_iterator p= dircolors.begin(); p!=dircolors.end();p++)
   {
     int color = *p;

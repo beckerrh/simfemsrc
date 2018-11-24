@@ -22,7 +22,7 @@ namespace mesh
   {
 protected:
     alat::armaivec _cutcells, _cutedges, _cutnodes, _celliscut, _edgeiscut, _nodeiscut, _cutnodesisin;
-    arma::vec _cutcoeff;
+    alat::armavec _cutcoeff;
     alat::armaimat _nodesofcutcellsisin, _nodesofcutcell;
     arma::mat _measuresofcutcells, _normalsofcutcells;
     arma::mat _cinofcutcells, _cexofcutcells, _cofinofcutcells, _cofexofcutcells;
@@ -30,7 +30,7 @@ protected:
     void _computeMeasuresOfCutCell(int iK, const mesh::MeshUnitInterface* mesh, arma::subview_col<double> measuresofcutcell, arma::subview_col<double> normalsofcutcells, arma::subview_col<double> cinofcutcells, arma::subview_col<double> cexofcutcells, const arma::mat& innodes, const arma::mat& exnodes, const arma::mat& addnodes, double moc, const arma::ivec& innodesind, const arma::ivec& exnodesind, const arma::ivec& addnodesedges);
     double _surface(arma::subview_col<double> u, arma::subview_col<double> v, arma::subview_col<double> w)const;
     double _surface(const arma::mat& addnodes)const;
-    void _computeCutTet(double& volin, double& volex, arma::subview_col<double> xcin, arma::subview_col<double> xcex, const arma::vec& normal, int iK, const mesh::MeshUnitInterface* mesh, const arma::mat& innodes, const arma::mat& exnodes, const arma::mat& addnodes, const arma::ivec& innodesind, const arma::ivec& exnodesind, const arma::ivec& addnodesedges)const;
+    void _computeCutTet(double& volin, double& volex, arma::subview_col<double> xcin, arma::subview_col<double> xcex, const alat::armavec& normal, int iK, const mesh::MeshUnitInterface* mesh, const arma::mat& innodes, const arma::mat& exnodes, const arma::mat& addnodes, const arma::ivec& innodesind, const arma::ivec& exnodesind, const arma::ivec& addnodesedges)const;
 
 public:
     ~CutInterface();
@@ -47,7 +47,7 @@ public:
     const alat::armaivec& getNodeIsCut() const;
     const alat::armaivec& getCutNodeIsIn() const;
     const alat::armaivec& getCutNodes() const;
-    const arma::vec& getCutCoeff() const;
+    const alat::armavec& getCutCoeff() const;
     const alat::armaimat& getNodesOfCutCellsIsIn() const;
     const alat::armaimat& getNodesOfCutCells() const;
     const arma::mat& getMeasureOfCutCells() const;

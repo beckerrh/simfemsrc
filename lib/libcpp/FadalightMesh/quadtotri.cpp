@@ -266,7 +266,7 @@ void QuadToTri::_makeCrissCross(const FadalightMesh::MeshInterface& QM)
     nodes[i].y() = QM.getNode(i).y();
   }
   arma::mat a(2,2);
-  arma::vec x(2), b(2);
+  alat::armavec x(2), b(2);
   for(int i = 0; i < QM.getNCells(); i++)
   {
     a(0,0) = nodes[QM.getNodeIdOfCell(i, 2)].x() - nodes[QM.getNodeIdOfCell(i, 0)].x();
@@ -529,7 +529,7 @@ void QuadToTri::constructPatchInfo(PatchInfo& patchinfo) const
       S(ip, 1) = M.y();
     }
     arma::mat A(2, 2);
-    arma::vec x(2), b(2);
+    alat::armavec x(2), b(2);
     for(int ip=0;ip<npatch;ip++)
     {
       bool found=false;

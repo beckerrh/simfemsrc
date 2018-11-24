@@ -10,7 +10,7 @@ namespace mesh
   class NodesCellsWeight : public GeometryObject
   {
   protected:
-    arma::vec _weights;
+    alat::armavec _weights;
 
   public:
     ~NodesCellsWeight();
@@ -20,7 +20,7 @@ namespace mesh
     std::string getClassName() const;
     std::unique_ptr<GeometryObject> clone() const;
 
-    const arma::vec& get() const;
+    const alat::armavec& get() const;
 
     alat::armaivec getSizes() const;
     void setSizes(alat::armaivec::const_iterator sizes);

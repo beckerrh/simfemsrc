@@ -8,21 +8,21 @@
 class CutExactSolutionQuadraticCircle : public solvers::FunctionInterface
 {
 protected:
-  mutable arma::vec _p;
+  mutable alat::armavec _p;
   double _r02, _k1, _k2;
   const solvers::FunctionInterface* _phi;
 public:
   CutExactSolutionQuadraticCircle(double K1, double k2);
   std::string getName() const;
   void setPhi(const solvers::FunctionInterface* phi);
-  void operator()(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void x (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void y (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void z (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void t (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void xx(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void yy(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void zz(arma::vec& u, double x, double y, double z, double t = 0.) const;
+  void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void z (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void t (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void xx(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void yy(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void zz(alat::armavec& u, double x, double y, double z, double t = 0.) const;
 };
 /*--------------------------------------------------------------------------*/
 class CutExactSolutionLinearStraight : public solvers::FunctionInterface
@@ -32,14 +32,14 @@ protected:
 public:
   CutExactSolutionLinearStraight(double xgamma, double K1, double k2);
   std::string getName() const;
-  void operator()(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void x (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void y (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void z (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void t (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void xx(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void yy(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void zz(arma::vec& u, double x, double y, double z, double t = 0.) const;
+  void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void z (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void t (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void xx(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void yy(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void zz(alat::armavec& u, double x, double y, double z, double t = 0.) const;
 };
 /*--------------------------------------------------------------------------*/
 class CutExactSolutionQuadraticStraight : public solvers::FunctionInterface
@@ -49,14 +49,14 @@ protected:
 public:
   CutExactSolutionQuadraticStraight(double xgamma, double K1, double k2);
   std::string getName() const;
-  void operator()(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void x (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void y (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void z (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void t (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void xx(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void yy(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void zz(arma::vec& u, double x, double y, double z, double t = 0.) const;
+  void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void z (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void t (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void xx(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void yy(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void zz(alat::armavec& u, double x, double y, double z, double t = 0.) const;
 };
 
 /*--------------------------------------------------------------------------*/

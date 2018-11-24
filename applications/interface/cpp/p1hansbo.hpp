@@ -17,7 +17,7 @@ public:
   P1Hansbo& operator=( const P1Hansbo& P1cut);
   std::string getClassName() const;
   const alat::armaivec* _cutcells, *_cutedges, *_celliscut, *_edgeiscut, *_cutnodes, *_nodeiscut, *_cutnodesisin;
-  const arma::vec* _cutcoeff;
+  const alat::armavec* _cutcoeff;
   const alat::armaimat* _nodesofcutcellsisin, *_nodesofcutcells;
   const arma::mat* _measuresofcutcells, *_normalsofcutcells;
   const arma::mat* _cinofcutcells, *_cexofcutcells, *_cofinofcutcells, *_cofexofcutcells;
@@ -35,7 +35,7 @@ public:
   void initCutInterface(const mesh::MeshUnitInterface* mesh);
   void toP1(alat::VectorOneVariableInterface* uP1, const alat::VectorOneVariableInterface* u);
   void fromP1(alat::VectorOneVariableInterface* u, const alat::VectorOneVariableInterface* uP1);
-  void computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions);
+  void computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions);
   void strongDirichlet(int ivar, alat::MatrixAllVariables& A, const alat::IntSet& dircolors)const;
   void strongDirichletZero(alat::VectorOneVariableInterface* u, const alat::IntSet& dircolors)const;
   void strongDirichlet(alat::VectorOneVariableInterface* u, const solvers::DirichletInterface& dirichlet, const alat::IntSet& dircolors)const;

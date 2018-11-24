@@ -38,7 +38,7 @@ void MatrixOneVariableInterface::solve(VectorOneVariableInterface* u, const Vect
 void MatrixOneVariableInterface::initSparsityPattern(const SparsityPatternSoft& sparsitypatternsoft)
 {_notWritten("initSparsityPattern");}
 const alat::SparsityPattern* MatrixOneVariableInterface::getSparsityPattern() const {_notWritten("getSparsityPattern"); return NULL;}
-const arma::vec* MatrixOneVariableInterface::getValues()const {_notWritten("getValues");return NULL;}
-arma::vec* MatrixOneVariableInterface::getValues() {_notWritten("getValues");return NULL;}
+const alat::armavec* MatrixOneVariableInterface::getValues()const {_notWritten("getValues");return NULL;}
+alat::armavec* MatrixOneVariableInterface::getValues() {_notWritten("getValues");return NULL;}
 void MatrixOneVariableInterface::addEntriesForDirectSolver(int offsetivar, int offsetjvar, alat::SparsityPatternSoft& sparsitypatternsoft) const{_notWritten("addEntriesForDirectSolver");}
-void MatrixOneVariableInterface::addMatrixForDirectSolver(int offsetivar, int offsetjvar, arma::vec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const{_notWritten("addMatrixForDirectSolver");}
+void MatrixOneVariableInterface::addMatrixForDirectSolver(int offsetivar, int offsetjvar, alat::armavec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const{_notWritten("addMatrixForDirectSolver");}

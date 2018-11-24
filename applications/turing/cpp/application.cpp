@@ -12,7 +12,7 @@ public:
   InitialCondition(double a, double b) : solvers::InitialConditionInterface(){
     _a = a; _b = b;
   }
-  void operator()(arma::vec& u, double x, double y, double z, double t)const{
+  void operator()(alat::armavec& u, double x, double y, double z, double t)const{
     u.fill(arma::fill::zeros);
     u[0] = _a;
     u[1] = _b/_a;

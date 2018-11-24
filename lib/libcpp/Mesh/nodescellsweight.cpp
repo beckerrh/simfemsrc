@@ -29,7 +29,7 @@ std::unique_ptr<GeometryObject> NodesCellsWeight::clone() const
 }
 
 /*--------------------------------------------------------------------------*/
-const arma::vec& NodesCellsWeight::get() const {return _weights;}
+const alat::armavec& NodesCellsWeight::get() const {return _weights;}
 
 alat::armaivec NodesCellsWeight::getSizes() const
 {

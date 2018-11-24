@@ -133,7 +133,7 @@ void PdePartCutInterface::computeRhsCell(int iK, solvers::PdePartData::vec& floc
     return;
   }
 
-  arma::vec f(_ncomp);
+  alat::armavec f(_ncomp);
   double moc=_meshinfo->measure_of_cells[iK];
   alat::Node xK = _mesh->getNodeOfCell(iK);
   _application->getRightHandSide(_ivar)(f, xK.x(), xK.y(), xK.z());
@@ -142,7 +142,7 @@ void PdePartCutInterface::computeRhsCell(int iK, solvers::PdePartData::vec& floc
   {
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += f[icomp]*scalemass;
+      floc[_ivar][icomp*_nlocal + ii] += f[icomp]*scalemass;
     }
   }
 }
@@ -167,14 +167,14 @@ void PdePartCutInterface::computeResidualCell(int iK, solvers::PdePartData::vec&
     {
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        floc[_ivar](icomp,ii) += diff*fem.laplace(ii,jj)*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] += diff*fem.laplace(ii,jj)*uloc[_ivar][icomp*_nlocal+jj];
       }
     }
   }
 }
 
 /*--------------------------------------------------------------------------*/
-void PdePartCutInterface::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void PdePartCutInterface::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   bool celliscut = ((*_celliscut)[iK]>=0);
   if(celliscut)
@@ -199,7 +199,7 @@ void PdePartCutInterface::computeMatrixCell(int iK, solvers::PdePartData::mat& m
           if(icomp==jcomp)
           {
             // diffusion
-            mat(_ivar,_ivar)[count] += diff*fem.laplace(ii,jj);
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += diff*fem.laplace(ii,jj);
           }
           count++;
         }

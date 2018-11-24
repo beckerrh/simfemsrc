@@ -51,4 +51,4 @@ void TimeMesh::setData(const TimeMeshData timemeshdata)
 /*---------------------------------------------------------*/
 int TimeMesh::n() const {return _t.size();}
 double TimeMesh::t(int i) const{return _t[i];}
-const arma::vec& TimeMesh::t() const{return _t;}
+const alat::armavec& TimeMesh::t() const{return _t;}

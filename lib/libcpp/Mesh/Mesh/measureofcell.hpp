@@ -10,7 +10,7 @@ namespace mesh
   class MeasureOfCell : public virtual GeometryObject
   {
   protected:
-    arma::vec _measureofcell;
+    alat::armavec _measureofcell;
     // arma::mat _centerofcell;
 
   public:
@@ -21,7 +21,7 @@ namespace mesh
     std::string getClassName() const;
     std::unique_ptr<GeometryObject> clone() const;
 
-    const arma::vec& getMeasureOfCell() const;
+    const alat::armavec& getMeasureOfCell() const;
     // const arma::mat& getCenterOfCell() const;
 
     alat::armaivec getSizes() const;

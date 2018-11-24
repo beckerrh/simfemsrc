@@ -34,8 +34,8 @@ public:
     void save(std::ostream& os, arma::file_type datatype = arma::arma_binary) const;
     void reInit(const alat::MatrixOneVariableInterface* sparsematrix);
     void computeLu();
-    void solve(arma::vec& x, const arma::vec& b) const;
-    void solveTranspose(arma::vec& x, const arma::vec& b) const;
+    void solve(alat::armavec& x, const alat::armavec& b) const;
+    void solveTranspose(alat::armavec& x, const alat::armavec& b) const;
   };
 }
 

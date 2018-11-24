@@ -9,11 +9,11 @@ namespace alat
 {
   class StringVector;
 
-  class VectorOneVariable : public  arma::vec, public virtual alat::VectorOneVariableInterface
+  class VectorOneVariable : public  alat::armavec, public virtual alat::VectorOneVariableInterface
   {
 public:
-    typedef arma::vec::const_iterator const_iterator;
-    typedef arma::vec::iterator iterator;
+    typedef alat::armavec::const_iterator const_iterator;
+    typedef alat::armavec::iterator iterator;
 
 protected:
     int _ncomp, _n;
@@ -49,8 +49,8 @@ public:
     void equal(const alat::VectorOneVariableInterface* v);
     void equal(double d);
     void add(const double& d, const alat::VectorOneVariableInterface* v);
-    void setVectorFromDirectSolver(int offset, const arma::vec& u);
-    void addVectorRhsForDirectSolver(int offset, arma::vec& f) const;
+    void setVectorFromDirectSolver(int offset, const alat::armavec& u);
+    void addVectorRhsForDirectSolver(int offset, alat::armavec& f) const;
 
     void assemble(const alat::armaimat& indices, const arma::mat& local, double d=1.0);
     void extract(const alat::armaimat& indices, arma::mat& local) const;

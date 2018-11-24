@@ -9,7 +9,7 @@ namespace solvers
   class P2 : public virtual solvers::Fem
   {
   protected:
-    arma::vec _phip1;
+    alat::armavec _phip1;
     arma::mat _phip1grad;
 
     int _iil, _iK;

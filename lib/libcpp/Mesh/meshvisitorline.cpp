@@ -49,7 +49,7 @@ double MeshVisitorLine::computeMeasureOfCell(int iK, const mesh::MeshUnitInterfa
   const arma::mat& nodes = mesh->getNodesAndNodesOfCells().getNodes();
   // const Tetrahedron& K = getCell(iK);
   const MeshUnitInterface::Cell K = mesh->getCell(iK);
-  arma::vec dx(3);
+  alat::armavec dx(3);
   dx[0] = nodes(0,K[1])-nodes(0,K[0]);
   dx[1] = nodes(1,K[1])-nodes(1,K[0]);
   dx[2] = nodes(2,K[1])-nodes(2,K[0]);
@@ -62,7 +62,7 @@ void MeshVisitorLine::computeNormal(MeshUnitInterface::Normal normal, const mesh
   const alat::armaimat& nodes_of_cells = mesh->getNodesAndNodesOfCells().getNodesOfCells();
   // const arma::mat& nodes = MeshUnit::nodesandnodesofcells.nodes;
   // const alat::armaimat& nodes_of_cells = MeshUnit::nodesandnodesofcells.nodes_of_cells;
-  arma::vec dx0(3);
+  alat::armavec dx0(3);
   const MeshUnitInterface::Cell K0 = mesh->getCell(iK0);
   dx0[0] = nodes(0,K0[1])-nodes(0,K0[0]);
   dx0[1] = nodes(1,K0[1])-nodes(1,K0[0]);
@@ -82,7 +82,7 @@ void MeshVisitorLine::computeNormal(MeshUnitInterface::Normal normal, const mesh
   	normal = dx0;
   	return;
   }
-  arma::vec dx1(3);
+  alat::armavec dx1(3);
   const MeshUnitInterface::Cell K1 = mesh->getCell(iK1);
   dx1[0] = nodes(0,K1[1])-nodes(0,K1[0]);
   dx1[1] = nodes(1,K1[1])-nodes(1,K1[0]);

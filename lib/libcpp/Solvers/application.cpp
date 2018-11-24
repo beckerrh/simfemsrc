@@ -26,7 +26,7 @@ bool Application::isStrongDirichlet(int color)const {return true;}
 
 class Dirichlet : public DirichletInterface
 {
-  void operator()(arma::vec& u, double x, double y, double z, double t)const{
+  void operator()(alat::armavec& u, double x, double y, double z, double t)const{
     u[0] = 3.0*x + 2.0*y + z;
   }
 };

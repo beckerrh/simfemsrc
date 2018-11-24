@@ -73,7 +73,7 @@ void RT0::interpolate(alat::VectorOneVariableInterface* u, const solvers::Functi
   assert(_ncomp==1);
   assert(uv->ncomp()==_ncomp);
   uv->fill(arma::fill::zeros);
-  arma::vec uinterpol(3,arma::fill::zeros);
+  alat::armavec uinterpol(3,arma::fill::zeros);
   for(int iS=0; iS<nsides;iS++)
   {
     alat::Node xS = _mesh->getNodeOfSide(iS);

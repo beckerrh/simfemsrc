@@ -80,10 +80,10 @@ void FGmres::solve(perulanganEnums::iterationstatus& status, const alat::GhostMa
   // std::cerr << " Q = " << Q << "\n";
   // std::cerr << " R = " << R << "\n";
 
-  arma::vec b(_niteration+1, arma::fill::zeros);
+  alat::armavec b(_niteration+1, arma::fill::zeros);
   b[0] = betafirst;
   // std::cerr << " b = " << b << "\n";
-  arma::vec solution = arma::solve(_H, b);
+  alat::armavec solution = arma::solve(_H, b);
   double res = arma::norm(b-_H*solution, 2);
   // std::cerr << " res = " << arma::norm(b-_H*solution, 2) << "\n";
 

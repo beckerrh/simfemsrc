@@ -19,7 +19,7 @@ protected:
 
   void computeRhsCellCut(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
   void computeResidualCellCut(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
-  void computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const;
+  void computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const;
   void computeProjectionNitsche(int iK)const;
   void computeProjectionNitscheStabC(int iK)const;
   void computeProjectionNitscheStabNC(int iK)const;
