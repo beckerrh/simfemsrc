@@ -18,7 +18,7 @@ def main():
     meshtypes = ["LineMesh"]
     testname = "poisson"
     testname = "cdrexp"
-    # testname = "rdcosh"
+    testname = "rdcosh"
     testtype = 'hmean'
     testtype = 'diff'
     methods=["newnitscheintegration", "nitscheintegration", "traditionalintegration"]
