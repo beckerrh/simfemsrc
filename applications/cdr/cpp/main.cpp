@@ -88,10 +88,14 @@ int main(int argc, char** argv)
   std::list<std::string> pdeparts;
   // pdeparts.push_back("traditional");
   // pdeparts.push_back("traditionalintegration");
+
+  // marche pas
   // pdeparts.push_back("nitsche");
-  // pdeparts.push_back("nitscheintegration");
-  pdeparts.push_back("newnitscheintegration");
-  // pdeparts.push_back("traditionalintegration");
+
+    // pdeparts.push_back("nitscheintegration");
+    // marche pas
+  // pdeparts.push_back("newnitscheintegration");
+  pdeparts.push_back("newnitsche");
   for(std::list<std::string>::const_iterator p=pdeparts.begin();p!=pdeparts.end();p++)
   {
     std::cerr << "##############  " << *p <<  "  ##############\n";

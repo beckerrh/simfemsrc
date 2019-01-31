@@ -26,6 +26,12 @@ const solver_options::pdepart::opts NitscheIntegration::setOptions()
   return solver_options::pdepart::cell + solver_options::pdepart::bdry;
 }
 /*--------------------------------------------------------------------------*/
+double NitscheIntegration::_gammaNitsche(const solvers::FemData& fem)const
+{
+  return fem.dim*_gamma*fem.G/fem.J;
+}
+
+/*--------------------------------------------------------------------------*/
 void NitscheIntegration::rhsBdry(solvers::PdePartData::vec& floc, const solvers::FemDatas& fems)const
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
@@ -33,7 +39,7 @@ void NitscheIntegration::rhsBdry(solvers::PdePartData::vec& floc, const solvers:
   alat::armavec dir(1);
   _application->getDirichlet(_ivar)(dir, fem.x, fem.y, fem.z);
   double d = fem.weight*_localmodel->diffusion(fem.x, fem.y, fem.z);
-  double gamma = _gamma*fem.G/fem.J;
+  double gamma = _gammaNitsche(fem);
   _localmodel->beta(_beta,fem.x, fem.y, fem.z, _mesh->getDimension());
   double bn = arma::dot(_beta, fem.normal);
   for(int ii=0;ii<_nlocal;ii++)
@@ -55,7 +61,7 @@ void NitscheIntegration::residualBdry(solvers::PdePartData::vec& floc, const sol
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   assert(floc.n_rows==1);
   double d = fem.weight*_localmodel->diffusion(fem.x, fem.y, fem.z);
-  double gamma = _gamma*fem.G/fem.J;
+  double gamma = _gammaNitsche(fem);
   _localmodel->beta(_beta,fem.x, fem.y, fem.z, _mesh->getDimension());
   double bn = arma::dot(_beta, fem.normal);
   double dun = arma::dot(fem.normal,fem.ugrad.col(0));
@@ -79,7 +85,7 @@ void NitscheIntegration::matrixBdry(solvers::PdePartData::mat& mat, const solver
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   double d = fem.weight*_localmodel->diffusion(fem.x, fem.y, fem.z);
   int count=0;
-  double gamma = _gamma*fem.G/fem.J;
+  double gamma = _gammaNitsche(fem);
   _localmodel->beta(_beta,fem.x, fem.y, fem.z, _mesh->getDimension());
   double bn = arma::dot(_beta, fem.normal);
   for(int ii=0; ii<_nlocal;ii++)

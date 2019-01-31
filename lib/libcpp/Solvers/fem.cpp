@@ -96,6 +96,7 @@ void Fem::initFem(int ivar, const mesh::MeshUnitInterface* mesh, const MeshInfo*
   _femdata.mass.set_size(nlocal,nlocal);
   _femdata.laplace.set_size(nlocal,nlocal);
   _femdata.mass_lumped.set_size(nlocal);
+  _femdata.dim = _dim;
   initData();
 }
 

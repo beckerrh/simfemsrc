@@ -31,7 +31,7 @@ namespace solvers
     alat::armavec phi, u, normal, uB, uI;
     arma::mat dphi, ugrad, uBgrad, uIgrad;
     arma::uvec isI;
-    int iil, ncomp, nlocal;
+    int iil, ncomp, nlocal, dim;
     arma::mat mass, laplace;
     alat::armavec mass_lumped;
   };
