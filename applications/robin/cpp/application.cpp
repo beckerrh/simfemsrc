@@ -10,23 +10,23 @@ RDcosh::RDcosh(double diff, double alpha) : solvers::FunctionInterface()
   _c = -1.0/cosh(_b);
 }
 std::string RDcosh::getName() const {return "RDcosh";}
-void RDcosh::operator()(arma::vec& u, double x, double y, double z, double t) const
+void RDcosh::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = 1.0+_c*cosh(_b*x);
 }
-void RDcosh::x(arma::vec& u, double x, double y, double z, double t) const
+void RDcosh::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _b*_c*sinh(_b*x);
 }
-void RDcosh::xx(arma::vec& u, double x, double y, double z, double t) const
+void RDcosh::xx(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _b*_b*_c*cosh(_b*x);
 }
-void RDcosh::y (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void RDcosh::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void RDcosh::t (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void RDcosh::yy(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void RDcosh::zz(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void RDcosh::y (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void RDcosh::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void RDcosh::t (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void RDcosh::yy(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void RDcosh::zz(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
 
 /*--------------------------------------------------------------------------*/
 CDExpLayer::CDExpLayer(double diff) : solvers::FunctionInterface()
@@ -34,26 +34,26 @@ CDExpLayer::CDExpLayer(double diff) : solvers::FunctionInterface()
   _diff = diff;
 }
 std::string CDExpLayer::getName() const {return "CDExpLayer";}
-void CDExpLayer::operator()(arma::vec& u, double x, double y, double z, double t) const
+void CDExpLayer::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = (1.0+y)*( 1.0-exp((x-1)/_diff) )/( 1.0-exp(-2.0/_diff) );
   u[0] = (1.0-exp((1.0-x)/_diff))/(1.0-exp(2.0/_diff));
 }
-void CDExpLayer::x(arma::vec& u, double x, double y, double z, double t) const
+void CDExpLayer::x(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = -(1.0+y)*exp((x-1)/_diff)/( 1.0-exp(-2.0/_diff) )/_diff;
   u[0] = exp((1.0-x)/_diff)/(1.0-exp(2.0/_diff))/_diff;
 }
-void CDExpLayer::y(arma::vec& u, double x, double y, double z, double t) const
+void CDExpLayer::y(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = ( 1.0-exp((x-1)/_diff) )/( 1.0-exp(-2.0/_diff) );
   u[0] = ( exp(-2.0/_diff)-exp((-1.0-x)/_diff) )/( exp(-2.0/_diff)-1.0 );
 }
-void CDExpLayer::xx(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CDExpLayer::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CDExpLayer::t (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CDExpLayer::yy(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CDExpLayer::zz(arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CDExpLayer::xx(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CDExpLayer::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CDExpLayer::t (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CDExpLayer::yy(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CDExpLayer::zz(alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
 
 /*--------------------------------------------------------------------------*/
 Application::~Application() {}
@@ -147,9 +147,9 @@ private:
 public:
   RightHandSideExactSolution(const Model* localmode_in, const solvers::FunctionInterface& solution_in) : solvers::RightHandSideInterface(), localmodel(localmode_in), solution(solution_in){}
   std::string getClassName()const {return "RightHandSideExactSolution";}
-  void operator()(arma::vec& f, double x, double y, double z, double t)const
+  void operator()(alat::armavec& f, double x, double y, double z, double t)const
   {
-    arma::vec u(1), ux(1), uy(1), uz(1), uxx(1), uyy(1), uzz(1);
+    alat::armavec u(1), ux(1), uy(1), uz(1), uxx(1), uyy(1), uzz(1);
     arma::mat r(1,1), um(1,1);
     solution(u, x, y, z);
     solution.x(ux, x, y, z);
@@ -162,7 +162,7 @@ public:
     // u[0] = solution[0]->operator()(x,y,z);
     localmodel->reaction(r.col(0), um.col(0));
     double d = localmodel->diffusion(x,y,z);
-    arma::vec beta(3);
+    alat::armavec beta(3);
     localmodel->beta(beta, x, y, z);
     f[0] = r(0,0);
     // f[0] += beta[0]*solution[0]->x(x,y,z)+beta[1]*solution[0]->y(x,y,z)+beta[1]*solution[0]->z(x,y,z);
@@ -178,9 +178,9 @@ private:
 public:
   NeumannExactSolution(const Model* localmode_in, const solvers::FunctionInterface& solution_in) : solvers::NeumannInterface(), localmodel(localmode_in), solution(solution_in){}
   std::string getClassName()const {return "NeumannExactSolution";}
-  void operator()(arma::vec& f, double nx, double ny, double nz, double x, double y, double z, double t)const
+  void operator()(alat::armavec& f, double nx, double ny, double nz, double x, double y, double z, double t)const
   {
-    arma::vec ux(1), uy(1), uz(1);
+    alat::armavec ux(1), uy(1), uz(1);
     arma::mat r(1,1), um(1,1);
     solution.x(ux, x, y, z);
     solution.y(uy, x, y, z);

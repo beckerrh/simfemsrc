@@ -7,6 +7,8 @@
 class NitscheIntegration : public TraditionalIntegration
 {
 protected:
+  double _gammaNitsche(const solvers::FemData& fem)const;
+
 public:
   ~NitscheIntegration();
   NitscheIntegration(alat::StringList vars);

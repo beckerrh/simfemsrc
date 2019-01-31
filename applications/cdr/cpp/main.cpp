@@ -88,6 +88,7 @@ int main(int argc, char** argv)
   std::list<std::string> pdeparts;
   // pdeparts.push_back("traditional");
   // pdeparts.push_back("traditionalintegration");
+
   // pdeparts.push_back("nitsche");
   // pdeparts.push_back("nitscheintegration");
   pdeparts.push_back("newnitscheintegration");

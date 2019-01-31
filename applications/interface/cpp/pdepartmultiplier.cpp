@@ -57,9 +57,9 @@ void PdePartMultiplier::computeMatrixGlobal(alat::MatrixAllVariables& A, const a
   alat::MatrixOneVariable* Aul = dynamic_cast<alat::MatrixOneVariable*>(A.get(_ivars[0],_ivars[1])); assert(Aul);
   alat::MatrixOneVariable* Alu = dynamic_cast<alat::MatrixOneVariable*>(A.get(_ivars[1],_ivars[0])); assert(Alu);
   const alat::SparsityPattern* Sul = Aul->getSparsityPattern();
-  arma::vec* Vul = Aul->getValues();
+  alat::armavec* Vul = Aul->getValues();
   const alat::SparsityPattern* Slu = Alu->getSparsityPattern();
-  arma::vec* Vlu = Alu->getValues();
+  alat::armavec* Vlu = Alu->getValues();
   for(int il=0; il < indicesofcutedge.n_cols; il++)
   {
     for(int ii=0;ii<4;ii++)

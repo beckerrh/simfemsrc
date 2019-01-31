@@ -37,11 +37,11 @@ void NewNitscheIntegration::rhsBdry(solvers::PdePartData::vec& floc, const solve
   double bn = arma::dot(_beta, fem.normal);
   if(bn<0.0)
   {
-    arma::vec dir(1);
+    alat::armavec dir(1);
     _application->getDirichlet(_ivar)(dir, fem.x, fem.y, fem.z);
     for(int ii=0;ii<_nlocal;ii++)
     {
-      floc[_ivar](0,ii) -= fem.weight*bn*fem.phi[ii]*dir[0];
+      floc[_ivar][ii] -= fem.weight*bn*fem.phi[ii]*dir[0];
     }
   }
 }
@@ -54,7 +54,7 @@ void NewNitscheIntegration::residualBdry(solvers::PdePartData::vec& floc, const 
   {
     for(int ii=0;ii<_nlocal;ii++)
     {
-      floc[_ivar](0,ii) -= fem.weight*bn*fem.phi[ii]*fem.u[0];
+      floc[_ivar][ii] -= fem.weight*bn*fem.phi[ii]*fem.u[0];
     }
   }
 }
@@ -72,7 +72,7 @@ void NewNitscheIntegration::matrixBdry(solvers::PdePartData::mat& mat, const sol
       {
         if(bn<0.0)
         {
-          mat(_ivar,_ivar)[count] -= fem.weight*bn*fem.phi[ii]*fem.phi[jj];
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= fem.weight*bn*fem.phi[ii]*fem.phi[jj];
         }
         count++;
       }
@@ -83,8 +83,8 @@ void NewNitscheIntegration::matrixBdry(solvers::PdePartData::mat& mat, const sol
 void NewNitscheIntegration::prepareRhsCellBdry(int iK) const
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
-  arma::vec dir(1);
-  _udirloc.set_size(_ncomp, _nlocal);
+  alat::armavec dir(1);
+  _udirloc.set_size(_ncomp*_nlocal);
   _udirgrad.set_size(3, _ncomp);
   _udir.set_size(_ncomp);
   _udirloc.fill(arma::fill::zeros);
@@ -97,14 +97,14 @@ void NewNitscheIntegration::prepareRhsCellBdry(int iK) const
       {
         int iN = _meshinfo->nodes_of_cells(ii,iK);
         _application->getDirichlet(_ivar)(dir, _meshinfo->nodes(0,iN), _meshinfo->nodes(1,iN), _meshinfo->nodes(2,iN));
-        _udirloc(0,ii) = dir[0];
+        _udirloc[ii] = dir[0];
       }
       else if((*_fems)[_ivar]->getType()==solverEnums::fem::CR1)
       {
         int iS = _meshinfo->sides_of_cells(ii,iK);
         alat::Node xS = _mesh->getNodeOfSide(iS);
         _application->getDirichlet(_ivar)(dir, xS.x(), xS.y(), xS.z());
-        _udirloc(0,ii) = dir[0];
+        _udirloc[ii] = dir[0];
       }
       else
       {
@@ -123,7 +123,7 @@ void NewNitscheIntegration::rhsBdryCell(solvers::PdePartData::vec& floc, const s
 
   const solvers::FemData& fem=*fems[_ivar];
   assert(floc.n_rows==1);
-  arma::vec f(_ncomp,arma::fill::zeros);
+  alat::armavec f(_ncomp,arma::fill::zeros);
   (*_fems)[_ivar]->computeGrad(_udirgrad, _udirloc);
   (*_fems)[_ivar]->computeFunction(_udir, _udirloc);
   _application->getRightHandSide(_ivar)(f, fem.x, fem.y, fem.z);
@@ -137,7 +137,7 @@ void NewNitscheIntegration::rhsBdryCell(solvers::PdePartData::vec& floc, const s
       {
         for(int icomp=0;icomp<_ncomp;icomp++)
         {
-          floc[_ivar](icomp,ii) -= dot;
+          floc[_ivar][icomp*_nlocal + ii] -= dot;
         }
       }
     }
@@ -147,10 +147,10 @@ void NewNitscheIntegration::rhsBdryCell(solvers::PdePartData::vec& floc, const s
       {
         if(_symmetric)
         {
-          floc[_ivar](icomp,ii) -= f[icomp]*fem.weight*fem.phi[ii];
+          floc[_ivar][icomp*_nlocal + ii] -= f[icomp]*fem.weight*fem.phi[ii];
         }
-        floc[_ivar](icomp,ii) += dot;
-        floc[_ivar](icomp,ii) += (_gamma-1.0)*dot;
+        floc[_ivar][icomp*_nlocal + ii] += dot;
+        floc[_ivar][icomp*_nlocal + ii] += (_gamma-1.0)*dot;
       }
     }
   }
@@ -169,13 +169,13 @@ void NewNitscheIntegration::residualBdryCell(solvers::PdePartData::vec& floc, co
     {
       if(_symmetric)
       {
-        floc[_ivar](0,ii) -= d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
+        floc[_ivar][ii] -= d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
       }
     }
     else
     {
-      floc[_ivar](0,ii) -= d* arma::dot(fem.dphi.col(ii),fem.uIgrad.col(0));
-      floc[_ivar](0,ii) += (_gamma-1.0)*d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
+      floc[_ivar][ii] -= d* arma::dot(fem.dphi.col(ii),fem.uIgrad.col(0));
+      floc[_ivar][ii] += (_gamma-1.0)*d* arma::dot(fem.dphi.col(ii),fem.uBgrad.col(0));
     }
   }
 }
@@ -204,11 +204,11 @@ void NewNitscheIntegration::matrixBdryCell(solvers::PdePartData::mat& mat, const
       {
         if(sub)
         {
-          mat(_ivar,_ivar)[count] -= d* arma::dot(fem.dphi.col(ii),fem.dphi.col(jj));
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= d* arma::dot(fem.dphi.col(ii),fem.dphi.col(jj));
         }
         if(not fem.isI[ii] and not fem.isI[jj])
         {
-          mat(_ivar,_ivar)[count] += (_gamma-1.0)*d* arma::dot(fem.dphi.col(ii),fem.dphi.col(jj));
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += (_gamma-1.0)*d* arma::dot(fem.dphi.col(ii),fem.dphi.col(jj));
         }
         count++;
       }

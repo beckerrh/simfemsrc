@@ -48,12 +48,12 @@ namespace solvers
     const alat::armaimat& cells_of_sides;
     const alat::armaimat& nodes_of_edges;
     const alat::armaicube& localnodes_of_edges_of_cell;
-    const arma::vec&  measure_of_cells;
+    const alat::armavec&  measure_of_cells;
     const arma::mat&  normals;
     const arma::fmat& sigma;
     const mesh::MeshUnitInterface::BoundaryInformationMap& bdrymesheunitsmap;
 
-    MeshInfo(const arma::mat& in_nodes, const alat::armaimat& in_nodes_of_cells, const alat::armaimat& in_sides_of_cells, const alat::armaimat& in_cells_of_sides, const alat::armaimat& in_edges_of_cells, const alat::armaimat& in_nodes_of_sides, const alat::armaimat& in_nodes_of_edges, const alat::armaicube& in_localnodes_of_edges_of_cell, const arma::vec& in_measure_of_cells, const arma::mat& in_normals, const arma::fmat& in_sigma, double in_dim, int in_nnodes, int in_ncells, int in_nsides, int in_nedges, int in_nnodespercell, int in_nedgespercell, int in_nsidespercell, int in_nnodesperside, const mesh::MeshUnitInterface::BoundaryInformationMap& in_bdrymesheunitsmap);
+    MeshInfo(const arma::mat& in_nodes, const alat::armaimat& in_nodes_of_cells, const alat::armaimat& in_sides_of_cells, const alat::armaimat& in_cells_of_sides, const alat::armaimat& in_edges_of_cells, const alat::armaimat& in_nodes_of_sides, const alat::armaimat& in_nodes_of_edges, const alat::armaicube& in_localnodes_of_edges_of_cell, const alat::armavec& in_measure_of_cells, const arma::mat& in_normals, const arma::fmat& in_sigma, double in_dim, int in_nnodes, int in_ncells, int in_nsides, int in_nedges, int in_nnodespercell, int in_nedgespercell, int in_nsidespercell, int in_nnodesperside, const mesh::MeshUnitInterface::BoundaryInformationMap& in_bdrymesheunitsmap);
   };
 
   typedef alat::Map<std::string, std::shared_ptr<solvers::PdePartInterface> > PdePartsMap;

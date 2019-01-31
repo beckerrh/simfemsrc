@@ -30,7 +30,7 @@ std::unique_ptr<GeometryObject> MeasureOfCell::clone() const
 }
 
 /*--------------------------------------------------------------------------*/
-const arma::vec& MeasureOfCell::getMeasureOfCell() const
+const alat::armavec& MeasureOfCell::getMeasureOfCell() const
 {
 	return _measureofcell;
 }

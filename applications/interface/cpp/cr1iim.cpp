@@ -248,7 +248,7 @@ void CR1IIM::computeCutFem(int iK)
   laplaceCut = diffin*(femcoefin*laplaceP1*femcoefin.t()) + diffex*(femcoefex*laplaceP1*femcoefex.t());
 }
 /*--------------------------------------------------------------------------*/
-void CR1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions)
+void CR1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions)
 {
   setCell(iK);
   int iKcut = (*_celliscut)[iK];
@@ -257,7 +257,7 @@ void CR1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::ma
     double k = _kin;
     if ((*_celliscut)[iK]==-2) k = _kex;
 
-    arma::vec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
+    alat::armavec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
     arma::mat ugradex(3,_ncomp);
     int nloccell = getNPerCell(iK);
     const solvers::IntegrationFormulaInterface* IF = getFormulaErrors();
@@ -314,8 +314,8 @@ void CR1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::ma
   const arma::subview_col<double> coeffin = (*_cofinofcutcells).col(iKcut);
   const arma::subview_col<double> coeffex = (*_cofexofcutcells).col(iKcut);
 
-  arma::vec uexin(_ncomp), uex_xin(_ncomp), uex_yin(_ncomp), uex_zin(_ncomp);
-  arma::vec uexex(_ncomp), uex_xex(_ncomp), uex_yex(_ncomp), uex_zex(_ncomp);
+  alat::armavec uexin(_ncomp), uex_xin(_ncomp), uex_yin(_ncomp), uex_zin(_ncomp);
+  alat::armavec uexex(_ncomp), uex_xex(_ncomp), uex_yex(_ncomp), uex_zex(_ncomp);
   arma::mat ugradex(3,_ncomp);
   int nloccell = getNPerCell(iK);
 
@@ -339,14 +339,14 @@ void CR1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::ma
 
 
   int nn = _mesh->getNNodesPerCell();
-  arma::vec uhin(_ncomp), uhex(_ncomp);
+  alat::armavec uhin(_ncomp), uhex(_ncomp);
   arma::mat uhgradin(3,_ncomp), uhgradex(3,_ncomp);
 
 
   uhin.zeros(); uhgradin.zeros();
   uhex.zeros(); uhgradex.zeros();
-  arma::vec lambdahatin = femcoefin*coeffin;
-  arma::vec lambdahatex = femcoefex*coeffex;
+  alat::armavec lambdahatin = femcoefin*coeffin;
+  alat::armavec lambdahatex = femcoefex*coeffex;
   // arma::mat dlambdahatin, dlambdahatex;
   arma::mat dlambdahatin = dphi_P1*femcoefin.t();
   arma::mat dlambdahatex = dphi_P1*femcoefex.t();
@@ -458,7 +458,7 @@ void CR1IIM::strongDirichletZero(alat::VectorOneVariableInterface* u, const alat
 void CR1IIM::strongDirichlet(alat::VectorOneVariableInterface* u, const solvers::DirichletInterface& dirichlet, const alat::IntSet& dircolors)const
 {
   alat::VectorOneVariable* uv = dynamic_cast<alat::VectorOneVariable*>(u); assert(uv);
-  arma::vec udir(_ncomp);
+  alat::armavec udir(_ncomp);
   for(alat::IntSet::const_iterator p= dircolors.begin(); p!=dircolors.end();p++)
   {
     int color = *p;

@@ -12,7 +12,7 @@ namespace alat
   {
   protected:
     alat::SparsityPattern _sparsitypattern;
-    arma::vec _values;
+    alat::armavec _values;
     alat::UmfMatrix _umf;
 
   public:
@@ -24,8 +24,8 @@ namespace alat
     MatrixOneVariable* clone() const;
 
     const alat::SparsityPattern* getSparsityPattern() const;
-    const arma::vec* getValues() const;
-    arma::vec* getValues();
+    const alat::armavec* getValues() const;
+    alat::armavec* getValues();
 
     bool needsConnectivity() const;
     void set_size(int n, int m);
@@ -35,12 +35,12 @@ namespace alat
     void fillzeros();
     void matrixVectorProduct(alat::VectorOneVariableInterface* out, const alat::VectorOneVariableInterface* in, double d = 1.0) const;
     void addMatrix(const MatrixOneVariableInterface* matrix, double d = 1.0);
-    void assemble(const arma::vec& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj);
+    void assemble(const alat::armamat& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj);
     void rowIdentity(int index);
     void rowZero(int index);
     void solve(VectorOneVariableInterface* u, const VectorOneVariableInterface* f);
     void addEntriesForDirectSolver(int offsetivar, int offsetjvar, alat::SparsityPatternSoft& sparsitypatternsoft) const;
-    void addMatrixForDirectSolver(int offsetivar, int offsetjvar, arma::vec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const;
+    void addMatrixForDirectSolver(int offsetivar, int offsetjvar, alat::armavec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const;
   };
   std::ostream& operator<<(std::ostream& os, const MatrixOneVariable& A);
 }

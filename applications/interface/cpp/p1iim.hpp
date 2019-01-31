@@ -17,7 +17,7 @@ public:
   P1IIM& operator=( const P1IIM& P1cut);
   std::string getClassName() const;
   const alat::armaivec* _cutcells, *_cutedges, *_celliscut, *_edgeiscut, *_cutnodes;
-  const arma::vec* _cutcoeff;
+  const alat::armavec* _cutcoeff;
   const alat::armaimat* _nodesofcutcellsisin, *_nodesofcutcells;
   const arma::mat* _measuresofcutcells, *_normalsofcutcells;
   const arma::mat* _cinofcutcells, *_cexofcutcells, *_cofinofcutcells, *_cofexofcutcells;
@@ -34,7 +34,7 @@ public:
   void computeCutFem(int iK);
 
   void initCutInterface(const mesh::MeshUnitInterface* mesh);
-  void computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions);
+  void computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions);
 
 };
 

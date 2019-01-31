@@ -28,12 +28,12 @@ namespace solvers
   struct FemData
   {
     double J, x, y, z, weight, G;
-    arma::vec phi, u, normal, uB, uI;
+    alat::armavec phi, u, normal, uB, uI;
     arma::mat dphi, ugrad, uBgrad, uIgrad;
     arma::uvec isI;
-    int iil, ncomp, nlocal;
+    int iil, ncomp, nlocal, dim;
     arma::mat mass, laplace;
-    arma::vec mass_lumped;
+    alat::armavec mass_lumped;
   };
   class FemInterface : public virtual alat::InterfaceBase
   {
@@ -55,6 +55,7 @@ namespace solvers
 
     virtual void initFem(int ivar, const mesh::MeshUnitInterface* mesh, const solvers::MeshInfo* meshinfo, int ncomp);
     virtual int getN() const=0;
+    virtual bool getNPerCellConstant() const;
     virtual int getNPerCell(int iK=-1) const;
     virtual int getNcomp() const;
     virtual void indicesOfCell(int iK, alat::armaivec& indices) const;
@@ -67,12 +68,12 @@ namespace solvers
     virtual const FemData& referencePoint(const alat::Node& vhat, double weight);
     virtual const FemData& referencePointWithData(const alat::Node& vhat, double weight, const arma::mat& uloc);
     virtual const FemData& referencePointBdry(const alat::Node& vhat, double weight);
-    virtual const FemData& referencePointBdryWithData(const alat::Node& vhat, double weight, const arma::mat& uloc);
-    virtual const FemData& referencePointBdryCellWithData(const alat::Node& vhat, double weight, const arma::mat& uloc);
-    virtual void setVectorIndices(int iK, alat::armaimat& vec_i)const;
+    virtual const FemData& referencePointBdryWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc);
+    virtual const FemData& referencePointBdryCellWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc);
+    virtual void setVectorIndices(int iK, alat::armaivec& vec_i, int ncomp)const;
 
-    virtual void computeGrad(arma::mat& ugrad, const arma::mat& uloc) const;
-    virtual void computeFunction(arma::vec& u, const arma::mat& uloc) const;
+    virtual void computeGrad(arma::mat& ugrad, const alat::armavec& uloc) const;
+    virtual void computeFunction(alat::armavec& u, const alat::armavec& uloc) const;
     virtual const solvers::FemData& getFemdata() const;
     virtual void setCellIsBdry(arma::uvec& cellisbdry);
     virtual void setIsi(int iK);
@@ -84,7 +85,7 @@ namespace solvers
     virtual bool canInterpolateToP1()const;
     virtual void toP1(alat::VectorOneVariableInterface* uc1, const alat::VectorOneVariableInterface* u);
     virtual void fromP1(alat::VectorOneVariableInterface* u, const alat::VectorOneVariableInterface* uc1);
-    virtual void computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions);
+    virtual void computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions);
     virtual bool noIntegration() const;
   };
 }

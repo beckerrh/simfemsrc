@@ -38,13 +38,13 @@ void FunctionInterface::setNcompAndDim(int ncomp, int dim)
 
 
 /*----------------------------------------------------------*/
-void FunctionInterface::d (arma::vec& u, int i, double xv, double yv, double zv, double t) const
+void FunctionInterface::d (alat::armavec& u, int i, double xv, double yv, double zv, double t) const
 {
   if(i == 0){x(u, xv, yv, zv, t);}
   else if(i == 1){y(u, xv, yv, zv, t);}
   else{z(u, xv, yv, zv, t);}
 }
-void FunctionInterface::dd(arma::vec& u, int i, int j, double xv, double yv, double zv, double t) const
+void FunctionInterface::dd(alat::armavec& u, int i, int j, double xv, double yv, double zv, double t) const
 {
   if(i == 0)
   {
@@ -65,61 +65,61 @@ void FunctionInterface::dd(arma::vec& u, int i, int j, double xv, double yv, dou
     else {zz(u, xv, yv, zv, t);}
   }
 }
-void FunctionInterface::x (arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::x (alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   ( *this )( _ur, xv+_eps, yv, zv, t );
   ( *this )( _ul, xv-_eps, yv, zv, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::y (arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::y (alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   ( *this )( _ur, xv, yv+_eps, zv, t );
   ( *this )( _ul, xv, yv-_eps, zv, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::z (arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::z (alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   ( *this )( _ur, xv, yv, zv+_eps, t );
   ( *this )( _ul, xv, yv, zv-_eps, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::xx(arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::xx(alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   x( _ur, xv+_eps, yv, zv, t );
   x( _ul, xv-_eps, yv, zv, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::yy(arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::yy(alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   y( _ur, xv, yv+_eps, zv, t );
   y( _ul, xv, yv-_eps, zv, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::zz(arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::zz(alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   z( _ur, xv, yv, zv+_eps, t );
   z( _ul, xv, yv, zv-_eps, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::xy(arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::xy(alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   x( _ur, xv, yv+_eps, zv, t );
   x( _ul, xv, yv-_eps, zv, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::yz(arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::yz(alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   y( _ur, xv, yv, zv+_eps, t );
   y( _ul, xv, yv, zv-_eps, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::xz(arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::xz(alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   x( _ur, xv, yv, zv+_eps, t );
   x( _ul, xv, yv, zv-_eps, t );
   u = _epsinv*(_ur-_ul);
 }
-void FunctionInterface::t (arma::vec& u, double xv, double yv, double zv, double t) const
+void FunctionInterface::t (alat::armavec& u, double xv, double yv, double zv, double t) const
 {
   ( *this )( _ur, xv, yv, zv, t+_eps );
   ( *this )( _ul, xv, yv, zv, t-_eps );
@@ -130,16 +130,16 @@ void FunctionInterface::t (arma::vec& u, double xv, double yv, double zv, double
 /*--------------------------------------------------------------------------*/
 RightHandSideConstant::RightHandSideConstant(double d) : solvers::RightHandSideInterface(), _d(d){}
 std::string RightHandSideConstant::getClassName()const {return "RightHandSideConstant";}
-void RightHandSideConstant::operator()(arma::vec& f, double x, double y, double z, double t)const{f.fill(_d);}
+void RightHandSideConstant::operator()(alat::armavec& f, double x, double y, double z, double t)const{f.fill(_d);}
 
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 DirichletConstant::DirichletConstant(double d) : solvers::DirichletInterface(), _d(d) {}
 std::string DirichletConstant::getClassName()const {return "DirichletConstant";}
-void DirichletConstant::operator()(arma::vec& u, double x, double y, double z, double t)const{u.fill(_d);}
+void DirichletConstant::operator()(alat::armavec& u, double x, double y, double z, double t)const{u.fill(_d);}
 DirichletExactSolution::DirichletExactSolution(const solvers::FunctionInterface& solution_in) : solvers::DirichletInterface(), solution(solution_in){}
 std::string DirichletExactSolution::getClassName()const {return "DirichletExactSolution";}
-void DirichletExactSolution::operator()(arma::vec& u, double x, double y, double z, double t)const
+void DirichletExactSolution::operator()(alat::armavec& u, double x, double y, double z, double t)const
 {
   // std::cerr << "DirichletExactSolution::operator() u="<<u;
   solution(u, x, y, z, t);
@@ -148,4 +148,4 @@ void DirichletExactSolution::operator()(arma::vec& u, double x, double y, double
 /*--------------------------------------------------------------------------*/
 /*--------------------------------------------------------------------------*/
 std::string NeumannZero::getClassName()const {return "NeumannZero";}
-void NeumannZero::operator()(arma::vec& u, double nx, double ny, double nz, double x, double y, double z, double t)const{u.zeros();}
+void NeumannZero::operator()(alat::armavec& u, double nx, double ny, double nz, double x, double y, double z, double t)const{u.zeros();}

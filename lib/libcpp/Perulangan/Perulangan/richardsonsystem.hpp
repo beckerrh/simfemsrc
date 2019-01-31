@@ -10,7 +10,7 @@ namespace perulangan
   class RichardsonSystem : public RichardsonRB
   {
 private:
-    mutable arma::vec _scalarproduct;
+    mutable alat::armavec _scalarproduct;
     mutable alat::Vector<alat::GhostVector*> _vectors;
 
     void _computeSmallSystem(int index, int nmemory) const;

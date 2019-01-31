@@ -17,7 +17,7 @@ namespace alat
   {
     MatrixOneVariable matrix;
     alat::armaivec offsets;
-    mutable arma::vec out, in;
+    mutable alat::armavec out, in;
   };
 
   class MatrixAllVariables : public alat::Matrix<std::shared_ptr<alat::MatrixOneVariableInterface> >
@@ -26,7 +26,7 @@ protected:
     // MatrixOneVariable _sparsematrix;
     // alat::UmfMatrix _umf;
     // alat::armaivec _offsets;
-    // mutable arma::vec _out, _in;
+    // mutable alat::armavec _out, _in;
 
 public:
     ~MatrixAllVariables();

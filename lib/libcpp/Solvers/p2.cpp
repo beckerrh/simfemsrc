@@ -337,7 +337,7 @@ void P2::strongDirichletZero(alat::VectorOneVariableInterface* u, const alat::In
 void P2::strongDirichlet(alat::VectorOneVariableInterface* u, const solvers::DirichletInterface& dirichlet, const alat::IntSet& dircolors)const
 {
   alat::VectorOneVariable* uv = dynamic_cast<alat::VectorOneVariable*>(u); assert(uv);
-  arma::vec udir(_ncomp);
+  alat::armavec udir(_ncomp);
   for(alat::IntSet::const_iterator p= dircolors.begin(); p!=dircolors.end();p++)
   {
     int color = *p;

@@ -36,8 +36,8 @@ namespace alat
     virtual void equal(const alat::VectorOneVariableInterface* v);
     virtual void equal(double d);
     virtual void add(const double& d, const alat::VectorOneVariableInterface* v);
-    virtual void setVectorFromDirectSolver(int offset, const arma::vec& u);
-    virtual void addVectorRhsForDirectSolver(int offset, arma::vec& f) const;
+    virtual void setVectorFromDirectSolver(int offset, const alat::armavec& u);
+    virtual void addVectorRhsForDirectSolver(int offset, alat::armavec& f) const;
     virtual void scaleIntVector(const alat::armaivec& count)=0;
 
     virtual void assemble(const alat::armaimat& indices, const arma::mat& local, double d=1.0)=0;

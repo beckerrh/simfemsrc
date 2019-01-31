@@ -7,7 +7,7 @@
   class PdePart : public solvers::PdePartP1
   {
   protected:
-    arma::vec _k;
+    alat::armavec _k;
     double _a, _b;
     void brussel(arma::subview_col<double> f, const arma::subview_col<double> u) const;
     void brussel_d(arma::mat& df, const arma::subview_col<double> u)const;
@@ -23,7 +23,7 @@
 
     void computeRhsCell(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
     void computeResidualCell(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
-    void computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const;
+    void computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const;
   };
 
 /*--------------------------------------------------------------------------*/

@@ -22,7 +22,7 @@ namespace alat
     void fillzeros();
     void solve(VectorOneVariableInterface* u, const VectorOneVariableInterface* f);
     void set_size(int n, int m);
-    void assemble(const arma::vec& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj);
+    void assemble(const alat::armamat& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj);
     void rowIdentity(int index);
     void save(std::ostream& os, arma::file_type datatype = arma::arma_binary) const;
     void matrixVectorProduct(alat::VectorOneVariableInterface* out, const alat::VectorOneVariableInterface* in, double d = 1.0) const;

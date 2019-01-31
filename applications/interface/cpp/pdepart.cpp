@@ -58,7 +58,7 @@ void PdePart::setData(const alat::Map<std::string, int>& var2index, const solver
 /*--------------------------------------------------------------------------*/
 void PdePart::computeRhsCellCut(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const
 {
-  arma::vec fin(_ncomp), fex(_ncomp);
+  alat::armavec fin(_ncomp), fex(_ncomp);
 
   floc[_ivar].zeros();
   int iKcut = (*_celliscut)[iK];
@@ -177,14 +177,14 @@ void PdePart::computeResidualCellCut(int iK, solvers::PdePartData::vec& floc, co
     indin = &p1hansbo->indin;
     index = &p1hansbo->index;
   }
-  arma::vec uin(_nlocal), uex(_nlocal);
+  alat::armavec uin(_nlocal), uex(_nlocal);
   for(int ii=0; ii<_nlocal;ii++)
   {
     uin[ii] = uuloc[(*indin)[ii]];
     uex[ii] = uuloc[(*index)[ii]];
   }
-  arma::vec fin = Linin*uin + Linex*uex;
-  arma::vec fex = Lexin*uin + Lexex*uex;
+  alat::armavec fin = Linin*uin + Linex*uex;
+  alat::armavec fex = Lexin*uin + Lexex*uex;
   for(int ii=0; ii<_nlocal;ii++)
   {
     floc[_ivar](0,(*indin)[ii]) += fin[ii];
@@ -192,7 +192,7 @@ void PdePart::computeResidualCellCut(int iK, solvers::PdePartData::vec& floc, co
   }
 }
 /*--------------------------------------------------------------------------*/
-void PdePart::computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void PdePart::computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   Linin.zeros(); Linex.zeros(); Lexin.zeros(); Lexex.zeros();
   if(_method=="nitsche")
@@ -255,19 +255,19 @@ void PdePart::computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, solve
   {
     for(int jj=0; jj<_nlocal;jj++)
     {
-      mat(_ivar,_ivar)[count] += Linin(ii,jj);
+      mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += Linin(ii,jj);
       mat_i(_ivar,_ivar)[count] = indices[(*indin)[ii]];
       mat_j(_ivar,_ivar)[count] = indices[(*indin)[jj]];
       count++;
-      mat(_ivar,_ivar)[count] += Linex(ii,jj);
+      mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += Linex(ii,jj);
       mat_i(_ivar,_ivar)[count] = indices[(*indin)[ii]];
       mat_j(_ivar,_ivar)[count] = indices[(*index)[jj]];
       count++;
-      mat(_ivar,_ivar)[count] += Lexin(ii,jj);
+      mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += Lexin(ii,jj);
       mat_i(_ivar,_ivar)[count] = indices[(*index)[ii]];
       mat_j(_ivar,_ivar)[count] = indices[(*indin)[jj]];
       count++;
-      mat(_ivar,_ivar)[count] += Lexex(ii,jj);
+      mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += Lexex(ii,jj);
       mat_i(_ivar,_ivar)[count] = indices[(*index)[ii]];
       mat_j(_ivar,_ivar)[count] = indices[(*index)[jj]];
       count++;

@@ -12,14 +12,14 @@ protected:
 public:
   RDcosh(double diff, double alpha);
   std::string getName() const;
-  void operator()(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void x (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void y (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void z (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void t (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void xx(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void yy(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void zz(arma::vec& u, double x, double y, double z, double t = 0.) const;
+  void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void z (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void t (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void xx(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void yy(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void zz(alat::armavec& u, double x, double y, double z, double t = 0.) const;
 };
 class CDExpLayer : public solvers::FunctionInterface
 {
@@ -28,14 +28,14 @@ protected:
 public:
   CDExpLayer(double diff);
   std::string getName() const;
-  void operator()(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void x (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void y (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void z (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void t (arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void xx(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void yy(arma::vec& u, double x, double y, double z, double t = 0.) const;
-  void zz(arma::vec& u, double x, double y, double z, double t = 0.) const;
+  void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void z (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void t (alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void xx(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void yy(alat::armavec& u, double x, double y, double z, double t = 0.) const;
+  void zz(alat::armavec& u, double x, double y, double z, double t = 0.) const;
 };
 
 /*--------------------------------------------------------------------------*/

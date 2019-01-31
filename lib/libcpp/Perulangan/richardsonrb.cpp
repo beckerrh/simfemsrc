@@ -105,7 +105,7 @@ void RichardsonRB::addUpdate(perulanganEnums::iterationstatus& status, const ala
     else if(_type == "coef")
     {
       arma::uword ind;
-      arma::vec s = arma::abs(_x);
+      alat::armavec s = arma::abs(_x);
       s.min(ind);
       _nextmemory = ind;
     }

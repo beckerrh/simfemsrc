@@ -9,7 +9,7 @@ class CR1IIM : public solvers::P1
 protected:
   double _kin, _kex;
   arma::mat Iin, Iex, Bin, Bex, P, laplaceP1;
-  arma::vec phi_P1;
+  alat::armavec phi_P1;
   arma::mat dphi_P1;
 
 public:
@@ -19,7 +19,7 @@ public:
   CR1IIM& operator=( const CR1IIM& P1cut);
   std::string getClassName() const;
   const alat::armaivec* _cutcells, *_cutedges, *_celliscut, *_edgeiscut, *_cutnodes;
-  const arma::vec* _cutcoeff;
+  const alat::armavec* _cutcoeff;
   const alat::armaimat* _nodesofcutcellsisin, *_nodesofcutcells;
   const arma::mat* _measuresofcutcells, *_normalsofcutcells;
   const arma::mat* _cinofcutcells, *_cexofcutcells, *_cofinofcutcells, *_cofexofcutcells;
@@ -39,7 +39,7 @@ public:
   void computeCutFem(int iK);
 
   void initCutInterface(const mesh::MeshUnitInterface* mesh);
-  void computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions);
+  void computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions);
 
   void strongDirichlet(int ivar, alat::MatrixAllVariables& A, const alat::IntSet& dircolors)const;
   void strongDirichletZero(alat::VectorOneVariableInterface* u, const alat::IntSet& dircolors)const;

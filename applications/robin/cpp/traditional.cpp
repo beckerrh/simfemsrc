@@ -47,7 +47,7 @@ void Traditional::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const 
     PdePart::computeRhsCell(iK, floc, uloc);
     return;
   }
-  arma::vec f(_ncomp);
+  alat::armavec f(_ncomp);
   double moc=_meshinfo->measure_of_cells[iK];
   double scalemass = moc/(_meshinfo->dim+1.0);
 
@@ -57,7 +57,7 @@ void Traditional::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const 
     _application->getRightHandSide(_ivar)(f, _meshinfo->nodes(0,iN), _meshinfo->nodes(1,iN), _meshinfo->nodes(2,iN));
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += f[icomp]*scalemass;
+      floc[_ivar][icomp*_nlocal + ii] += f[icomp]*scalemass;
     }
   }
 }
@@ -67,7 +67,7 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
-  // arma::vec betavec(3, arma::fill::zeros);
+  // alat::armavec betavec(3, arma::fill::zeros);
   // (*_betafct)(betavec,xK.x(), xK.y(), xK.z(), _mesh->getDimension());
   // std::cerr << "betavec="<<betavec.t();
 
@@ -86,7 +86,7 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
       // reaction
       if(_lumpedmass)
       {
-        floc[_ivar](icomp,ii) += fem.mass_lumped[ii]*Fu(icomp, ii);
+        floc[_ivar][icomp*_nlocal + ii] += fem.mass_lumped[ii]*Fu(icomp, ii);
       }
     }
     for(int jj=0; jj<_nlocal;jj++)
@@ -94,12 +94,12 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
         // diffusion
-        floc[_ivar](icomp,ii) += diff*fem.laplace(ii,jj)*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] += diff*fem.laplace(ii,jj)*uloc[_ivar][icomp*_nlocal+jj];
         // convection
-        floc[_ivar](icomp,ii) += beta*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] += beta*uloc[_ivar][icomp*_nlocal+jj];
         if(not _lumpedmass)
         {
-          floc[_ivar](icomp,ii) += fem.mass(ii,jj)*Fu(icomp, jj);
+          floc[_ivar][icomp*_nlocal + ii] += fem.mass(ii,jj)*Fu(icomp, jj);
         }
       }
     }
@@ -107,7 +107,7 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
 }
 
 /*--------------------------------------------------------------------------*/
-void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
@@ -131,21 +131,21 @@ void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solv
           if(icomp==jcomp)
           {
             // diffusion
-            mat(_ivar,_ivar)[count] += diff*fem.laplace(ii,jj);
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += diff*fem.laplace(ii,jj);
             // convection
-            mat(_ivar,_ivar)[count] += beta;
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += beta;
           }
           // mass
           if(_lumpedmass)
           {
             if(ii==jj)
             {
-              mat(_ivar,_ivar)[count] += fem.mass_lumped[ii]*DF(icomp,jcomp, ii);
+              mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += fem.mass_lumped[ii]*DF(icomp,jcomp, ii);
             }
           }
           else
           {
-            mat(_ivar,_ivar)[count] += fem.mass(ii,jj)*DF(icomp,jcomp, ii);
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += fem.mass(ii,jj)*DF(icomp,jcomp, ii);
           }
           count++;
         }
@@ -157,7 +157,7 @@ void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solv
 /*--------------------------------------------------------------------------*/
 void Traditional::computeRhsBdry(int color, int iK, int iS, int iil, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const
 {
-  arma::vec neum(_ncomp), dir(_ncomp);
+  alat::armavec neum(_ncomp), dir(_ncomp);
   const arma::subview_col<double> normal = _meshinfo->normals.col(iS);
   double dn = arma::norm(normal);
   double dns = 1./dn;
@@ -166,7 +166,7 @@ void Traditional::computeRhsBdry(int color, int iK, int iS, int iil, solvers::Pd
   _application->getNeumann(_ivar)(neum, dns*normal[0], dns*normal[1], dns*normal[2], xS.x(), xS.y(), xS.z());
 
   arma::mat udir(_ncomp, _nlocal);
-  arma::vec uhelp(_ncomp);
+  alat::armavec uhelp(_ncomp);
   for(int ii=0; ii<_nlocal;ii++)
   {
     int iN = _meshinfo->nodes_of_cells(ii,iK);
@@ -196,15 +196,15 @@ void Traditional::computeRhsBdry(int color, int iK, int iS, int iil, solvers::Pd
     double dni = scalediff*arma::dot(_meshinfo->normals.col(iSi), normal)*_meshinfo->sigma(ii,iK);
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) -= reps*dir[icomp]*dni;
-      floc[_ivar](icomp,ii) -= repseps*neum[icomp]*dni;
+      floc[_ivar][icomp*_nlocal + ii] -= reps*dir[icomp]*dni;
+      floc[_ivar][icomp*_nlocal + ii] -= repseps*neum[icomp]*dni;
     }
     if(ii==iil) continue;
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += seps*neum[icomp]*dnormal;
-      floc[_ivar](icomp,ii) += s*udir(icomp,ii)*dnormal;
-      if(beta<0.0) floc[_ivar](icomp,ii) -= beta*udir(icomp,ii);
+      floc[_ivar][icomp*_nlocal + ii] += seps*neum[icomp]*dnormal;
+      floc[_ivar][icomp*_nlocal + ii] += s*udir[icomp*_nlocal + ii]*dnormal;
+      if(beta<0.0) floc[_ivar][icomp*_nlocal + ii] -= beta*udir[icomp*_nlocal + ii];
     }
   }
 }
@@ -240,19 +240,19 @@ void Traditional::computeResidualBdry(int color, int iK, int iS, int iil, solver
       {
         for(int icomp=0;icomp<_ncomp;icomp++)
         {
-          floc[_ivar](icomp,ii) -= reps*dni*uloc[_ivar](icomp, jj)/_meshinfo->dim;
+          floc[_ivar][icomp*_nlocal + ii] -= reps*dni*uloc[_ivar][icomp*_nlocal+jj]/_meshinfo->dim;
         }
       }
       if(ii!=iil)
       {
         for(int icomp=0;icomp<_ncomp;icomp++)
         {
-          floc[_ivar](icomp,ii) -= reps*dnj*uloc[_ivar](icomp, jj)/_meshinfo->dim;
+          floc[_ivar][icomp*_nlocal + ii] -= reps*dnj*uloc[_ivar][icomp*_nlocal+jj]/_meshinfo->dim;
         }
       }
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        floc[_ivar](icomp,ii) += repseps*dni*dnj*uloc[_ivar](icomp, jj)/dn;
+        floc[_ivar][icomp*_nlocal + ii] += repseps*dni*dnj*uloc[_ivar][icomp*_nlocal+jj]/dn;
       }
       if(not _lumpedmass)
       {
@@ -260,8 +260,8 @@ void Traditional::computeResidualBdry(int color, int iK, int iS, int iil, solver
         {
           for(int icomp=0;icomp<_ncomp;icomp++)
           {
-          if(ii==jj) floc[_ivar](icomp,ii) += s*uloc[_ivar](icomp, jj)*dn/3.0;
-          else floc[_ivar](icomp,ii) += s*uloc[_ivar](icomp, jj)*dn/6.0;
+          if(ii==jj) floc[_ivar][icomp*_nlocal + ii] += s*uloc[_ivar][icomp*_nlocal+jj]*dn/3.0;
+          else floc[_ivar][icomp*_nlocal + ii] += s*uloc[_ivar][icomp*_nlocal+jj]*dn/6.0;
         }
         }
       }
@@ -271,13 +271,13 @@ void Traditional::computeResidualBdry(int color, int iK, int iS, int iil, solver
       if(ii==iil) continue;
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        floc[_ivar](icomp,ii) += s*uloc[_ivar](icomp, ii)*dnormal;
+        floc[_ivar][icomp*_nlocal + ii] += s*uloc[_ivar][icomp*_nlocal+ii]*dnormal;
       }
     }
   }
 }
 /*--------------------------------------------------------------------------*/
-void Traditional::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void Traditional::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   alat::Node xK = _mesh->getNodeOfCell(iK);
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
@@ -309,15 +309,15 @@ void Traditional::computeMatrixBdry(int color, int iK, int iS, int iil, solvers:
       double dnj = scalediff*arma::dot(_meshinfo->normals.col(iSj), normal)*_meshinfo->sigma(jj,iK);
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        if(jj!=iil) mat(_ivar,_ivar)[count] -= reps*dni/_meshinfo->dim;
-        if(ii!=iil) mat(_ivar,_ivar)[count] -= reps*dnj/_meshinfo->dim;
-        mat(_ivar,_ivar)[count] += repseps*dni*dnj/dn;
+        if(jj!=iil) mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) -= reps*dni/_meshinfo->dim;
+        if(ii!=iil) mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) -= reps*dnj/_meshinfo->dim;
+        mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += repseps*dni*dnj/dn;
         if(_lumpedmass)
         {
           if(ii!=iil && ii==jj)
           {
             mat  (_ivar,_ivar)[count] += s*dnormal;
-            if(beta>0.0) mat(_ivar,_ivar)[count] += beta;
+            if(beta>0.0) mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += beta;
           }
         }
         else
@@ -327,12 +327,12 @@ void Traditional::computeMatrixBdry(int color, int iK, int iS, int iil, solvers:
             if(ii==jj)
             {
                 mat  (_ivar,_ivar)[count] += s*dn/3.0;
-                if(beta>0.0) mat(_ivar,_ivar)[count] += beta/3.0;
+                if(beta>0.0) mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += beta/3.0;
             }
             else
             {
               mat  (_ivar,_ivar)[count] += s*dn/6.0;
-              if(beta>0.0) mat(_ivar,_ivar)[count] += beta/6.0;
+              if(beta>0.0) mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += beta/6.0;
             }
           }
         }

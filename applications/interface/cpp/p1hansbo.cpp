@@ -155,7 +155,7 @@ void P1Hansbo::fromP1(alat::VectorOneVariableInterface* u, const alat::VectorOne
   solvers::P1::fromP1(u, uP1);
 }
 /*--------------------------------------------------------------------------*/
-void P1Hansbo::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions)
+void P1Hansbo::computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions)
 {
   setCell(iK);
   int iKcut = (*_celliscut)[iK];
@@ -164,7 +164,7 @@ void P1Hansbo::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::
   {
     double k = _kin;
     if (iKcut==-2) k = _kex;
-    arma::vec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
+    alat::armavec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
     arma::mat ugradex(3,_ncomp);
     int nloccell = getNPerCell(iK);
     const solvers::IntegrationFormulaInterface* IF = getFormulaErrors();
@@ -221,8 +221,8 @@ void P1Hansbo::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::
   const arma::subview_col<double> coeffin = (*_cofinofcutcells).col(iKcut);
   const arma::subview_col<double> coeffex = (*_cofexofcutcells).col(iKcut);
 
-  arma::vec uexin(_ncomp), uex_xin(_ncomp), uex_yin(_ncomp), uex_zin(_ncomp);
-  arma::vec uexex(_ncomp), uex_xex(_ncomp), uex_yex(_ncomp), uex_zex(_ncomp);
+  alat::armavec uexin(_ncomp), uex_xin(_ncomp), uex_yin(_ncomp), uex_zin(_ncomp);
+  alat::armavec uexex(_ncomp), uex_xex(_ncomp), uex_yex(_ncomp), uex_zex(_ncomp);
   arma::mat ugradex(3,_ncomp);
 
   alat::armaivec indices;
@@ -244,7 +244,7 @@ void P1Hansbo::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::
 
   int nn = _mesh->getNNodesPerCell();
 
-  arma::vec uhin(_ncomp), uhex(_ncomp);
+  alat::armavec uhin(_ncomp), uhex(_ncomp);
   arma::mat uhgradin(3,_ncomp), uhgradex(3,_ncomp);
 
   assert(uloc.n_cols==2*nn);
@@ -414,7 +414,7 @@ void P1Hansbo::strongDirichlet(alat::VectorOneVariableInterface* u, const solver
 {
   alat::VectorOneVariable* uv = dynamic_cast<alat::VectorOneVariable*>(u); assert(uv);
   int N = getN();
-  arma::vec udir(_ncomp);
+  alat::armavec udir(_ncomp);
   for(alat::IntSet::const_iterator p= dircolors.begin(); p!=dircolors.end();p++)
   {
     int color = *p;

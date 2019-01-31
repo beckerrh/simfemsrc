@@ -148,7 +148,7 @@ using namespace alat;
 // void UmfMatrix::computeLu()
 // {
 //   const alat::SparsityPattern& sparsitypattern = *_sparsematrix->getSparsityPattern();
-//   const arma::vec& mat = *_sparsematrix->getValues();
+//   const alat::armavec& mat = *_sparsematrix->getValues();
 //   //
 //   // construct LU
 //   //
@@ -172,10 +172,10 @@ using namespace alat;
 // }
 // 
 // /*----------------------------------------------------------*/
-// void UmfMatrix::solve(arma::vec& x, const arma::vec& b) const
+// void UmfMatrix::solve(alat::armavec& x, const alat::armavec& b) const
 // {
 //   const alat::SparsityPattern& sparsitypattern = *_sparsematrix->getSparsityPattern();
-//   const arma::vec& mat = *_sparsematrix->getValues();
+//   const alat::armavec& mat = *_sparsematrix->getValues();
 //   assert( x.size() == b.size() );
 //   assert( x.size() == sparsitypattern.n() );
 //   const long* sb = &( *sparsitypattern.rowstart().begin() );
@@ -198,10 +198,10 @@ using namespace alat;
 // }
 // 
 // /*----------------------------------------------------------*/
-// void UmfMatrix::solveTranspose(arma::vec& x, const arma::vec& b) const
+// void UmfMatrix::solveTranspose(alat::armavec& x, const alat::armavec& b) const
 // {
 //   const alat::SparsityPattern& sparsitypattern = *_sparsematrix->getSparsityPattern();
-//   const arma::vec& mat = *_sparsematrix->getValues();
+//   const alat::armavec& mat = *_sparsematrix->getValues();
 //   const long* sb = &( *sparsitypattern.rowstart().begin() );
 //   const long* cb = &( *sparsitypattern.col().begin() );
 //   const double* mb = &( mat[0] );
@@ -349,7 +349,7 @@ void UmfMatrix::reInit(const alat::MatrixOneVariableInterface* sparsematrix)
 void UmfMatrix::computeLu()
 {
   const alat::SparsityPattern& sparsitypattern = *_sparsematrix->getSparsityPattern();
-  const arma::vec& mat = *_sparsematrix->getValues();
+  const alat::armavec& mat = *_sparsematrix->getValues();
   //
   // construct LU
   //
@@ -374,10 +374,10 @@ void UmfMatrix::computeLu()
 }
 
 /*----------------------------------------------------------*/
-void UmfMatrix::solve(arma::vec& x, const arma::vec& b) const
+void UmfMatrix::solve(alat::armavec& x, const alat::armavec& b) const
 {
   const alat::SparsityPattern& sparsitypattern = *_sparsematrix->getSparsityPattern();
-  const arma::vec& mat = *_sparsematrix->getValues();
+  const alat::armavec& mat = *_sparsematrix->getValues();
   assert( x.size() == b.size() );
   assert( x.size() == sparsitypattern.n() );
   const int* sb = &( *sparsitypattern.rowstart().begin() );
@@ -400,10 +400,10 @@ void UmfMatrix::solve(arma::vec& x, const arma::vec& b) const
 }
 
 /*----------------------------------------------------------*/
-void UmfMatrix::solveTranspose(arma::vec& x, const arma::vec& b) const
+void UmfMatrix::solveTranspose(alat::armavec& x, const alat::armavec& b) const
 {
   const alat::SparsityPattern& sparsitypattern = *_sparsematrix->getSparsityPattern();
-  const arma::vec& mat = *_sparsematrix->getValues();
+  const alat::armavec& mat = *_sparsematrix->getValues();
   const int* sb = &( *sparsitypattern.rowstart().begin() );
   const int* cb = &( *sparsitypattern.col().begin() );
   const double* mb = &( mat[0] );

@@ -33,14 +33,17 @@ namespace solvers
 {
   struct PdePartData
   {
-    typedef arma::field<alat::armaimat> ivec;
-    typedef arma::field<arma::mat> vec;
-    typedef arma::field<arma::vec> mat;
-    typedef arma::field<alat::armaivec> imat;
-    mat aloc, aloc_inex, aloc_exin, aloc_exex;
-    imat aloc_i, aloc_j, aloc_i_ex, aloc_j_ex;
+    // typedef arma::field<alat::armaimat> ivec;
+    typedef arma::field<alat::armaivec> ivec;
+    // typedef arma::field<arma::mat> vec;
+    typedef arma::field<alat::armavec> vec;
+    // typedef arma::field<alat::armavec> mat;
+    // typedef arma::field<alat::armaivec> imat;
+    typedef arma::field<arma::mat> mat;
     vec uloc, floc, ulocex, flocex;
     ivec vec_i, vec_iex;
+    mat aloc, aloc_inex, aloc_exin, aloc_exex;
+    // imat aloc_i, aloc_j, aloc_i_ex, aloc_j_ex;
     void set_size(const alat::armaivec& ncomps, const alat::armaivec& nlocals);
     void set_sizes(const alat::armaivec& ncomps, const alat::armaivec& nlocals);
   };
@@ -93,13 +96,13 @@ namespace solvers
     virtual void prepareRhsCellBdry(int iK) const;
 
     virtual void computeResidualInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::vec& flocin, solvers::PdePartData::vec& flocex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex);
-    virtual void computeMatrixInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::mat& matinin, solvers::PdePartData::mat& matinex, solvers::PdePartData::mat& matexin, solvers::PdePartData::mat& matexex, solvers::PdePartData::imat& mat_i_in, solvers::PdePartData::imat& mat_j_in, solvers::PdePartData::imat& mat_i_ex, solvers::PdePartData::imat& mat_j_ex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex)const;
+    virtual void computeMatrixInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::mat& matinin, solvers::PdePartData::mat& matinex, solvers::PdePartData::mat& matexin, solvers::PdePartData::mat& matexex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex)const;
     virtual void computeRhsCell(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
     virtual void computeRhsBdry(int color, int iK, int iS, int iil, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
     virtual void computeResidualCell(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
     virtual void computeResidualBdry(int color, int iK, int iS, int iil, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const;
-    virtual void computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const;
-    virtual void computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const;
+    virtual void computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const;
+    virtual void computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const;
     virtual void setTimeMeshData(double time, double dt);
     virtual void additionCouplings(alat::Matrix<alat::SparsityPatternSoft>& sparsitypatternsoft)const;
     virtual void computeMatrixGlobal(alat::MatrixAllVariables& A, const alat::VectorAllVariables& u)const;

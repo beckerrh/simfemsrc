@@ -69,20 +69,20 @@ void NewNitsche::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const s
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
-  arma::vec f(_ncomp);
+  alat::armavec f(_ncomp);
   arma::mat udir(_ncomp, _nlocal);
-  arma::vec uhelp(_ncomp);
+  alat::armavec uhelp(_ncomp);
   for(int ii=0; ii<_nlocal;ii++)
   {
     int iN = _meshinfo->nodes_of_cells(ii,iK);
     _application->getDirichlet(_ivar)(uhelp, _meshinfo->nodes(0,iN), _meshinfo->nodes(1,iN), _meshinfo->nodes(2,iN));
     udir.col(ii) = uhelp;
   }
-  arma::mat FuD(_ncomp,_nlocal);
-  for(int ii=0; ii<_nlocal;ii++)
-  {
-    _localmodel->reaction(FuD.col(ii), udir.col(ii));
-  }
+  // arma::mat FuD(_ncomp,_nlocal);
+  // for(int ii=0; ii<_nlocal;ii++)
+  // {
+  //   _localmodel->reaction(FuD.col(ii), udir.col(ii));
+  // }
   double moc=_meshinfo->measure_of_cells[iK];
   double scalemass = moc/(_meshinfo->dim+1.0);
   for(int ii=0; ii<_nlocal;ii++)
@@ -102,15 +102,15 @@ void NewNitsche::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const s
             // diffusion
             for(int icomp=0;icomp<_ncomp;icomp++)
             {
-              floc[_ivar](icomp,ii) -= diff*fem.laplace(ii,jj)*udir(icomp,jj);
-              if(_lumpedmass)
-              {
-                if(ii==jj) floc[_ivar](icomp,ii) -= fem.mass_lumped[ii]*FuD(icomp, ii);
-              }
-              else
-              {
-                floc[_ivar](icomp,ii) -= fem.mass(ii,jj)*FuD(icomp, jj);
-              }
+              floc[_ivar][icomp*_nlocal + ii] -= diff*fem.laplace(ii,jj)*udir(icomp,jj);
+              // if(_lumpedmass)
+              // {
+              //   if(ii==jj) floc[_ivar][icomp*_nlocal + ii] -= fem.mass_lumped[ii]*FuD(icomp, ii);
+              // }
+              // else
+              // {
+              //   floc[_ivar][icomp*_nlocal + ii] -= fem.mass(ii,jj)*FuD(icomp, jj);
+              // }
             }
           }
         }
@@ -121,7 +121,7 @@ void NewNitsche::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const s
       _application->getRightHandSide(_ivar)(f, _meshinfo->nodes(0,iN), _meshinfo->nodes(1,iN), _meshinfo->nodes(2,iN));
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        floc[_ivar](icomp,ii) -= f[icomp]*scalemass;
+        floc[_ivar][icomp*_nlocal + ii] -= f[icomp]*scalemass;
       }
       for(int jj=0; jj<_nlocal;jj++)
       {
@@ -129,15 +129,15 @@ void NewNitsche::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const s
         {
           for(int icomp=0;icomp<_ncomp;icomp++)
           {
-            floc[_ivar](icomp,ii) += diff*fem.laplace(ii,jj)*udir(icomp,jj);
-            if(_lumpedmass)
-            {
-              if(ii==jj) floc[_ivar](icomp,ii) += fem.mass_lumped[ii]*FuD(icomp, ii);
-            }
-            else
-            {
-              floc[_ivar](icomp,ii) += fem.mass(ii,jj)*FuD(icomp, jj);
-            }
+            floc[_ivar][icomp*_nlocal + ii] += diff*fem.laplace(ii,jj)*udir(icomp,jj);
+            // if(_lumpedmass)
+            // {
+            //   if(ii==jj) floc[_ivar][icomp*_nlocal + ii] += fem.mass_lumped[ii]*FuD(icomp, ii);
+            // }
+            // else
+            // {
+            //   floc[_ivar][icomp*_nlocal + ii] += fem.mass(ii,jj)*FuD(icomp, jj);
+            // }
           }
         }
       }
@@ -157,11 +157,11 @@ void NewNitsche::computeResidualCell(int iK, solvers::PdePartData::vec& floc, co
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
-  arma::mat Fu(_ncomp,_nlocal);
-  for(int ii=0; ii<_nlocal;ii++)
-  {
-    _localmodel->reaction(Fu.col(ii), uloc[_ivar].col(ii));
-  }
+  // arma::mat Fu(_ncomp,_nlocal);
+  // for(int ii=0; ii<_nlocal;ii++)
+  // {
+  //   _localmodel->reaction(Fu.col(ii), uloc[_ivar].col(ii));
+  // }
 
   double moc=_meshinfo->measure_of_cells[iK];
   for(int ii=0; ii<_nlocal;ii++)
@@ -186,26 +186,26 @@ void NewNitsche::computeResidualCell(int iK, solvers::PdePartData::vec& floc, co
         for(int icomp=0;icomp<_ncomp;icomp++)
         {
           // diffusion
-          floc[_ivar](icomp,ii) -= diff*fem.laplace(ii,jj)*uloc[_ivar](icomp, jj);
-          // floc[_ivar](icomp,ii) -= d*uloc[_ivar](icomp, jj);
-          if(_lumpedmass)
-          {
-            // if(ii==jj) floc[_ivar](icomp,ii) -= scalemass*Fu(icomp, ii);
-            if(ii==jj) floc[_ivar](icomp,ii) += fem.mass_lumped[ii]*Fu(icomp, ii);
-          }
-          else
-          {
-            floc[_ivar](icomp,ii) -= fem.mass(ii,jj)*Fu(icomp, jj);
-          }
+          floc[_ivar][icomp*_nlocal + ii] -= diff*fem.laplace(ii,jj)*uloc[_ivar][icomp*_nlocal+jj];
+          // floc[_ivar][icomp*_nlocal + ii] -= d*uloc[_ivar][icomp*_nlocal+jj];
+          // if(_lumpedmass)
+          // {
+          //   // if(ii==jj) floc[_ivar][icomp*_nlocal + ii] -= scalemass*Fu(icomp, ii);
+          //   if(ii==jj) floc[_ivar][icomp*_nlocal + ii] += fem.mass_lumped[ii]*Fu(icomp, ii);
+          // }
+          // else
+          // {
+          //   floc[_ivar][icomp*_nlocal + ii] -= fem.mass(ii,jj)*Fu(icomp, jj);
+          // }
         }
       }
     }
   }
 }
 /*--------------------------------------------------------------------------*/
-void NewNitsche::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void NewNitsche::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
-  Traditional::computeMatrixCell(iK, mat, mat_i, mat_j, uloc);
+  Traditional::computeMatrixCell(iK, mat, uloc);
   if(not _cellisbdry[iK])
   {
     return;
@@ -214,11 +214,11 @@ void NewNitsche::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solve
   _setisI(iK);
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
-  arma::cube DF(_ncomp,_ncomp,_nlocal);
-  for(int ii=0; ii<_nlocal;ii++)
-  {
-    _localmodel->reaction_d(DF.slice(ii), uloc[_ivar].col(ii));
-  }
+  // arma::cube DF(_ncomp,_ncomp,_nlocal);
+  // for(int ii=0; ii<_nlocal;ii++)
+  // {
+  //   _localmodel->reaction_d(DF.slice(ii), uloc[_ivar].col(ii));
+  // }
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
   double moc=_meshinfo->measure_of_cells[iK];
 
@@ -242,28 +242,21 @@ void NewNitsche::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solve
       int jS = _meshinfo->sides_of_cells(jj,iK);
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
-        for(int jcomp=0;jcomp<_ncomp;jcomp++)
+        if(sub)
         {
-          if(sub)
-          {
-            // diffusion
-            if(icomp==jcomp)
-            {
-              mat(_ivar,_ivar)[count] -= diff*fem.laplace(ii,jj);
-            }
-            if(_lumpedmass)
-            {
-              if(ii==jj)
-              {
-                mat(_ivar,_ivar)[count] -= fem.mass_lumped[ii]*DF(icomp,jcomp, ii);
-              }
-            }
-            else
-            {
-              mat(_ivar,_ivar)[count] -= fem.mass(ii,jj)*DF(icomp,jcomp, ii);
-            }
-          }
-          count++;
+          // diffusion
+          mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= diff*fem.laplace(ii,jj);
+          // if(_lumpedmass)
+          // {
+          //   if(ii==jj)
+          //   {
+          //     mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= fem.mass_lumped[ii]*DF(icomp,icomp, ii);
+          //   }
+          // }
+          // else
+          // {
+          //   mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) -= fem.mass(ii,jj)*DF(icomp,icomp, ii);
+          // }
         }
       }
     }

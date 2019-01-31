@@ -216,7 +216,7 @@ void P1IIM::computeCutFem(int iK)
 }
 
 /*--------------------------------------------------------------------------*/
-void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions)
+void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions)
 {
   setCell(iK);
   int iKcut = (*_celliscut)[iK];
@@ -224,7 +224,7 @@ void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat
   {
     double k = _kin;
     if (iKcut==-2) k = _kex;
-    arma::vec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
+    alat::armavec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
     arma::mat ugradex(3,_ncomp);
     int nloccell = getNPerCell(iK);
     const solvers::IntegrationFormulaInterface* IF = getFormulaErrors();
@@ -283,8 +283,8 @@ void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat
   const arma::subview_col<double> coeffin = (*_cofinofcutcells).col(iKcut);
   const arma::subview_col<double> coeffex = (*_cofexofcutcells).col(iKcut);
 
-  arma::vec uexin(_ncomp), uex_xin(_ncomp), uex_yin(_ncomp), uex_zin(_ncomp);
-  arma::vec uexex(_ncomp), uex_xex(_ncomp), uex_yex(_ncomp), uex_zex(_ncomp);
+  alat::armavec uexin(_ncomp), uex_xin(_ncomp), uex_yin(_ncomp), uex_zin(_ncomp);
+  alat::armavec uexex(_ncomp), uex_xex(_ncomp), uex_yex(_ncomp), uex_zex(_ncomp);
   arma::mat ugradex(3,_ncomp);
   int nloccell = getNPerCell(iK);
 
@@ -306,14 +306,14 @@ void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat
   exactsolutions.z(uex_zex, xex[0], xex[1], xex[2]);
 
   int nn = _mesh->getNNodesPerCell();
-  arma::vec uhin(_ncomp), uhex(_ncomp);
+  alat::armavec uhin(_ncomp), uhex(_ncomp);
   arma::mat uhgradin(3,_ncomp), uhgradex(3,_ncomp);
 
   // std::cerr << "iK="<<iK << "\n";
   // std::cerr << "xin="<<xin.t();
   // std::cerr << "xex="<<xex.t();
 
-  // arma::vec xin2(3), xex2(3);
+  // alat::armavec xin2(3), xex2(3);
   // xin2.zeros(); xex2.zeros();
   // for(int ii=0;ii<nn;ii++)
   // {
@@ -327,8 +327,8 @@ void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat
 
   uhin.zeros(); uhgradin.zeros();
   uhex.zeros(); uhgradex.zeros();
-  arma::vec lambdahatin = femcoefin*coeffin;
-  arma::vec lambdahatex = femcoefex*coeffex;
+  alat::armavec lambdahatin = femcoefin*coeffin;
+  alat::armavec lambdahatex = femcoefex*coeffex;
   // arma::mat dlambdahatin, dlambdahatex;
   arma::mat dlambdahatin = _femdata.dphi*femcoefin.t();
   arma::mat dlambdahatex = _femdata.dphi*femcoefex.t();
@@ -347,10 +347,10 @@ void P1IIM::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat
   // std::cerr << " uhin= "<<uhin[0]<< " uhex= "<<uhex[0] << "\n";
 
   // std::cerr << "uex_xin= "<<uex_xin[0] << " uex_yin= "<<uex_yin[0];
-  // std::cerr << " == uhgradin= "<< arma::vec(uhgradin.col(0)).t();
+  // std::cerr << " == uhgradin= "<< alat::armavec(uhgradin.col(0)).t();
   //
   // std::cerr << "uex_xex= "<<uex_xex[0] << " uex_uex= "<<uex_yex[0];
-  // std::cerr << " == uhgradex= "<< arma::vec(uhgradex.col(0)).t();
+  // std::cerr << " == uhgradex= "<< alat::armavec(uhgradex.col(0)).t();
 
   uexin -= uhin;
   uexex -= uhex;

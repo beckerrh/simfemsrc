@@ -9,7 +9,7 @@
 class PdePart : public solvers::PdePartWithIntegration
 {
 protected:
-  mutable arma::vec _beta;
+  mutable alat::armavec _beta;
   const Model* _localmodel;
   int _ivar, _ncomp, _nlocal;
   double _deltasupg;

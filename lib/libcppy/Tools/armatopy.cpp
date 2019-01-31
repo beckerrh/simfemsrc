@@ -7,7 +7,7 @@ namespace np = boost::python::numpy;
 using namespace simfem;
 
 /*---------------------------------------------------------------------------*/
-PyObject* ArmavecToNumpyConverter::convert(const arma::vec& avec)
+PyObject* ArmavecToNumpyConverter::convert(const alat::armavec& avec)
 {
   // std::cerr << "@@@@@@@@-------------- " << avec << "\n";
   const double* data = avec.memptr();
@@ -35,12 +35,12 @@ PyObject* ErrorsMapToDictConverter::convert(const solvers::ErrorsMap& map) {
 }
 
 /*---------------------------------------------------------------------------*/
-arma::vec simfem::numpy_to_armavec(const np::ndarray& y)
+alat::armavec simfem::numpy_to_armavec(const np::ndarray& y)
 {
   // std::cerr << "shape="<<y.shape(0)<< " " << y.shape(1)<<"\n";
-  return arma::vec(reinterpret_cast<double*>(y.get_data()),y.shape(0));
+  return alat::armavec(reinterpret_cast<double*>(y.get_data()),y.shape(0));
 }
-boost::python::object simfem::armavec_to_numpy(const arma::vec& v)
+boost::python::object simfem::armavec_to_numpy(const alat::armavec& v)
 {
   // std::cerr << "arma_to_numpy()\n";
   // int data[] = {1,2,3,4,5};

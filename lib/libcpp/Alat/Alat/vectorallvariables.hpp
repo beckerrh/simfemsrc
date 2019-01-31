@@ -30,8 +30,8 @@ public:
     void equal(const alat::VectorAllVariables* v);
     void equal(double d);
     void add(const double& d, const alat::VectorAllVariables* v);
-    // void scalePerVariables(const alat::Vector<arma::vec>& scales);
-    // void scalePerVariablesInverse(const alat::Vector<arma::vec>& scales);
+    // void scalePerVariables(const alat::Vector<alat::armavec>& scales);
+    // void scalePerVariablesInverse(const alat::Vector<alat::armavec>& scales);
     void loadhdf5(const std::string& filename, const alat::StringVector& names);
     void savehdf5(const std::string& filename, const alat::StringVector& names) const;
     void save(std::ostream& os, arma::file_type datatype = arma::arma_binary) const;

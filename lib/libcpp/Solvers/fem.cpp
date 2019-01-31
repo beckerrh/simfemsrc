@@ -96,6 +96,7 @@ void Fem::initFem(int ivar, const mesh::MeshUnitInterface* mesh, const MeshInfo*
   _femdata.mass.set_size(nlocal,nlocal);
   _femdata.laplace.set_size(nlocal,nlocal);
   _femdata.mass_lumped.set_size(nlocal);
+  _femdata.dim = _dim;
   initData();
 }
 
@@ -110,39 +111,43 @@ const solvers::IntegrationFormulaInterface* Fem::getFormulaRhs() const {return _
 const solvers::IntegrationFormulaInterface* Fem::getFormulaErrors() const {return _formulaerrors.get();}
 const solvers::IntegrationFormulaInterface* Fem::getFormulaBdry() const {return _formulabdry.get();}
 const solvers::FemData& Fem::getFemdata() const {return _femdata;}
-void Fem::computeGrad(arma::mat& ugrad, const arma::mat& uloc) const
+void Fem::computeGrad(arma::mat& ugrad, const alat::armavec& uloc) const
 {
   ugrad.fill(arma::fill::zeros);
-  for(int ii=0;ii<_femdata.phi.size();ii++)
+  int nlocal = _femdata.phi.size();
+  for(int ii=0;ii<nlocal;ii++)
   {
-    for(int icomp=0;icomp<uloc.n_rows;icomp++)
+    for(int icomp=0;icomp<_femdata.ncomp;icomp++)
     {
-      ugrad.col(icomp) += _femdata.dphi.col(ii)*uloc(icomp,ii);
+      ugrad.col(icomp) += _femdata.dphi.col(ii)*uloc[icomp*nlocal + ii];
     }
   }
 }
-void Fem::computeFunction(arma::vec& u, const arma::mat& uloc) const
+void Fem::computeFunction(alat::armavec& u, const alat::armavec& uloc) const
 {
   u.fill(arma::fill::zeros);
-  for(int ii=0;ii<_femdata.phi.size();ii++)
+  int nlocal = _femdata.phi.size();
+  for(int ii=0;ii<nlocal;ii++)
   {
-    for(int icomp=0;icomp<uloc.n_rows;icomp++)
+    for(int icomp=0;icomp<_femdata.ncomp;icomp++)
     {
-      u[icomp] += _femdata.phi[ii]*uloc(icomp,ii);
+      u[icomp] += _femdata.phi[ii]*uloc[icomp*nlocal + ii];
     }
   }
 }
 
-void Fem::_computeData(const arma::mat& uloc)
+void Fem::_computeData(const alat::armavec& uloc)
 {
   _femdata.u.fill(arma::fill::zeros);
+  assert(_femdata.ugrad.n_cols==_femdata.ncomp);
   _femdata.ugrad.fill(arma::fill::zeros);
-  for(int ii=0;ii<_femdata.phi.size();ii++)
+  int nlocal = _femdata.phi.size();
+  for(int ii=0;ii<nlocal;ii++)
   {
-    for(int icomp=0;icomp<uloc.n_rows;icomp++)
+    for(int icomp=0;icomp<_femdata.ncomp;icomp++)
     {
-      _femdata.u[icomp] += _femdata.phi[ii]*uloc(icomp,ii);
-      _femdata.ugrad.col(icomp) += _femdata.dphi.col(ii)*uloc(icomp,ii);
+      _femdata.u[icomp] += _femdata.phi[ii]*uloc[icomp*nlocal + ii];
+      _femdata.ugrad.col(icomp) += _femdata.dphi.col(ii)*uloc[icomp*nlocal + ii];
     }
   }
 }
@@ -153,13 +158,13 @@ const FemData& Fem::referencePointWithData(const alat::Node& vhat, double weight
   _computeData(uloc);
   return _femdata;
 }
-const FemData& Fem::referencePointBdryWithData(const alat::Node& vhat, double weight, const arma::mat& uloc)
+const FemData& Fem::referencePointBdryWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc)
 {
   referencePointBdry(vhat, weight);
   _computeData(uloc);
   return _femdata;
 }
-const FemData& Fem::referencePointBdryCellWithData(const alat::Node& vhat, double weight, const arma::mat& uloc)
+const FemData& Fem::referencePointBdryCellWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc)
 {
   referencePoint(vhat, weight);
   _computeData(uloc);
@@ -167,22 +172,23 @@ const FemData& Fem::referencePointBdryCellWithData(const alat::Node& vhat, doubl
   _femdata.uIgrad.fill(arma::fill::zeros);
   _femdata.uB.fill(arma::fill::zeros);
   _femdata.uI.fill(arma::fill::zeros);
-  for(int ii=0;ii<_femdata.phi.size();ii++)
+  int nlocal = _femdata.phi.size();
+  for(int ii=0;ii<nlocal;ii++)
   {
     if(_femdata.isI[ii])
     {
-      for(int icomp=0;icomp<uloc.n_rows;icomp++)
+      for(int icomp=0;icomp<_femdata.ncomp;icomp++)
       {
-        _femdata.uI[icomp] += _femdata.phi[ii]*uloc(icomp,ii);
-        _femdata.uIgrad.col(icomp) += _femdata.dphi.col(ii)*uloc(icomp,ii);
+        _femdata.uI[icomp] += _femdata.phi[ii]*uloc[icomp*nlocal + ii];
+        _femdata.uIgrad.col(icomp) += _femdata.dphi.col(ii)*uloc[icomp*nlocal + ii];
       }
     }
     else
     {
-      for(int icomp=0;icomp<uloc.n_rows;icomp++)
+      for(int icomp=0;icomp<_femdata.ncomp;icomp++)
       {
-        _femdata.uB[icomp] += _femdata.phi[ii]*uloc(icomp,ii);
-        _femdata.uBgrad.col(icomp) += _femdata.dphi.col(ii)*uloc(icomp,ii);
+        _femdata.uB[icomp] += _femdata.phi[ii]*uloc[icomp*nlocal + ii];
+        _femdata.uBgrad.col(icomp) += _femdata.dphi.col(ii)*uloc[icomp*nlocal + ii];
       }
     }
   }
@@ -191,18 +197,22 @@ const FemData& Fem::referencePointBdryCellWithData(const alat::Node& vhat, doubl
 
 
 /*--------------------------------------------------------------------------*/
-void Fem::setVectorIndices(int iK, alat::armaimat& vec_i)const
+void Fem::setVectorIndices(int iK, alat::armaivec& vec_i, int ncomp)const
 {
+  assert(_femdata.ncomp==ncomp);
   int nglob = getN();
+  int nlocal = getNPerCell(iK);
   alat::armaivec indices(vec_i.n_cols);
   indicesOfCell(iK, indices);
-  vec_i.set_size(_ncomp, indices.size());
-  for(int ii=0; ii<indices.size();ii++)
+  assert(nlocal = indices.size());
+  assert(vec_i.n_elem==ncomp*nlocal);
+  // vec_i.set_size(_ncomp, indices.size());
+  for(int ii=0; ii<nlocal;ii++)
   {
     int i = indices[ii];
-    for(int icomp=0;icomp<_ncomp;icomp++)
+    for(int icomp=0;icomp<ncomp;icomp++)
     {
-      vec_i(icomp,ii) = icomp*nglob +i;
+      vec_i[icomp*nlocal + ii] = icomp*nglob +i;
     }
   }
   // std::cerr << "Fem::setVectorIndices() " << indices.t();
@@ -233,8 +243,8 @@ void Fem::toP1(alat::VectorOneVariableInterface* uc1, const alat::VectorOneVaria
   else {IF = std::unique_ptr<const solvers::IntegrationFormulaInterface>(new TetrahedronTrapez());}
   alat::armaivec count(nnodes, arma::fill::zeros);
   arma::mat uloc(_ncomp, nloccell);
-  alat::armaivec indices(nnodespercell);
-  alat::armaimat vec_i(_ncomp, nloccell);
+  // alat::armaivec indices(nnodespercell);
+  alat::armaivec vec_i(_ncomp, nloccell);
   uc1v->fill(arma::fill::zeros);
   assert(IF->n()==nnodespercell);
 
@@ -243,7 +253,7 @@ void Fem::toP1(alat::VectorOneVariableInterface* uc1, const alat::VectorOneVaria
   for(int iK=0; iK<_meshinfo->ncells;iK++)
   {
     setCell(iK);
-    setVectorIndices(iK, vec_i);
+    setVectorIndices(iK, vec_i, _ncomp);
     uv->extract(vec_i, uloc);
     for(int k = 0; k < IF->n(); k++)
     {
@@ -281,20 +291,20 @@ void Fem::interpolate(alat::VectorOneVariableInterface* u, const solvers::Functi
   assert(uv->n()==nglob);
   assert(uv->ncomp()==_ncomp);
   arma::mat Mloc(nloccell,nloccell);
-  arma::vec uinterpol(_ncomp);
+  alat::armavec uinterpol(_ncomp);
   arma::mat uloc(_ncomp, nloccell), floc(nloccell,_ncomp);
   // massMatrix(0, Mloc, true);
   // Mloc = arma::inv(Mloc);
   const solvers::IntegrationFormulaInterface* IF = getFormula();
   alat::armaivec count(nglob, arma::fill::zeros);
   alat::armaivec indices(nloccell);
-  alat::armaimat vec_i(_ncomp, nloccell);
+  alat::armaivec vec_i(_ncomp, nloccell);
   uv->fill(arma::fill::zeros);
   for(int iK=0; iK<_meshinfo->ncells;iK++)
   {
     setCell(iK);
     indicesOfCell(iK, indices);
-    setVectorIndices(iK, vec_i);
+    setVectorIndices(iK, vec_i, _ncomp);
     floc.fill(arma::fill::zeros);
     Mloc.fill(arma::fill::zeros);
     for(int k = 0; k < IF->n(); k++)
@@ -332,9 +342,9 @@ void Fem::interpolate(alat::VectorOneVariableInterface* u, const solvers::Functi
   // std::cerr << "uv="<<uv->t()<<"\n";
 }
 /*--------------------------------------------------------------------------*/
-void Fem::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions)
+void Fem::computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions)
 {
-  arma::vec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
+  alat::armavec uex(_ncomp), uex_x(_ncomp), uex_y(_ncomp), uex_z(_ncomp);
   arma::mat ugradex(3,_ncomp);
   int nloccell = getNPerCell(iK);
   const solvers::IntegrationFormulaInterface* IF = getFormulaErrors();

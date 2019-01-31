@@ -18,7 +18,7 @@ void (solvers::Solver::*sp4)(std::string, bool)  = &solvers::Solver::setParamete
 void wrapSolver()
 {
   bp::to_python_converter<solvers::ErrorsMap, simfem::ErrorsMapToDictConverter>();
-  bp::to_python_converter<arma::vec, simfem::ArmavecToNumpyConverter>();
+  bp::to_python_converter<alat::armavec, simfem::ArmavecToNumpyConverter>();
   bp::class_< solvers::Solver >("Solver")
   .def("loadMesh", &solvers::Solver::loadMesh)
   .def("setMesh", &solvers::Solver::setMesh)

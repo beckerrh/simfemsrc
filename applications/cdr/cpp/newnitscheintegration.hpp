@@ -7,8 +7,9 @@
 class NewNitscheIntegration : public TraditionalIntegration
 {
 protected:
-  mutable arma::mat _udirloc, _udirgrad;
-  mutable arma::vec _udir;
+  mutable alat::armavec _udirloc;
+  mutable arma::mat _udirgrad;
+  mutable alat::armavec _udir;
 
 public:
   ~NewNitscheIntegration();

@@ -28,16 +28,16 @@ namespace alat
     virtual void fillzeros()=0;
     virtual void matrixVectorProduct(alat::VectorOneVariableInterface* out, const alat::VectorOneVariableInterface* in, double d = 1.0) const;
     virtual void addMatrix(const MatrixOneVariableInterface* matrix, double d = 1.0);
-    virtual void assemble(const arma::vec& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj)=0;
+    virtual void assemble(const alat::armamat& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj)=0;
     virtual void rowIdentity(int index);
     virtual void rowZero(int index);
     virtual void solve(VectorOneVariableInterface* u, const VectorOneVariableInterface* f);
     virtual void initSparsityPattern(const SparsityPatternSoft& sparsitypatternsoft);
     virtual const alat::SparsityPattern* getSparsityPattern() const;
-    virtual const arma::vec* getValues() const;
-    virtual arma::vec* getValues();
+    virtual const alat::armavec* getValues() const;
+    virtual alat::armavec* getValues();
     virtual void addEntriesForDirectSolver(int offsetivar, int offsetjvar, alat::SparsityPatternSoft& sparsitypatternsoft) const;
-    virtual void addMatrixForDirectSolver(int offsetivar, int offsetjvar, arma::vec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const;
+    virtual void addMatrixForDirectSolver(int offsetivar, int offsetjvar, alat::armavec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const;
  };
 }
 

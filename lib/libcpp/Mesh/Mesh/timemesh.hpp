@@ -17,7 +17,7 @@ namespace mesh
   class TimeMesh : public virtual alat::InterfaceBase
   {
 private:
-    arma::vec _t;
+    alat::armavec _t;
     TimeMeshData _timemeshdata;
 
 public:
@@ -32,7 +32,7 @@ public:
     void setData(const TimeMeshData timemeshdata);
     int n() const;
     double t(int i) const;
-    const arma::vec& t() const;
+    const alat::armavec& t() const;
   };
 }
 

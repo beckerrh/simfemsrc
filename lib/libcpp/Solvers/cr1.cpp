@@ -134,7 +134,7 @@ const FemData& CR1::referencePoint(const alat::Node& vhat, double weight)
     _femdata.y += _trafoA(1,ii)*vhat[ii];
     _femdata.z += _trafoA(2,ii)*vhat[ii];
   }
-  arma::vec phip1(_meshinfo->nnodespercell);
+  alat::armavec phip1(_meshinfo->nnodespercell);
   phip1[0]=1.0;
   for(int ii=0;ii<_meshinfo->nnodespercell-1;ii++)
   {
@@ -223,7 +223,7 @@ void CR1::strongDirichletZero(alat::VectorOneVariableInterface* u, const alat::I
 void CR1::strongDirichlet(alat::VectorOneVariableInterface* u, const solvers::DirichletInterface& dirichlet, const alat::IntSet& dircolors)const
 {
   alat::VectorOneVariable* uv = dynamic_cast<alat::VectorOneVariable*>(u); assert(uv);
-  arma::vec udir(_ncomp);
+  alat::armavec udir(_ncomp);
   for(alat::IntSet::const_iterator p= dircolors.begin(); p!=dircolors.end();p++)
   {
     int color = *p;

@@ -58,7 +58,7 @@ const alat::armaivec& CutInterface::getEdgeIsCut() const {return _edgeiscut;}
 const alat::armaivec& CutInterface::getNodeIsCut() const {return _nodeiscut;}
 const alat::armaivec& CutInterface::getCutNodeIsIn() const {return _cutnodesisin;}
 const alat::armaivec& CutInterface::getCutNodes() const {return _cutnodes;}
-const arma::vec& CutInterface::getCutCoeff() const {return _cutcoeff;}
+const alat::armavec& CutInterface::getCutCoeff() const {return _cutcoeff;}
 const alat::armaimat& CutInterface::getNodesOfCutCellsIsIn() const {return _nodesofcutcellsisin;}
 const alat::armaimat& CutInterface::getNodesOfCutCells() const {return _nodesofcutcell;}
 const arma::mat& CutInterface::getMeasureOfCutCells() const {return _measuresofcutcells;}
@@ -105,7 +105,7 @@ void CutInterface::saveH5(const arma::hdf5_name& spec) const
 /*--------------------------------------------------------------------------*/
 double CutInterface::_surface(arma::subview_col<double> u, arma::subview_col<double> v, arma::subview_col<double> w)const
 {
-  arma::vec p(3), q(3), normal(3);
+  alat::armavec p(3), q(3), normal(3);
   p[0] = v[0]-u[0];
   p[1] = v[1]-u[1];
   p[2] = v[2]-u[2];
@@ -129,7 +129,7 @@ double CutInterface::_surface(const arma::mat& nodes)const
   return 0.5*vol;
 }
 /*--------------------------------------------------------------------------*/
-void CutInterface::_computeCutTet(double& volin, double& volex, arma::subview_col<double> xcin, arma::subview_col<double> xcex, const arma::vec& normal, int iK, const mesh::MeshUnitInterface* mesh, const arma::mat& innodes, const arma::mat& exnodes, const arma::mat& addnodes, const arma::ivec& innodesind, const arma::ivec& exnodesind, const arma::ivec& addnodesedges)const
+void CutInterface::_computeCutTet(double& volin, double& volex, arma::subview_col<double> xcin, arma::subview_col<double> xcex, const alat::armavec& normal, int iK, const mesh::MeshUnitInterface* mesh, const arma::mat& innodes, const arma::mat& exnodes, const arma::mat& addnodes, const arma::ivec& innodesind, const arma::ivec& exnodesind, const arma::ivec& addnodesedges)const
 {
   const SidesAndCells& sidesandcells=mesh->getSidesAndCells();
   const alat::armaimat& nodesofsides = sidesandcells.getNodesOfSides();
@@ -181,7 +181,7 @@ void CutInterface::_computeCutTet(double& volin, double& volex, arma::subview_co
   volex = 0.0;
   xcin.zeros();
   xcex.zeros();
-  arma::vec xcs(3), xcsin(3), xcsex(3), xK(3), xK2(3);
+  alat::armavec xcs(3), xcsin(3), xcsex(3), xK(3), xK2(3);
   xK.zeros();
   for(int ii=0;ii<4;ii++)
   {
@@ -269,7 +269,7 @@ void CutInterface::_computeCutTet(double& volin, double& volex, arma::subview_co
   if( arma::norm(xK - (volin/vol)*xcin - (volex/vol)*xcex ) > 1e-12)
   {
     std::cerr << "xK="<<xK.t();
-    arma::vec xt = (volin/vol)*xcin + (volex/vol)*xcex;
+    alat::armavec xt = (volin/vol)*xcin + (volex/vol)*xcex;
     std::cerr << "xt="<<xt.t();
     std::cerr << "xcin="<<xcin.t();
     std::cerr << "xcex="<<xcex.t();
@@ -283,14 +283,14 @@ void CutInterface::_computeMeasuresOfCutCell(int iK, const mesh::MeshUnitInterfa
   {
     assert(innodes.n_cols+exnodes.n_cols==3);
     assert(addnodes.n_cols==2);
-    arma::vec normal(3), test(3);
+    alat::armavec normal(3), test(3);
     normal[0] = addnodes(1,1)-addnodes(1,0);
     normal[1] = addnodes(0,0)-addnodes(0,1);
     normal[2] = 0.0;
     test[0] = 0.5*(addnodes(0,0)+addnodes(0,1));
     test[1] = 0.5*(addnodes(1,0)+addnodes(1,1));
     test[2] = 0.0;
-    arma::vec xK(3, arma::fill::zeros);
+    alat::armavec xK(3, arma::fill::zeros);
     for(int ii=0;ii<innodes.n_cols;ii++)
     {
       xK += innodes.col(ii)/3.0;
@@ -346,7 +346,7 @@ void CutInterface::_computeMeasuresOfCutCell(int iK, const mesh::MeshUnitInterfa
     // std::cerr << "exnodes = " << exnodes;
     // std::cerr << "addnodes = " << addnodes;
     assert(innodes.n_cols+exnodes.n_cols==4);
-    arma::vec xK(3, arma::fill::zeros);
+    alat::armavec xK(3, arma::fill::zeros);
     for(int ii=0;ii<innodes.n_cols;ii++)
     {
       xK += innodes.col(ii)/4.0;
@@ -355,7 +355,7 @@ void CutInterface::_computeMeasuresOfCutCell(int iK, const mesh::MeshUnitInterfa
     {
       xK += exnodes.col(ii)/4.0;
     }
-    arma::vec p(3), q(3), normal(3), test(3);
+    alat::armavec p(3), q(3), normal(3), test(3);
     p[0] = addnodes(0,1)-addnodes(0,0);
     p[1] = addnodes(1,1)-addnodes(1,0);
     p[2] = addnodes(2,1)-addnodes(2,0);
@@ -454,7 +454,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
 
   std::shared_ptr<const mesh::MeasureOfCell> measureofcell = std::dynamic_pointer_cast<const mesh::MeasureOfCell>(mesh->getGeometryObject(meshEnums::MeasureOfCell));
   assert(measureofcell);
-  const arma::vec& moc = measureofcell->getMeasureOfCell();
+  const alat::armavec& moc = measureofcell->getMeasureOfCell();
 
   const EdgesAndCells& edgesandcells = mesh->getEdgesAndCells();
   const alat::armaimat& nodesofedges = edgesandcells.getNodesOfEdges();
@@ -624,7 +624,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
 
     double d = 1.0/moc[iK];
     d/=(double)mesh->getDimension();
-    arma::vec xtest(3);
+    alat::armavec xtest(3);
     for(int ii=0;ii<nnodespercell;ii++)
     {
       int iN = nodesofcells(ii,iK);
@@ -649,7 +649,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
       assert(0);
     }
     // // test centers of cut cells
-    // arma::vec coeff(nedgespercell, arma::fill::zeros), coeff2(nedgespercell, arma::fill::zeros);
+    // alat::armavec coeff(nedgespercell, arma::fill::zeros), coeff2(nedgespercell, arma::fill::zeros);
     // alat::armaivec count(nnodespercell, arma::fill::zeros);
     // for(int ii=0;ii<nedgespercell;ii++)
     // {
@@ -661,7 +661,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     //   int i1 = edgesandcells._localnodes_of_edges_in_cells(1, ii, iK);
     //   int iN0 = nodesofcells(i0,iK);
     //   int iN1 = nodesofcells(i1,iK);
-    //   arma::vec xc,x0, x1;
+    //   alat::armavec xc,x0, x1;
     //   x0 = nodes.col(iN0);
     //   x1 = nodes.col(iN1);
     //   xc = (1.0-cutcoeff) *x0  + cutcoeff*x1;
@@ -708,7 +708,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     // std::cerr << "iK=" << iK<< " K=" << K << " Kin="<<Kin << " Kex="<<Kex<<"\n";
     // std::cerr << "coeffin="<<coeffin.t();
     // std::cerr << "coeffex="<<coeffex.t();
-    // arma::vec xK(3, arma::fill::zeros), xin(3, arma::fill::zeros), xex(3, arma::fill::zeros);
+    // alat::armavec xK(3, arma::fill::zeros), xin(3, arma::fill::zeros), xex(3, arma::fill::zeros);
     // xin.zeros(); xex.zeros();
     // for(int ii=0;ii<nnc;ii++)
     // {
@@ -723,7 +723,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     // // double pin = Kin/K;
     // // double pex = Kex/K;
     // // std::cerr << "iK="<<iK << " " << pin*coeffin+pex*coeffex;
-    // arma::vec xtest = (Kin*xin+Kex*xex)/(Kin+Kex);
+    // alat::armavec xtest = (Kin*xin+Kex*xex)/(Kin+Kex);
     // // std::cerr << "iK="<<iK << " xK="<<xK[0]<<" "<<xK[1] << " test="<<xtest[0]<<" "<<xtest[1] << "\n";
     // assert(arma::norm(xK-xtest)<1e-12);
     // _cinofcutcells.col(iKcut) = xin;
@@ -734,7 +734,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     // // centers of cut cells
     // int nec = mesh->getNEdgesPerCell();
     // int nnc = mesh->getNNodesPerCell();
-    // arma::vec coeff(nnc, arma::fill::zeros);
+    // alat::armavec coeff(nnc, arma::fill::zeros);
     // alat::armaivec count(nnc, arma::fill::zeros);
     // for(int ii=0;ii<nec;ii++)
     // {
@@ -746,7 +746,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     //   int i1 = edgesandcells._localnodes_of_edges_in_cells(1, ii, iK);
     //   int iN0 = nodesofcells(i0,iK);
     //   int iN1 = nodesofcells(i1,iK);
-    //   arma::vec xc,x0, x1;
+    //   alat::armavec xc,x0, x1;
     //   x0 = nodes.col(iN0);
     //   x1 = nodes.col(iN1);
     //   xc = (1.0-cutcoeff) *x0  + cutcoeff*x1;
@@ -816,7 +816,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     // // std::cerr << "iK=" << iK<< " K=" << K << " Kin="<<Kin << " Kex="<<Kex<<"\n";
     // // std::cerr << "coeffin="<<coeffin.t();
     // // std::cerr << "coeffex="<<coeffex.t();
-    // arma::vec xK(3, arma::fill::zeros), xin(3, arma::fill::zeros), xex(3, arma::fill::zeros);
+    // alat::armavec xK(3, arma::fill::zeros), xin(3, arma::fill::zeros), xex(3, arma::fill::zeros);
     // xin.zeros(); xex.zeros();
     // for(int ii=0;ii<nnc;ii++)
     // {
@@ -831,7 +831,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
     // // double pin = Kin/K;
     // // double pex = Kex/K;
     // // std::cerr << "iK="<<iK << " " << pin*coeffin+pex*coeffex;
-    // arma::vec xtest = (Kin*xin+Kex*xex)/(Kin+Kex);
+    // alat::armavec xtest = (Kin*xin+Kex*xex)/(Kin+Kex);
     // // std::cerr << "iK="<<iK << " xK="<<xK[0]<<" "<<xK[1] << " test="<<xtest[0]<<" "<<xtest[1] << "\n";
     // assert(arma::norm(xK-xtest)<1e-12);
     // _cinofcutcells.col(iKcut) = xin;
@@ -917,7 +917,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
   //
   //   int nec = mesh->getNEdgesPerCell();
   //   int nnc = mesh->getNNodesPerCell();
-  //   arma::vec coeff(nnc, arma::fill::zeros);
+  //   alat::armavec coeff(nnc, arma::fill::zeros);
   //   alat::armaivec count(nnc, arma::fill::zeros);
   //   for(int ii=0;ii<nec;ii++)
   //   {
@@ -929,7 +929,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
   //     int i1 = edgesandcells._localnodes_of_edges_in_cells(1, ii, iK);
   //     int iN0 = nodesofcells(i0,iK);
   //     int iN1 = nodesofcells(i1,iK);
-  //     arma::vec xc,x0, x1;
+  //     alat::armavec xc,x0, x1;
   //     x0 = nodes.col(iN0);
   //     x1 = nodes.col(iN1);
   //     xc = (1.0-cutcoeff) *x0  + cutcoeff*x1;
@@ -1000,7 +1000,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
   //   // std::cerr << "iK=" << iK<< " K=" << K << " Kin="<<Kin << " Kex="<<Kex<<"\n";
   //   // std::cerr << "coeffin="<<coeffin.t();
   //   // std::cerr << "coeffex="<<coeffex.t();
-  //   arma::vec xK(3, arma::fill::zeros), xin(3, arma::fill::zeros), xex(3, arma::fill::zeros);
+  //   alat::armavec xK(3, arma::fill::zeros), xin(3, arma::fill::zeros), xex(3, arma::fill::zeros);
   //   xin.zeros(); xex.zeros();
   //   for(int ii=0;ii<nnc;ii++)
   //   {
@@ -1015,7 +1015,7 @@ void CutInterface::construct(const mesh::MeshUnitInterface* mesh, const Geometry
   //   // double pin = Kin/K;
   //   // double pex = Kex/K;
   //   // std::cerr << "iK="<<iK << " " << pin*coeffin+pex*coeffex;
-  //   arma::vec xtest = (Kin*xin+Kex*xex)/(Kin+Kex);
+  //   alat::armavec xtest = (Kin*xin+Kex*xex)/(Kin+Kex);
   //   // std::cerr << "iK="<<iK << " xK="<<xK[0]<<" "<<xK[1] << " test="<<xtest[0]<<" "<<xtest[1] << "\n";
   //   assert(arma::norm(xK-xtest)<1e-12);
   //   _cinofcutcells.col(iKcut) = xin;

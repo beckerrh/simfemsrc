@@ -42,7 +42,8 @@ void FemInterface::initFem(int ivar, const mesh::MeshUnitInterface* mesh, const 
 int FemInterface::getNcomp() const {return _ncomp;}
 
 /*--------------------------------------------------------------------------*/
-int FemInterface::getNPerCell(int iK) const{_notWritten("getNPerCell");}
+int FemInterface::getNPerCell(int iK) const{_notWritten("getNPerCell"); return 0;}
+bool FemInterface::getNPerCellConstant() const{return true;}
 void FemInterface::indicesOfCell(int iK, alat::armaivec& indices) const{_notWritten("indicesOfCell");}
 const solvers::IntegrationFormulaInterface* FemInterface::getFormula() const{_notWritten("getFormula");}
 const solvers::IntegrationFormulaInterface* FemInterface::getFormulaErrors() const{_notWritten("getFormulaErrors");}
@@ -53,12 +54,12 @@ void FemInterface::setCellBdry(int iK, int iS, int iil){_notWritten("setCellIsBd
 const FemData& FemInterface::referencePoint(const alat::Node& vhat, double weight){_notWritten("referencePoint");}
 const FemData& FemInterface::referencePointWithData(const alat::Node& vhat, double weight, const arma::mat& uloc){_notWritten("referencePointWithData");}
 const FemData& FemInterface::referencePointBdry(const alat::Node& vhat, double weight){_notWritten("referencePointBdry");}
-const FemData& FemInterface::referencePointBdryWithData(const alat::Node& vhat, double weight, const arma::mat& uloc){_notWritten("referencePointBdryWithData");}
-const FemData& FemInterface::referencePointBdryCellWithData(const alat::Node& vhat, double weight, const arma::mat& uloc){_notWritten("referencePointBdryCellWithData");}
-void FemInterface::setVectorIndices(int iK, alat::armaimat& vec_i)const{_notWritten("setVectorIndices");}
+const FemData& FemInterface::referencePointBdryWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc){_notWritten("referencePointBdryWithData");}
+const FemData& FemInterface::referencePointBdryCellWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc){_notWritten("referencePointBdryCellWithData");}
+void FemInterface::setVectorIndices(int iK, alat::armaivec& vec_i, int ncomp)const{_notWritten("setVectorIndices");}
 
-void FemInterface::computeGrad(arma::mat& ugrad, const arma::mat& uloc) const{_notWritten("computeGrad");}
-void FemInterface::computeFunction(arma::vec& u, const arma::mat& uloc) const{_notWritten("computeFunction");}
+void FemInterface::computeGrad(arma::mat& ugrad, const alat::armavec& uloc) const{_notWritten("computeGrad");}
+void FemInterface::computeFunction(alat::armavec& u, const alat::armavec& uloc) const{_notWritten("computeFunction");}
 const solvers::FemData& FemInterface::getFemdata() const{_notWritten("getFemdata");}
 
 
@@ -71,5 +72,5 @@ void FemInterface::strongDirichlet(alat::VectorOneVariableInterface* u, const so
 void FemInterface::interpolate(alat::VectorOneVariableInterface* u, const solvers::FunctionInterface& function){_notWritten("interpolate");}
 void FemInterface::toP1(alat::VectorOneVariableInterface* uc1, const alat::VectorOneVariableInterface* u){_notWritten("toP1");}
 void FemInterface::fromP1(alat::VectorOneVariableInterface* u, const alat::VectorOneVariableInterface* uc1){_notWritten("fromP1");}
-void FemInterface::computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions){_notWritten("computeErrors");}
+void FemInterface::computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions){_notWritten("computeErrors");}
 bool FemInterface::noIntegration() const {return false;}

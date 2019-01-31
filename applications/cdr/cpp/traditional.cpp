@@ -45,7 +45,7 @@ void Traditional::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const 
     PdePart::computeRhsCell(iK, floc, uloc);
     return;
   }
-  arma::vec f(_ncomp);
+  alat::armavec f(_ncomp);
   double moc=_meshinfo->measure_of_cells[iK];
   double scalemass = moc/(_meshinfo->dim+1.0);
 
@@ -55,7 +55,7 @@ void Traditional::computeRhsCell(int iK, solvers::PdePartData::vec& floc, const 
     _application->getRightHandSide(_ivar)(f, _meshinfo->nodes(0,iN), _meshinfo->nodes(1,iN), _meshinfo->nodes(2,iN));
     for(int icomp=0;icomp<_ncomp;icomp++)
     {
-      floc[_ivar](icomp,ii) += f[icomp]*scalemass;
+      floc[_ivar][icomp*_nlocal + ii] += f[icomp]*scalemass;
     }
   }
   // std::cerr << "computeRhsCell floc[_ivar]="<<floc[_ivar];
@@ -68,14 +68,20 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
   // std::cerr << "computeResidualCell uloc[_ivar]="<<uloc[_ivar];
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
-  // arma::vec betavec(3, arma::fill::zeros);
+  // alat::armavec betavec(3, arma::fill::zeros);
   // (*_betafct)(betavec,xK.x(), xK.y(), xK.z(), _mesh->getDimension());
   // std::cerr << "betavec="<<betavec.t();
 
-  arma::mat Fu(_ncomp,_nlocal);
+  alat::armamat Fu(_ncomp,_nlocal);
+  alat::armavec u(_ncomp), f(_ncomp);
   for(int ii=0; ii<_nlocal;ii++)
   {
-    _localmodel->reaction(Fu.col(ii), uloc[_ivar].col(ii));
+    for(int icomp=0;icomp<_ncomp;icomp++)
+    {
+      u[icomp] = uloc[_ivar][icomp*_nlocal + ii];
+    }
+    _localmodel->reaction(f, u);
+    Fu.col(ii) = f;
   }
   // std::cerr << "computeResidualCell Fu="<<Fu;
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
@@ -89,7 +95,7 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
       // reaction
       if(_lumpedmass)
       {
-        floc[_ivar](icomp,ii) += fem.mass_lumped[ii]*Fu(icomp, ii);
+        floc[_ivar][icomp*_nlocal + ii] += fem.mass_lumped[ii]*Fu(icomp, ii);
       }
     }
     for(int jj=0; jj<_nlocal;jj++)
@@ -97,12 +103,12 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
         // diffusion
-        floc[_ivar](icomp,ii) += diff*fem.laplace(ii,jj)*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] += diff*fem.laplace(ii,jj)*uloc[_ivar][icomp*_nlocal+jj];
         // convection
-        floc[_ivar](icomp,ii) += beta*uloc[_ivar](icomp, jj);
+        floc[_ivar][icomp*_nlocal + ii] += beta*uloc[_ivar][icomp*_nlocal+jj];
         if(not _lumpedmass)
         {
-          floc[_ivar](icomp,ii) += fem.mass(ii,jj)*Fu(icomp, jj);
+          floc[_ivar][icomp*_nlocal + ii] += fem.mass(ii,jj)*Fu(icomp, jj);
         }
       }
     }
@@ -111,17 +117,23 @@ void Traditional::computeResidualCell(int iK, solvers::PdePartData::vec& floc, c
 }
 
 /*--------------------------------------------------------------------------*/
-void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
   arma::cube DF(_ncomp,_ncomp,_nlocal);
+  alat::armamat DF1(_ncomp,_ncomp);
+  alat::armavec u(_ncomp);
   for(int ii=0; ii<_nlocal;ii++)
   {
-    _localmodel->reaction_d(DF.slice(ii), uloc[_ivar].col(ii));
+    for(int icomp=0;icomp<_ncomp;icomp++)
+    {
+      u[icomp] = uloc[_ivar][icomp*_nlocal + ii];
+    }
+    _localmodel->reaction_d(DF1, u);
+    DF.slice(ii) = DF1;
   }
   double diff = _localmodel->diffusion(xK.x(), xK.y(), xK.z());
-  int count=0;
   for(int ii=0; ii<_nlocal;ii++)
   {
     int iS = _meshinfo->sides_of_cells(ii,iK);
@@ -130,28 +142,24 @@ void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solv
     {
       for(int icomp=0;icomp<_ncomp;icomp++)
       {
+        // diffusion
+        mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += diff*fem.laplace(ii,jj);
+        // convection
+        mat(_ivar,_ivar)(icomp*_nlocal+ii, icomp*_nlocal+jj) += beta;
         for(int jcomp=0;jcomp<_ncomp;jcomp++)
         {
-          if(icomp==jcomp)
-          {
-            // diffusion
-            mat(_ivar,_ivar)[count] += diff*fem.laplace(ii,jj);
-            // convection
-            mat(_ivar,_ivar)[count] += beta;
-          }
           // mass
           if(_lumpedmass)
           {
             if(ii==jj)
             {
-              mat(_ivar,_ivar)[count] += fem.mass_lumped[ii]*DF(icomp,jcomp, ii);
+              mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += fem.mass_lumped[ii]*DF(icomp,jcomp, ii);
             }
           }
           else
           {
-            mat(_ivar,_ivar)[count] += fem.mass(ii,jj)*DF(icomp,jcomp, ii);
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += fem.mass(ii,jj)*DF(icomp,jcomp, ii);
           }
-          count++;
         }
       }
     }
@@ -159,7 +167,7 @@ void Traditional::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solv
 }
 
 /*--------------------------------------------------------------------------*/
-void Traditional::computeMatrixCellOld(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void Traditional::computeMatrixCellOld(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   const solvers::FemData& fem = (*_fems)[_ivar]->getFemdata();
   alat::Node xK = _mesh->getNodeOfCell(iK);
@@ -194,12 +202,12 @@ void Traditional::computeMatrixCellOld(int iK, solvers::PdePartData::mat& mat, s
           // diffusion
           if(icomp==jcomp)
           {
-            mat(_ivar,_ivar)[count] += d;
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += d;
           }
           // mass
           if(ii==jj)
           {
-            mat(_ivar,_ivar)[count] += scalemass*DF(icomp,jcomp, ii);
+            mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += scalemass*DF(icomp,jcomp, ii);
           }
           count++;
         }

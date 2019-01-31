@@ -67,7 +67,7 @@ void PdePartIIM::setData(const alat::Map<std::string, int>& var2index, const sol
 /*--------------------------------------------------------------------------*/
 void PdePartIIM::computeRhsCellCut(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const
 {
-  arma::vec fin(_ncomp), fex(_ncomp);
+  alat::armavec fin(_ncomp), fex(_ncomp);
 
   assert(_nlocal==3);
   floc[_ivar].zeros();
@@ -99,8 +99,8 @@ void PdePartIIM::computeRhsCellCut(int iK, solvers::PdePartData::vec& floc, cons
       {
         for(int jj=0;jj<_nlocal;jj++)
         {
-          floc[_ivar](icomp,ii) += p1iim->femcoefin(ii,jj)*coeffin[jj]*fin[icomp]*Kin;
-          floc[_ivar](icomp,ii) += p1iim->femcoefex(ii,jj)*coeffex[jj]*fex[icomp]*Kex;
+          floc[_ivar][icomp*_nlocal + ii] += p1iim->femcoefin(ii,jj)*coeffin[jj]*fin[icomp]*Kin;
+          floc[_ivar][icomp*_nlocal + ii] += p1iim->femcoefex(ii,jj)*coeffex[jj]*fex[icomp]*Kex;
         }
       }
     }
@@ -125,8 +125,8 @@ void PdePartIIM::computeRhsCellCut(int iK, solvers::PdePartData::vec& floc, cons
       {
         for(int jj=0;jj<_nlocal;jj++)
         {
-          floc[_ivar](icomp,ii) += cr1iim->femcoefin(ii,jj)*coeffin[jj]*fin[icomp]*Kin;
-          floc[_ivar](icomp,ii) += cr1iim->femcoefex(ii,jj)*coeffex[jj]*fex[icomp]*Kex;
+          floc[_ivar][icomp*_nlocal + ii] += cr1iim->femcoefin(ii,jj)*coeffin[jj]*fin[icomp]*Kin;
+          floc[_ivar][icomp*_nlocal + ii] += cr1iim->femcoefex(ii,jj)*coeffex[jj]*fex[icomp]*Kex;
         }
       }
     }
@@ -151,14 +151,14 @@ void PdePartIIM::computeResidualCellCut(int iK, solvers::PdePartData::vec& floc,
   arma::subview_row<double> ffloc = floc[_ivar].row(0);
   Last.zeros();
   computeMatrixIIM(iK);
-  arma::vec fin = Last*uuloc.t();
+  alat::armavec fin = Last*uuloc.t();
   for(int ii=0; ii<_nlocal;ii++)
   {
-    floc[_ivar](0,ii) += fin[ii];
+    floc[_ivar][ii] += fin[ii];
   }
 }
 /*--------------------------------------------------------------------------*/
-void PdePartIIM::computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void PdePartIIM::computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   Last.zeros();
   computeMatrixIIM(iK);
@@ -175,7 +175,7 @@ void PdePartIIM::computeMatrixCellCut(int iK, solvers::PdePartData::mat& mat, so
   {
     for(int jj=0; jj<_nlocal;jj++)
     {
-      mat(_ivar,_ivar)[count] += Last(ii,jj);
+      mat(_ivar,_ivar)(icomp*_nlocal+ii, jcomp*_nlocal+jj) += Last(ii,jj);
       mat_i(_ivar,_ivar)[count] = indices[ii];
       mat_j(_ivar,_ivar)[count] = indices[jj];
       count++;
@@ -256,17 +256,17 @@ void PdePartIIM::computeMatrixStabIIM(int iS, int iKin, int iKex)const
   //   assert( fabs(din-dex)<1e-10);
   // }
 
-  arma::vec coeffin(3), coeffex(3);
+  alat::armavec coeffin(3), coeffex(3);
   coeffin.zeros(); coeffex.zeros();
   coeffin[i0in] = (1.0-cutcoefin);
   coeffin[i1in] = cutcoefin;
   coeffex[i0ex] = (1.0-cutcoefex);
   coeffex[i1ex] = cutcoefex;
 
-  arma::vec lambdahatin_in = (*femcoefin_in)*coeffin;
-  arma::vec lambdahatex_in = (*femcoefex_in)*coeffin;
-  arma::vec lambdahatin_ex = (*femcoefin_ex)*coeffex;
-  arma::vec lambdahatex_ex = (*femcoefex_ex)*coeffex;
+  alat::armavec lambdahatin_in = (*femcoefin_in)*coeffin;
+  alat::armavec lambdahatex_in = (*femcoefex_in)*coeffin;
+  alat::armavec lambdahatin_ex = (*femcoefin_ex)*coeffex;
+  alat::armavec lambdahatex_ex = (*femcoefex_ex)*coeffex;
 
   // double hinv = 1.0/sqrt(_meshinfo->measure_of_cells[iKin]);
   double gammain = _gamma*5.0*_localmodel->_kin;
@@ -297,8 +297,8 @@ void PdePartIIM::computeResidualInteriorSide(int iS, int iKin, int iKex, solvers
   arma::subview_row<double> fflocin = flocin[_ivar].row(0);
   arma::subview_row<double> fflocex = flocex[_ivar].row(0);
   computeMatrixStabIIM(iS, iKin, iKex);
-  arma::vec fin = Linin*uulocin.t()+Linex*uulocex.t();
-  arma::vec fex = Lexin*uulocin.t()+Lexex*uulocex.t();
+  alat::armavec fin = Linin*uulocin.t()+Linex*uulocex.t();
+  alat::armavec fex = Lexin*uulocin.t()+Lexex*uulocex.t();
   // std::cerr << "Linin="<<Linin;
   // std::cerr << "uulocin="<<uulocin.t();
   // std::cerr << "uulocex="<<uulocex.t();
@@ -306,12 +306,12 @@ void PdePartIIM::computeResidualInteriorSide(int iS, int iKin, int iKex, solvers
   // std::cerr << "fex="<<fex.t();
   for(int ii=0; ii<_nlocal;ii++)
   {
-    flocin[_ivar](0,ii) += fin[ii];
-    flocex[_ivar](0,ii) += fex[ii];
+    flocin[_ivar][ii] += fin[ii];
+    flocex[_ivar][ii] += fex[ii];
   }
 }
 /*--------------------------------------------------------------------------*/
-void PdePartIIM::computeMatrixInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::mat& matinin, solvers::PdePartData::mat& matinex, solvers::PdePartData::mat& matexin, solvers::PdePartData::mat& matexex, solvers::PdePartData::imat& mat_i_in, solvers::PdePartData::imat& mat_j_in, solvers::PdePartData::imat& mat_i_ex, solvers::PdePartData::imat& mat_j_ex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex)const
+void PdePartIIM::computeMatrixInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::mat& matinin, solvers::PdePartData::mat& matinex, solvers::PdePartData::mat& matexin, solvers::PdePartData::mat& matexex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex)const
 {
   Linin.zeros(); Linex.zeros(); Lexin.zeros(); Lexex.zeros();
   computeMatrixStabIIM(iS, iKin, iKex);

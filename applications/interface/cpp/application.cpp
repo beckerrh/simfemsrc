@@ -9,7 +9,7 @@ protected:
   double _xgamma;
 public:
   InterfacePositionStraight(double xgamma) : solvers::FunctionInterface(), _xgamma(xgamma) {}
-  void operator()(arma::vec& u, double x, double y, double z, double t)const
+  void operator()(alat::armavec& u, double x, double y, double z, double t)const
   {
     u[0] = x- _xgamma;
   }
@@ -18,7 +18,7 @@ public:
 class InterfacePositionCircle : public solvers::FunctionInterface
 {
 public:
-  void operator()(arma::vec& u, double x, double y, double z, double t)const
+  void operator()(alat::armavec& u, double x, double y, double z, double t)const
   {
     u[0] = x*x + y*y + z*z - 0.5;
   }
@@ -35,7 +35,7 @@ void CutExactSolutionQuadraticCircle::setPhi(const solvers::FunctionInterface* p
 }
 
 std::string CutExactSolutionQuadraticCircle::getName() const {return "CutExactSolutionQuadraticCircle";}
-void CutExactSolutionQuadraticCircle::operator()(arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionQuadraticCircle::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   (*_phi)(_p, x, y, z);
   if(_p[0]<0.0)
@@ -47,7 +47,7 @@ void CutExactSolutionQuadraticCircle::operator()(arma::vec& u, double x, double 
     u[0] = (x*x+y*y)/_k2 - _r02/_k2 + _r02/_k1;
   }
 }
-void CutExactSolutionQuadraticCircle::x (arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionQuadraticCircle::x (alat::armavec& u, double x, double y, double z, double t) const
 {
   (*_phi)(_p, x, y, z);
   if(_p[0]<0.0)
@@ -59,7 +59,7 @@ void CutExactSolutionQuadraticCircle::x (arma::vec& u, double x, double y, doubl
     u[0] = 2.0*x/_k2;
   }
 }
-void CutExactSolutionQuadraticCircle::y (arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionQuadraticCircle::y (alat::armavec& u, double x, double y, double z, double t) const
 {
   (*_phi)(_p, x, y, z);
   if(_p[0]<0.0)
@@ -71,11 +71,11 @@ void CutExactSolutionQuadraticCircle::y (arma::vec& u, double x, double y, doubl
     u[0] = 2.0*y/_k2;
   }
 }
-void CutExactSolutionQuadraticCircle::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CutExactSolutionQuadraticCircle::t (arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionQuadraticCircle::xx(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionQuadraticCircle::yy(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionQuadraticCircle::zz(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticCircle::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CutExactSolutionQuadraticCircle::t (alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticCircle::xx(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticCircle::yy(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticCircle::zz(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
 
 /*--------------------------------------------------------------------------*/
 CutExactSolutionLinearStraight::CutExactSolutionLinearStraight(double xgamma, double k1, double k2) : solvers::FunctionInterface(), _xgamma(xgamma), _k1(k1), _k2(k2)
@@ -85,7 +85,7 @@ CutExactSolutionLinearStraight::CutExactSolutionLinearStraight(double xgamma, do
 }
 
 std::string CutExactSolutionLinearStraight::getName() const {return "CutExactSolutionLinearStraight";}
-void CutExactSolutionLinearStraight::operator()(arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionLinearStraight::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   if(x<=_xgamma)
   {
@@ -96,7 +96,7 @@ void CutExactSolutionLinearStraight::operator()(arma::vec& u, double x, double y
     u[0] = 1.0 + _p2*(x-1.0) + 0.0*y;
   }
 }
-void CutExactSolutionLinearStraight::x (arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionLinearStraight::x (alat::armavec& u, double x, double y, double z, double t) const
 {
   if(x<=_xgamma)
   {
@@ -107,15 +107,15 @@ void CutExactSolutionLinearStraight::x (arma::vec& u, double x, double y, double
     u[0] = _p2;
   }
 }
-void CutExactSolutionLinearStraight::y (arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionLinearStraight::y (alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = 0.0;
 }
-void CutExactSolutionLinearStraight::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CutExactSolutionLinearStraight::t (arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionLinearStraight::xx(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionLinearStraight::yy(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionLinearStraight::zz(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionLinearStraight::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CutExactSolutionLinearStraight::t (alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionLinearStraight::xx(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionLinearStraight::yy(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionLinearStraight::zz(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
 
 
 /*--------------------------------------------------------------------------*/
@@ -124,7 +124,7 @@ CutExactSolutionQuadraticStraight::CutExactSolutionQuadraticStraight(double xgam
 }
 
 std::string CutExactSolutionQuadraticStraight::getName() const {return "CutExactSolutionQuadraticStraight";}
-void CutExactSolutionQuadraticStraight::operator()(arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionQuadraticStraight::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   if(x<=_xgamma)
   {
@@ -135,7 +135,7 @@ void CutExactSolutionQuadraticStraight::operator()(arma::vec& u, double x, doubl
     u[0] = (x*x-_xgamma*_xgamma)/_k2 + _xgamma*_xgamma/_k1;
   }
 }
-void CutExactSolutionQuadraticStraight::x (arma::vec& u, double x, double y, double z, double t) const
+void CutExactSolutionQuadraticStraight::x (alat::armavec& u, double x, double y, double z, double t) const
 {
   if(x<=_xgamma)
   {
@@ -146,12 +146,12 @@ void CutExactSolutionQuadraticStraight::x (arma::vec& u, double x, double y, dou
     u[0] = 2.0*x/_k2;
   }
 }
-void CutExactSolutionQuadraticStraight::y (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CutExactSolutionQuadraticStraight::z (arma::vec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
-void CutExactSolutionQuadraticStraight::t (arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionQuadraticStraight::xx(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionQuadraticStraight::yy(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
-void CutExactSolutionQuadraticStraight::zz(arma::vec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticStraight::y (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CutExactSolutionQuadraticStraight::z (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
+void CutExactSolutionQuadraticStraight::t (alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticStraight::xx(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticStraight::yy(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
+void CutExactSolutionQuadraticStraight::zz(alat::armavec& u, double x, double y, double z, double t) const{assert(0);}
 
 
 /*--------------------------------------------------------------------------*/
@@ -251,11 +251,11 @@ private:
 public:
   RightHandSideExactSolution(const Model* localmode_in, const solvers::FunctionInterface& solution_in) : solvers::RightHandSideInterface(), localmodel(localmode_in), solution(solution_in){}
   std::string getClassName()const {return "RightHandSideExactSolution";}
-  void operator()(arma::vec& f, double x, double y, double z, double t)const
+  void operator()(alat::armavec& f, double x, double y, double z, double t)const
   {
     assert(0);
     double d = localmodel->_kin;
-    arma::vec uxx(1), uyy(1), uzz(1);
+    alat::armavec uxx(1), uyy(1), uzz(1);
     solution.xx(uxx, x, y, z);
     solution.yy(uyy, x, y, z);
     solution.zz(uzz, x, y, z);

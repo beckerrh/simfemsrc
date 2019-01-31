@@ -62,7 +62,7 @@ namespace solvers
     solverdata();
   };
 
-  typedef alat::Map<std::string, arma::vec> ErrorsMap;
+  typedef alat::Map<std::string, alat::armavec> ErrorsMap;
 
   class SolverInterface : public virtual alat::InterfaceBase
   {

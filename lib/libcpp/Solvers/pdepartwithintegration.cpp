@@ -31,7 +31,7 @@ void PdePartWithIntegration::rhsCell(solvers::PdePartData::vec& floc, const solv
     int ivar = _ivars[ii];
     const solvers::FemData& fem = *fems[ivar];
     int ncomp = fem.ncomp;
-    arma::vec f(ncomp,arma::fill::zeros);
+    alat::armavec f(ncomp,arma::fill::zeros);
     // std::cerr << "PdePartWithIntegration::rhsCell() " << _application->getClassName() <<"\n";
     if(not _application)
     {
@@ -43,7 +43,7 @@ void PdePartWithIntegration::rhsCell(solvers::PdePartData::vec& floc, const solv
     {
       for(int icomp=0;icomp<ncomp;icomp++)
       {
-        floc[ivar](icomp,ii) += f[icomp]*fem.weight*fem.phi[ii];
+        floc[ivar][icomp*nlocal + ii] += f[icomp]*fem.weight*fem.phi[ii];
       }
     }
   }
@@ -118,7 +118,7 @@ void PdePartWithIntegration::computeResidualCell(int iK, solvers::PdePartData::v
   }
 }
 /*--------------------------------------------------------------------------*/
-void PdePartWithIntegration::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void PdePartWithIntegration::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   const solvers::IntegrationFormulaInterface* IF = _femforintegration->getFormula();
   if(_cellisbdry[iK])
@@ -179,7 +179,7 @@ void PdePartWithIntegration::computeResidualBdry(int color, int iK, int iS, int 
   }
 }
 /*--------------------------------------------------------------------------*/
-void PdePartWithIntegration::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const
+void PdePartWithIntegration::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const
 {
   const solvers::IntegrationFormulaInterface* IF = _femforintegration->getFormulaBdry();
   for(int k = 0; k < IF->n(); k++)

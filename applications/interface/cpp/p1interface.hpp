@@ -17,7 +17,7 @@ public:
   P1Interface& operator=( const P1Interface& P1cut);
   std::string getClassName() const;
   const alat::armaivec* _cutcells, *_cutedges, *_celliscut, *_edgeiscut, *_cutnodes, *_nodeiscut, *_cutnodesisin;
-  const arma::vec* _cutcoeff;
+  const alat::armavec* _cutcoeff;
   const alat::armaimat* _nodesofcutcellsisin, *_nodesofcutcells;
   const arma::mat* _measuresofcutcells, *_normalsofcutcells;
   const arma::mat* _cinofcutcells, *_cexofcutcells, *_cofinofcutcells, *_cofexofcutcells;

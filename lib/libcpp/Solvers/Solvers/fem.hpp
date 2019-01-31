@@ -15,13 +15,13 @@ namespace solvers
     std::shared_ptr<solvers::IntegrationFormulaInterface> _formulabdry;
     std::shared_ptr<solvers::IntegrationFormulaInterface> _formularhs;
     FemData _femdata;
-    arma::vec _trafob;
+    alat::armavec _trafob;
     arma::mat _trafoA;
     virtual std::unique_ptr<solvers::IntegrationFormulaInterface> newFormula();
     virtual std::unique_ptr<solvers::IntegrationFormulaInterface> newFormulaErrors();
     virtual std::unique_ptr<solvers::IntegrationFormulaInterface> newFormulaBdry();
     virtual std::unique_ptr<solvers::IntegrationFormulaInterface> newFormulaRhs();
-    void _computeData(const arma::mat& uloc);
+    void _computeData(const alat::armavec& uloc);
 
   public:
     ~Fem();
@@ -36,17 +36,17 @@ namespace solvers
     const solvers::IntegrationFormulaInterface* getFormulaBdry() const;
     const solvers::IntegrationFormulaInterface* getFormulaRhs() const;
     const FemData& referencePointWithData(const alat::Node& vhat, double weight, const arma::mat& uloc);
-    const FemData& referencePointBdryWithData(const alat::Node& vhat, double weight, const arma::mat& uloc);
-    const FemData& referencePointBdryCellWithData(const alat::Node& vhat, double weight, const arma::mat& uloc);
-    void computeGrad(arma::mat& ugrad, const arma::mat& uloc) const;
-    void computeFunction(arma::vec& u, const arma::mat& uloc) const;
+    const FemData& referencePointBdryWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc);
+    const FemData& referencePointBdryCellWithData(const alat::Node& vhat, double weight, const alat::armavec& uloc);
+    void computeGrad(arma::mat& ugrad, const alat::armavec& uloc) const;
+    void computeFunction(alat::armavec& u, const alat::armavec& uloc) const;
     const solvers::FemData& getFemdata() const;
-    void setVectorIndices(int iK, alat::armaimat& vec_i)const;
+    void setVectorIndices(int iK, alat::armaivec& vec_i, int ncomp)const;
 
     void toP1(alat::VectorOneVariableInterface* uc1, const alat::VectorOneVariableInterface* u);
     void fromP1(alat::VectorOneVariableInterface* u, const alat::VectorOneVariableInterface* uc1);
     void interpolate(alat::VectorOneVariableInterface* u, const solvers::FunctionInterface& function) ;
-    void computeErrors(int iK, solvers::ErrorsMap& errormaps, const arma::mat& uloc, const solvers::FunctionInterface& exactsolutions);
+    void computeErrors(int iK, solvers::ErrorsMap& errormaps, const alat::armavec& uloc, const solvers::FunctionInterface& exactsolutions);
   };
 }
 

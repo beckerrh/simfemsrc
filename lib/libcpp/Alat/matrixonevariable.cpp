@@ -30,8 +30,8 @@ MatrixOneVariable* MatrixOneVariable::clone() const
 /*--------------------------------------------------------------------------*/
 const alat::SparsityPattern* MatrixOneVariable::getSparsityPattern() const
 {return &_sparsitypattern;}
-const arma::vec*  MatrixOneVariable::getValues() const {return &_values;}
-arma::vec*  MatrixOneVariable::getValues() {return &_values;}
+const alat::armavec*  MatrixOneVariable::getValues() const {return &_values;}
+alat::armavec*  MatrixOneVariable::getValues() {return &_values;}
 bool MatrixOneVariable::needsConnectivity() const {return true;}
 void MatrixOneVariable::initSparsityPattern(const SparsityPatternSoft& sparsitypatternsoft)
 {
@@ -58,7 +58,7 @@ void MatrixOneVariable::write(std::ostream& os) const
 std::ostream& alat::operator<<(std::ostream& os, const MatrixOneVariable& A)
 {
   const alat::SparsityPattern* sparsitypattern = A.getSparsityPattern();
-  const arma::vec& values =  *A.getValues();
+  const alat::armavec& values =  *A.getValues();
   int n = sparsitypattern->n();
   assert(values.size()==sparsitypattern->ntotal());
   os << "n = " << n << "\n";
@@ -99,29 +99,32 @@ void MatrixOneVariable::addMatrix(const MatrixOneVariableInterface* matrix, doub
   assert(0);
 }
 /*--------------------------------------------------------------------------*/
-void MatrixOneVariable::assemble(const arma::vec& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj)
+void MatrixOneVariable::assemble(const alat::armamat& Alocal, const alat::armaivec& indicesi, const alat::armaivec& indicesj)
 {
   // std::cerr << "Alocal = " << Alocal.t();
   // std::cerr << "indicesi = " << indicesi.t();
   // std::cerr << "indicesj = " << indicesj.t();
-  for(int ii=0;ii<Alocal.size();ii++)
+  for(int ii=0;ii<indicesi.size();ii++)
   {
-    double val = Alocal[ii];
     int i = indicesi[ii];
-    int j = indicesj[ii];
-    int posstart = _sparsitypattern.rowstart(i);
-    int posend = _sparsitypattern.rowstop(i);
-    bool found = false;
-    for(int pos = posstart; pos < posend; pos++)
+    for(int jj=0;jj<indicesj.size();jj++)
     {
-      if(_sparsitypattern.col(pos) == j)
+      int j = indicesj[jj];
+      double val = Alocal(ii,jj);
+      int posstart = _sparsitypattern.rowstart(i);
+      int posend = _sparsitypattern.rowstop(i);
+      bool found = false;
+      for(int pos = posstart; pos < posend; pos++)
       {
-        _values[pos] += val;
-        found=true;
-        break;
+        if(_sparsitypattern.col(pos) == j)
+        {
+          _values[pos] += val;
+          found=true;
+          break;
+        }
       }
+      assert(found);
     }
-    assert(found);
   }
 }
 
@@ -180,8 +183,8 @@ void MatrixOneVariable::solve(VectorOneVariableInterface* u, const VectorOneVari
 {
   _umf.reInit(this);
   _umf.computeLu();
-  arma::vec* ud = dynamic_cast<arma::vec* >(u); assert(ud);
-  const arma::vec* fd = dynamic_cast<const arma::vec* >(f); assert(fd);
+  alat::armavec* ud = dynamic_cast<alat::armavec* >(u); assert(ud);
+  const alat::armavec* fd = dynamic_cast<const alat::armavec* >(f); assert(fd);
   _umf.solve(*ud, *fd);
   // std::cerr << "u = " << *ud << "\n";
 }
@@ -198,7 +201,7 @@ void MatrixOneVariable::addEntriesForDirectSolver(int offsetivar, int offsetjvar
     }
   }
 }
-void MatrixOneVariable::addMatrixForDirectSolver(int offsetivar, int offsetjvar, arma::vec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const
+void MatrixOneVariable::addMatrixForDirectSolver(int offsetivar, int offsetjvar, alat::armavec& matrixvalues, const alat::SparsityPattern* sparsitypattern) const
 {
   int n = _sparsitypattern.n();
   for(int i = 0; i < n; i++)

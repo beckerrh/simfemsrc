@@ -14,23 +14,20 @@ void PdePartData::set_size(const alat::armaivec& ncomps, const alat::armaivec& n
   floc  .set_size(nvars);
   vec_i .set_size(nvars);
   aloc  .set_size(nvars, nvars);
-  aloc_i.set_size(nvars, nvars);
-  aloc_j.set_size(nvars, nvars);
   for(int ivar=0;ivar<nvars;ivar++)
   {
-    int ncomp = ncomps[ivar];
-    int nlocal = nlocals[ivar];
-    uloc [ivar].set_size(ncomp, nlocal);
-    floc [ivar].set_size(ncomp, nlocal);
-    vec_i[ivar].set_size(ncomp, nlocal);
+    int ncompi = ncomps[ivar];
+    int nlocali = nlocals[ivar];
+    int sizei = ncompi*nlocali;
+    uloc [ivar].set_size(sizei);
+    floc [ivar].set_size(sizei);
+    vec_i[ivar].set_size(sizei);
     for(int jvar=0;jvar<nvars;jvar++)
     {
       int ncompj = ncomps[jvar];
       int nlocalj = nlocals[jvar];
-      int sizemat = ncomp*ncompj*nlocal*nlocalj;
-      aloc  (ivar, jvar).set_size(sizemat);
-      aloc_i(ivar, jvar).set_size(sizemat);
-      aloc_j(ivar, jvar).set_size(sizemat);
+      int sizej = ncompj*nlocalj;
+      aloc  (ivar, jvar).set_size(sizei, sizej);
     }
   }
 }
@@ -45,37 +42,30 @@ void PdePartData::set_sizes(const alat::armaivec& ncomps, const alat::armaivec& 
   flocex.set_size(nvars);
   vec_i .set_size(nvars);
   vec_iex.set_size(nvars);
-  aloc  .set_size(nvars, nvars);
+  aloc     .set_size(nvars, nvars);
   aloc_inex.set_size(nvars, nvars);
   aloc_exin.set_size(nvars, nvars);
   aloc_exex.set_size(nvars, nvars);
-  aloc_i.set_size(nvars, nvars);
-  aloc_j.set_size(nvars, nvars);
-  aloc_i_ex.set_size(nvars, nvars);
-  aloc_j_ex.set_size(nvars, nvars);
   for(int ivar=0;ivar<nvars;ivar++)
   {
-    int ncomp = ncomps[ivar];
-    int nlocal = nlocals[ivar];
-    uloc  [ivar].set_size(ncomp, nlocal);
-    ulocex[ivar].set_size(ncomp, nlocal);
-    floc  [ivar].set_size(ncomp, nlocal);
-    flocex[ivar].set_size(ncomp, nlocal);
-    vec_i [ivar].set_size(ncomp, nlocal);
-    vec_iex[ivar].set_size(ncomp, nlocal);
+    int ncompi = ncomps[ivar];
+    int nlocali = nlocals[ivar];
+    int sizei = ncompi*nlocali;
+    uloc  [ivar].set_size(sizei);
+    ulocex[ivar].set_size(sizei);
+    floc  [ivar].set_size(sizei);
+    flocex[ivar].set_size(sizei);
+    vec_i  [ivar].set_size(sizei);
+    vec_iex[ivar].set_size(sizei);
     for(int jvar=0;jvar<nvars;jvar++)
     {
       int ncompj = ncomps[jvar];
       int nlocalj = nlocals[jvar];
-      int sizemat = ncomp*ncompj*nlocal*nlocalj;
-      aloc  (ivar, jvar).set_size(sizemat);
-      aloc_inex(ivar, jvar).set_size(sizemat);
-      aloc_exin(ivar, jvar).set_size(sizemat);
-      aloc_exex(ivar, jvar).set_size(sizemat);
-      aloc_i(ivar, jvar).set_size(sizemat);
-      aloc_j(ivar, jvar).set_size(sizemat);
-      aloc_i_ex(ivar, jvar).set_size(sizemat);
-      aloc_j_ex(ivar, jvar).set_size(sizemat);
+      int sizej = ncompj*nlocalj;
+      aloc     (ivar, jvar).set_size(sizei, sizej);
+      aloc_inex(ivar, jvar).set_size(sizei, sizej);
+      aloc_exin(ivar, jvar).set_size(sizei, sizej);
+      aloc_exex(ivar, jvar).set_size(sizei, sizej);
     }
   }
 }
@@ -142,7 +132,7 @@ bool PdePartInterface::interiorsidecoupling(int iKin, int iKex) const
 /*--------------------------------------------------------------------------*/
 
 void PdePartInterface::computeResidualInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::vec& flocin, solvers::PdePartData::vec& flocex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex){}
-void PdePartInterface::computeMatrixInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::mat& matinin, solvers::PdePartData::mat& matinex, solvers::PdePartData::mat& matexin, solvers::PdePartData::mat& matexex, solvers::PdePartData::imat& mat_i_in, solvers::PdePartData::imat& mat_j_in, solvers::PdePartData::imat& mat_i_ex, solvers::PdePartData::imat& mat_j_ex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex)const{}
+void PdePartInterface::computeMatrixInteriorSide(int iS, int iKin, int iKex, solvers::PdePartData::mat& matinin, solvers::PdePartData::mat& matinex, solvers::PdePartData::mat& matexin, solvers::PdePartData::mat& matexex, const solvers::PdePartData::vec& ulocin, const solvers::PdePartData::vec& ulocex)const{}
 
 /*--------------------------------------------------------------------------*/
 void PdePartInterface::rhsCell(solvers::PdePartData::vec& floc, const solvers::FemDatas& fems) const
@@ -217,5 +207,5 @@ void PdePartInterface::computeRhsCell(int iK, solvers::PdePartData::vec& floc, c
 void PdePartInterface::computeRhsBdry(int color, int iK, int iS, int iil, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const{_notWritten("computeRhsBdry");}
 void PdePartInterface::computeResidualCell(int iK, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const{_notWritten("computeResidualCell");}
 void PdePartInterface::computeResidualBdry(int color, int iK, int iS, int iil, solvers::PdePartData::vec& floc, const solvers::PdePartData::vec& uloc)const{_notWritten("computeResidualBdry");}
-void PdePartInterface::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const{_notWritten("computeMatrixCell");}
-void PdePartInterface::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, solvers::PdePartData::imat& mat_i, solvers::PdePartData::imat& mat_j, const solvers::PdePartData::vec& uloc)const{_notWritten("computeMatrixBdry");}
+void PdePartInterface::computeMatrixCell(int iK, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const{_notWritten("computeMatrixCell");}
+void PdePartInterface::computeMatrixBdry(int color, int iK, int iS, int iil, solvers::PdePartData::mat& mat, const solvers::PdePartData::vec& uloc)const{_notWritten("computeMatrixBdry");}

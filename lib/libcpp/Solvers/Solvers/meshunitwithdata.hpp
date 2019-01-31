@@ -50,10 +50,9 @@ namespace solvers
     mutable PdePartData _pdepartdata;
 
     mutable alat::armaivec _ncomps, _nlocals;
-    void preparePdePartsData(int iK, const alat::armaivec& ivars) const;
-    void preparePdePartsData(int iKin, int iKex, const alat::armaivec& ivars) const;
-    void prepareCellMatrix(int iK, const alat::armaivec& ivars) const;
-    void prepareCellMatrix(int iKin, int iKex, const alat::armaivec& ivars) const;
+    void preparePdePartsData(const alat::armaivec& ivars) const;
+    // void prepareCellMatrix(int iK, const alat::armaivec& ivars) const;
+    // void prepareCellMatrix(int iKin, int iKex, const alat::armaivec& ivars) const;
 
   public:
     ~MeshUnitWithData();

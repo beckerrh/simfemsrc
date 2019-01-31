@@ -15,7 +15,7 @@ public:
   P1Cut& operator=( const P1Cut& P1cut);
   std::string getClassName() const;
 
-  arma::vec beta;
+  alat::armavec beta;
   arma::mat Iin, Iex, Id, P, Q, Pnc, Qnc;
 
   void initFem(int ivar, const mesh::MeshUnitInterface* mesh, const solvers::MeshInfo* meshinfo, int ncomp);
