@@ -36,9 +36,9 @@ class Replace(object):
     self.oldlower = self.old.lower()
     self.newupper = self.new.upper()
     self.newlower = self.new.lower()
-    print "replace %s ==> %s" %(self.old, self.new)
-    print "replace %s ==> %s" %(self.oldlower, self.newlower)
-    print "replace %s ==> %s" %(self.oldupper, self.newupper)
+    print ("replace {} ==> {}".format(self.old, self.new))
+    print ("replace {} ==> {}".format(self.oldlower, self.oldlower))
+    print ("replace {} ==> {}".format(self.oldupper, self.oldupper))
     # sys.exit(1)
   def __call__(self, toto):
     # return  toto.replace(self.old,self.new)
@@ -50,7 +50,7 @@ def changename(args):
     oldname = args['old']
     newname = args['new']
     dry = args['dry']
-    exclude = ['.svn']
+    exclude = ['.svn', '.DS_Store']
     if not os.path.isdir(directory):
         raise ValueError("directory does not exists " + directory)
 
@@ -61,11 +61,11 @@ def changename(args):
             if root.find(".svn") !=-1:
                 raise NameError("@@@ ERROR in toto: subfolders must not contain .svn "+ root)
             rootnew = replace(root)
-            print 'directory %s --> %s' %(root,rootnew)
+            print('directory {} --> {}'.format(root,rootnew))
             for file in files:
                 fileroot = root + '/' + file
                 filenew = replace(fileroot)
-                print 'file %s --> %s' %(fileroot,filenew)
+                print('file {} --> {}'.format(fileroot,filenew))
         return
 
     backupdirectory = directory + '.old'
@@ -80,7 +80,7 @@ def changename(args):
         if root.find(".svn") !=-1:
             raise NameError("@@@ ERROR in toto: subfolders must not contain .svn "+ root)
         rootnew = replace(root.replace(backupdirectory,directory))
-        print 'rootnew', rootnew
+        print('rootnew', rootnew)
         os.mkdir(rootnew)
         for file in files:
             fileroot = root + '/' + file
@@ -90,11 +90,13 @@ def changename(args):
             if fileroot.find('.tgz') !=-1 or  fileroot.find('.png') !=-1 != is_binary(fileroot):
               shutil.copyfile(fileroot, filenew)
               continue
-            print 'filenew', filenew
+            print('filenew', filenew)
             infile = open(fileroot, 'r')
             outfile = open(filenew, 'w')
-            toto = infile.read()
-            # print 'toto', toto
+            try:
+                toto = infile.read()
+            except:
+                print("cannot read file", fileroot)
             totonew = replace(toto)
             # print 'totonew', totonew
             outfile.write(totonew)

@@ -26,19 +26,18 @@ def main():
     simfemplot = tools.plot.SimFemPlot(methods, params=hmeans, param='hmean')
     diff = 1.0
     beta = "zero"
-    alpha = 0.0
+    alpha = 1.0
     application="quadratic"
     errL1 = {}
     errL2 = {}
     errH1 = {}
     times = {}
     for method in methods: times[method] = 0.0
-
     geom=GeometryClass(hmean=1)
-    geom.runGmsh(outdir="Data", number=0)
+    name = geom.runGmsh(outdir="Data", number=0)
     for ih in range(3):
         print("---- ih=", ih)
-        name = geom.runGmshRefine(outdir="Data", number=0)
+        name = geom.runGmshRefine(number=0, outdir="Data")
         print("name", name)
         partion_id = 1
         construct_bdrymeshes = False
@@ -47,7 +46,7 @@ def main():
         mesh.addGeometryObject('MeasureOfCell')
         mesh.addGeometryObject('Normals')
         mesh.save("Data/"+name+'.h5')
-        stop
+        print("mesh", mesh)
         for im,method in enumerate(methods):
             print("####### %s #####" %(method))
             errL1[method] =  np.zeros(len(hmeans))
@@ -63,7 +62,7 @@ def main():
             solver.setParameter("alpha", alpha);
             solver.setParameter("deltasupg", 0.5);
             solver.setMesh(mesh)
-            # solver.loadMesh(meshtype, "Data/"+geom.name+'.h5')
+            # solver.loadMesh(meshtype, "Data/"+name+'.h5')
             solver.init()
             info = solver.getInfo()
             print(info)
