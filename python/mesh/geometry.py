@@ -30,9 +30,36 @@ class Geometry(pygmsh.built_in.Geometry):
     # file.write(self.get_code().encode())
     file.write(self.get_code())
     file.close()
-  def runGmsh(self, outdir=None, name=None, verbose = True, num_lloyd_steps=3):
+
+  def runGmshRefine(self, number, outdir=None, name=None):
     if outdir is None : outdir = os.getcwd()
     if name is None : name = self.name
+    namecoarse = name + "_{:03d}".format(number)
+    nameref = name + "_{:03d}".format(number+1)
+    filenamemsh = os.path.join(outdir,namecoarse+'.msh')
+    filenamemshref = os.path.join(outdir,nameref+'.msh')
+    print("filenamemsh", filenamemsh)
+    print("filenamemshref", filenamemshref)
+    cmd = [self.gmsh_executable]
+    cmd += ["-refine"]
+    cmd += ["{}".format(filenamemsh)]
+    cmd += ["-o"]
+    cmd += ["{}".format(filenamemshref)]
+    cmd += ["-format"]
+    cmd += ["{}".format("msh2")]
+    p = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    stdout, stderr = p.communicate()
+    if stderr != "":
+      print("cmd=",cmd)
+      print("cmd=",' '.join(cmd))
+      print("stderr=",stderr)
+      raise RuntimeError('Gmsh exited with error (return code %d).' %p.returncode)
+    return nameref
+
+  def runGmsh(self, outdir=None, name=None, verbose = True, number=None):
+    if outdir is None : outdir = os.getcwd()
+    if name is None : name = self.name
+    if number is not None: name += "_{:03d}".format(number)
     filenamegeo = os.path.join(outdir,name + '.geo')
     self.runGeo(outdir, name)
     filenamemsh = os.path.join(outdir,name+'.msh')
@@ -62,3 +89,4 @@ class Geometry(pygmsh.built_in.Geometry):
       # print("stdout=",stdout)
       print("stderr=",stderr)
       raise RuntimeError('Gmsh exited with error (return code %d).' %p.returncode)
+    return name

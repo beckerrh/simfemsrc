@@ -40,6 +40,8 @@ void wrapMesh()
 	.def("writeBoundaryVtk", &MeshWrapper::writeBoundaryVtk)
 	.def("load", &MeshWrapper::loadH5)
 	.def("save", &MeshWrapper::saveH5)
+  .def("getNCells", &MeshWrapper::getNCells)
+  .def("getDimension", &MeshWrapper::getDimension)
 	.def(bp::self_ns::str(bp::self_ns::self));
   bp::register_ptr_to_python< std::shared_ptr<MeshWrapper> >();
   bp::implicitly_convertible<std::shared_ptr<MeshWrapper>,std::shared_ptr<mesh::MeshInterface> >();

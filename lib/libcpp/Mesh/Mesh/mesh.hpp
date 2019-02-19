@@ -41,6 +41,8 @@ namespace mesh
     void addGeometryObject(meshEnums::geomobjtype type, const GeometryConstructorInterface* geometryconstructor=&trivialgeometryconstructor);
     void addGeometryObjectByName(std::string name);
     std::string getInfo() const;
+    int getNCells() const;
+    int getDimension() const;
 
     const MeshUnitInterface* getPlainMesh() const;
     const MeshUnitInterface* getBoundaryMesh(int color) const;

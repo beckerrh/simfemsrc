@@ -123,6 +123,16 @@ void Mesh::addGeometryObject(meshEnums::geomobjtype type, const GeometryConstruc
   }
 }
 /*---------------------------------------------------------*/
+int Mesh::getNCells() const
+{
+  return _plainmesh.getNCells();
+}
+/*---------------------------------------------------------*/
+int Mesh::getDimension() const
+{
+  return _plainmesh.getDimension();
+}
+/*---------------------------------------------------------*/
 std::string Mesh::getInfo() const
 {
   std::string sep("-----------------\n");
