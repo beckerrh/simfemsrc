@@ -2,13 +2,13 @@
 #                              for python wrapping
 # ==============================================================================
 
-set(python3 false)
+set(python3 true)
 if(python3)
   execute_process(COMMAND python3-config --prefix OUTPUT_VARIABLE PYTHON_PATH)
   string(REGEX REPLACE "\n$" "" PYTHON_PATH "${PYTHON_PATH}")
   string(STRIP ${PYTHON_PATH} PYTHON_PATH)
   string(CONCAT PYTHON_LIBRARY ${PYTHON_PATH} "/lib/libpython3.7.dylib")
-  string(CONCAT PYTHON_INCLUDE_DIR ${PYTHON_PATH} "/include/python3.7")
+  string(CONCAT PYTHON_INCLUDE_DIR ${PYTHON_PATH} "/include/python3.7m")
   message("{PYTHON_PATH} ${PYTHON_PATH}")
   message("{PYTHON_LIBRARY} ${PYTHON_LIBRARY}")
   message("{PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_DIR}")

@@ -224,7 +224,6 @@ class SimFemRun(object):
             libdir = os.path.join(self.simfemsrcdir, "applications", name)
             projdir = os.getcwd()
             filestocopy = self._comparefiles(projdir, libdir, suffix='*.py', ignores='sys.path.append')
-            # print("filestocopy", filestocopy)
             if not args['dry']:
                 replaceDict={}
                 replaceDict[os.path.join(self.simfemsrcdir, 'python')] = '@simfempythonpath@'
@@ -233,18 +232,21 @@ class SimFemRun(object):
                     libfile = os.path.join(libdir, file)
                     shutil.copyfile(projfile, libfile)
                     self._convert(libfile, replaceDict)
+            else:
+                print("filestocopy (*.py)", filestocopy)
         if not args['nocpp']:
             appdir = os.path.join(self.simfemsrcdir, "applications", name)
             for dir in ['cpp', 'cppy']:
                 libdir = os.path.join(appdir, dir)
                 projdir = os.path.join(os.getcwd(), dir)
                 filestocopy = self._comparefiles(projdir, libdir, suffix=['*.cpp', '*.hpp'])
-                # print("filestocopy", filestocopy)
                 if not args['dry']:
                     for file in filestocopy:
                         projfile = os.path.join(projdir, file)
                         libfile = os.path.join(libdir, file)
                         shutil.copyfile(projfile, libfile)
+                else:
+                    print("filestocopy({})".format(dir), filestocopy)
 #------------------------------------------------------------------------
     def _comparefiles(self, projdir, libdir, suffix, ignores=[]):
         import filecmp, difflib

@@ -83,7 +83,7 @@ class Geometry(pygmsh.built_in.Geometry):
     #     line = p.stdout.readline()
     #     if not line: break
     #     print(line, end='')
-    if stderr != "":
+    if stderr:
       print("cmd=",cmd)
       print("cmd=",' '.join(cmd))
       # print("stdout=",stdout)
