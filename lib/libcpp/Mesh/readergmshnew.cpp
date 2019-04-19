@@ -1,5 +1,5 @@
-#include  "Mesh/readergmshnew.hpp"
 #include  "Mesh/nodesandnodesofcells.hpp"
+#include  "Mesh/readergmshnew.hpp"
 #include  <fstream>
 
 using namespace mesh;
@@ -25,45 +25,52 @@ ReaderGmshNew::ReaderGmshNew() : alat::InterfaceBase()
   _size_of_elem[14] = 15;
   _size_of_elem[15] = 1;
 }
-std::string ReaderGmshNew::getClassName() const {return "ReaderGmshNew";}
+
+std::string ReaderGmshNew::getClassName() const
+{
+  return "ReaderGmshNew";
+}
 
 /*---------------------------------------------------------*/
 void ReaderGmshNew::read(std::string filename)
 {
   // std::cerr << "MeshBase::readGmsh() " <<filename << "\n";
-  std::ifstream file(filename.c_str());
-  if(not file.is_open()) {_error_string("read","cannot open file", filename);}
+  std::ifstream file(filename.c_str() );
+  if(not file.is_open() )
+  {
+    _error_string("read", "cannot open file", filename);
+  }
 
   std::string str;
-  int format=0, size=0;
+  int format = 0, size = 0;
   double version;
-  _binary=false;
+  _binary = false;
 
   std::getline(file, str);
-  if (not file)
+  if(not file)
   {
-    _error_string("read", "cannot read file",filename);
+    _error_string("read", "cannot read file", filename);
   }
-  if (str.find("$MeshFormat") != static_cast<std::string::size_type>(0))
+  if(str.find("$MeshFormat") != static_cast<std::string::size_type>( 0 ) )
   {
-    _error_string("read", "cannot read ",str);
+    _error_string("read", "cannot read ", str);
   }
   file >> version >> format >> size;
   std::getline(file, str);
-  // std::cerr << " version " << version<< " format " << format<< " size " << size << "\n";
+  std::cerr << " version " << version<< " format " << format<< " size " << size << "\n";
   std::getline(file, str);
-  // std::cerr << "str " << str << "\n";
-  if(version != 2.2)
+  std::cerr << "str " << str << "\n";
+  if(version != 4.1)
   {
-    _error_string("read", "unknown version",version);
+    _error_string("read", "unknown version", version);
   }
-  if (format==1)
+  if(format == 1)
   {
     _binary = true;
   }
-  else if (format)
+  else if(format)
   {
-    _error_string("read", "unknown format",format);
+    _error_string("read", "unknown format", format);
   }
   if(_binary)
   {
@@ -73,31 +80,160 @@ void ReaderGmshNew::read(std::string filename)
     // assert(one==1);
     std::getline(file, str);
   }
-  while (true)
+  while(true)
   {
     std::getline(file, str);
-    // std::cerr << "reading " << str << "\n";
-    if (file.eof())
+    std::cerr << "reading " << str << "\n";
+    if(file.eof() )
     {
       break;
     }
-    if (str.find("$Nodes") == static_cast<std::string::size_type>(0))
+    if(str.find("$Nodes") == static_cast<std::string::size_type>( 0 ) )
     {
-      if(_binary) {_read_nodes_binaray(file);}
-      else {_read_nodes_ascii(file);}
+      if(_binary)
+      {
+        _read_nodes_binaray(file);
+      }
+      else
+      {
+        _read_nodes_ascii(file);
+      }
       std::getline(file, str);
       std::getline(file, str);
     }
-    else if (str.find("$Elements") == static_cast<std::string::size_type>(0))
+    else if(str.find("$Elements") == static_cast<std::string::size_type>( 0 ) )
     {
-      if(_binary) {_read_elements_binaray(file);}
-      else {_read_elements_ascii(file);}
+      if(_binary)
+      {
+        _read_elements_binaray(file);
+      }
+      else
+      {
+        _read_elements_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$PhysicalNames") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_physicalnames_binaray(file);
+      }
+      else
+      {
+        _read_physicalnames_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$Entities") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_entities_binaray(file);
+      }
+      else
+      {
+        _read_entities_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$PartitionedEntities") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_partitionedentities_binaray(file);
+      }
+      else
+      {
+        _read_partitionedentities_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$Periodic") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_periodic_binaray(file);
+      }
+      else
+      {
+        _read_periodic_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$GhostElements") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_ghostelements_binaray(file);
+      }
+      else
+      {
+        _read_ghostelements_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$NodeData") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_nodedata_binaray(file);
+      }
+      else
+      {
+        _read_nodedata_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$ElementData") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_elementdata_binaray(file);
+      }
+      else
+      {
+        _read_elementdata_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$ElementNodeData") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_elementnodedata_binaray(file);
+      }
+      else
+      {
+        _read_elementnodedata_ascii(file);
+      }
+      std::getline(file, str);
+      std::getline(file, str);
+    }
+    else if(str.find("$InterpolationScheme") == static_cast<std::string::size_type>( 0 ) )
+    {
+      if(_binary)
+      {
+        _read_interpolationscheme_binaray(file);
+      }
+      else
+      {
+        _read_interpolationscheme_ascii(file);
+      }
       std::getline(file, str);
       std::getline(file, str);
     }
     else
     {
-      _error_string("read", "unknown field",str);
+      _error_string("read", "unknown field", str);
     }
     continue;
   }
@@ -105,109 +241,142 @@ void ReaderGmshNew::read(std::string filename)
 }
 
 /*---------------------------------------------------------*/
+void ReaderGmshNew::_read_entities_ascii(std::ifstream& file)
+{
+  int numPoints, numCurves, numSurfaces, numVolumes;
+  int nphystags;
+
+  file >> numPoints >> numCurves >> numSurfaces >> numVolumes;
+  _pointtag.tag.set_size(numPoints);
+  _pointtag.coord.set_size(3, numPoints);
+  _pointtag.physicaltag.set_size(numPoints);
+
+  _curvetag.tag.set_size(numCurves);
+  _curvetag.coordmin.set_size(3, numCurves);
+  _curvetag.coordmax.set_size(3, numCurves);
+  _curvetag.physicaltag.set_size(numCurves);
+  _curvetag.physicaltaglower.set_size(numCurves);
+
+  _surfacetag.tag.set_size(numSurfaces);
+  _surfacetag.coordmin.set_size(3, numSurfaces);
+  _surfacetag.coordmax.set_size(3, numSurfaces);
+  _surfacetag.physicaltag.set_size(numSurfaces);
+  _surfacetag.physicaltaglower.set_size(numSurfaces);
+
+  _volumetag.tag.set_size(numVolumes);
+  _volumetag.coordmin.set_size(3, numVolumes);
+  _volumetag.coordmax.set_size(3, numVolumes);
+  _volumetag.physicaltag.set_size(numVolumes);
+  _volumetag.physicaltaglower.set_size(numVolumes);
+
+  for(int i = 0; i < numPoints; i++)
+  {
+    file >> _pointtag.tag[i] >> _pointtag.coord(0, i) >> _pointtag.coord(1, i) >> _pointtag.coord(2, i) >> nphystags;
+    _pointtag.physicaltag[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _pointtag.physicaltag[i][ii];
+    }
+  }
+
+  for(int i = 0; i < numCurves; i++)
+  {
+    file >> _curvetag.tag[i] >> _curvetag.coordmin(0, i) >> _curvetag.coordmin(1, i) >> _curvetag.coordmin(2, i) >> _curvetag.coordmax(0, i) >> _curvetag.coordmax(1, i) >> _curvetag.coordmax(2, i) >> nphystags;
+    _curvetag.physicaltag[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _curvetag.physicaltag[i][ii];
+    }
+    file >> nphystags;
+    _curvetag.physicaltaglower[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _curvetag.physicaltaglower[i][ii];
+    }
+  }
+
+  for(int i = 0; i < numSurfaces; i++)
+  {
+    file >> _surfacetag.tag[i] >> _surfacetag.coordmin(0, i) >> _surfacetag.coordmin(1, i) >> _surfacetag.coordmin(2, i) >> _surfacetag.coordmax(0, i) >> _surfacetag.coordmax(1, i) >> _surfacetag.coordmax(2, i) >> nphystags;
+    _surfacetag.physicaltag[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _surfacetag.physicaltag[i][ii];
+    }
+    file >> nphystags;
+    _surfacetag.physicaltaglower[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _surfacetag.physicaltaglower[i][ii];
+    }
+  }
+
+  for(int i = 0; i < numVolumes; i++)
+  {
+    file >> _volumetag.tag[i] >> _volumetag.coordmin(0, i) >> _volumetag.coordmin(1, i) >> _volumetag.coordmin(2, i) >> _volumetag.coordmax(0, i) >> _volumetag.coordmax(1, i) >> _volumetag.coordmax(2, i) >> nphystags;
+    _volumetag.physicaltag[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _volumetag.physicaltag[i][ii];
+    }
+    file >> nphystags;
+    _volumetag.physicaltaglower[i].set_size(nphystags);
+    for(int ii = 0; ii < nphystags; ii++)
+    {
+      file >> _volumetag.physicaltaglower[i][ii];
+    }
+  }
+  // std::cerr << "_pointtag" << _pointtag.tag << "\n" << _pointtag.coord << "\n" << _pointtag.physicaltag << "\n";
+// std::cerr << "_curvetag" << _curvetag.tag << "\n" << _curvetag.coordmin << "\n" << _curvetag.coordmax << "\n" << _curvetag.physicaltag << "\n" << _curvetag.physicaltaglower << "\n";
+  // std::cerr << "_surfacetag" << _surfacetag.tag << "\n" << _surfacetag.coordmin << "\n" << _surfacetag.coordmax << "\n" << _surfacetag.physicaltag << "\n" << _surfacetag.physicaltaglower << "\n";
+  // std::cerr << "_volumetag" << _volumetag.tag << "\n" << _volumetag.coordmin << "\n" << _volumetag.coordmax << "\n" << _volumetag.physicaltag << "\n" << _volumetag.physicaltaglower << "\n";
+}
+
+/*---------------------------------------------------------*/
 void ReaderGmshNew::_read_nodes_binaray(std::ifstream& file)
 {
-  std::string str;
-  int num_nodes, id;
-  file >> num_nodes;
-  std::getline(file, str);
-  _nodes.set_size(3,num_nodes);
-  // char buffer[100];
-  for (int i=0; i<num_nodes; ++i)
-  {
-    file.read( reinterpret_cast<char*>(&id), sizeof( int ) );
-    file.read( reinterpret_cast<char*>(&_nodes(0,i)), sizeof( double ) );
-    file.read( reinterpret_cast<char*>(&_nodes(1,i)), sizeof( double ) );
-    file.read( reinterpret_cast<char*>(&_nodes(2,i)), sizeof( double ) );
-    _nodeid2id[id] = i;
-  }
-  // std::cerr << "_nodes="<<_nodes.t()<<"\n";
+  _notWritten("_read_nodes_binaray");
 }
 
 /*---------------------------------------------------------*/
 void ReaderGmshNew::_read_nodes_ascii(std::ifstream& file)
 {
-  std::string str;
-  int num_nodes, id;
-  file >> num_nodes;
-  std::getline(file, str);
-  _nodes.set_size(3,num_nodes);
-  double x, y, z;
-  for (int i=0; i<num_nodes; ++i)
+  int numEntityBlocks, numNodes, minNodeTag, maxNodeTag;
+  file >> numEntityBlocks >> numNodes >> minNodeTag >> maxNodeTag;
+  std::cerr << "numEntityBlocks " << numEntityBlocks << " numNodes " << numNodes << " minNodeTag " << minNodeTag << " maxNodeTag " << maxNodeTag << "\n";
+  _nodes.set_size(3, numNodes);
+  int entityDim, entityTag, parametric, numNodesBlock;
+  int count = 0;
+  for(int i = 0; i < numEntityBlocks; i++)
   {
-    file >> id >> _nodes(0,i) >> _nodes(1,i) >> _nodes(2,i);
-    _nodeid2id[id] = i;
+    file >> entityDim >> entityTag >> parametric >> numNodesBlock;
+    assert(parametric == 0);
+// std::cerr << " entityDim " << entityDim << " ";
+// std::cerr << " entityTag " << entityTag << " ";
+// std::cerr << " parametric " << parametric << " ";
+// std::cerr << " numNodesBlock " << numNodesBlock << " ";
+    alat::armaivec nodeTag(numNodesBlock);
+    for(int ii = 0; ii < numNodesBlock; ii++)
+    {
+      file >> nodeTag[ii];
+    }
+    // std::cerr << " nodeTag ";
+    for(int ii = 0; ii < numNodesBlock; ii++)
+    {
+      // std::cerr << nodeTag[ii] << "\n";
+      _nodeid2id[nodeTag[ii]] = count;
+      file >> _nodes(0, count) >> _nodes(1, count) >> _nodes(2, count);
+      count++;
+    }
+    // std::cerr << "\n";
   }
+  // std::cerr << " _nodes " << _nodes.t() << " ";
 }
 
 /*---------------------------------------------------------*/
 void ReaderGmshNew::_read_elements_binaray(std::ifstream& file)
 {
-  alat::armaivec& col = _elems.col();
-  alat::armaivec& rowstart = _elems.rowstart();
-
-  std::string str;
-  int nelems;
-  file >> nelems;
-  std::getline(file, str);
-
-  std::streampos elemstart=file.tellg();
-
-  int id, type, ntags, physical, elementary, nparts, num_elm_follow;
-  int buffer[10];
-  _npartsmax=0;
-  alat::armaivec rowsizes(nelems);
-  int header[3];
-  for(int i=0; i<nelems; i++)
-  {
-    // file >> id >> type >> ntags >> physical >> elementary;
-    file.read( reinterpret_cast<char*>(&header), 3*sizeof( int ) );
-    type = header[0];
-    num_elm_follow = header[1];
-    ntags = header[2];
-    int ndata = 1+ntags+_size_of_elem[type];
-    int data[ndata];
-    file.read( reinterpret_cast<char*>(&data), ndata*sizeof( int ) );
-    id = data[0];
-    physical = data[1];
-    elementary = data[2];
-    // rowsizes[i] = ndata + 3;
-    rowsizes[i] = ndata + 2;
-    // std::cerr << "header = ";for(int ii=0;ii<3;ii++) std::cerr<< header[ii]<<" "; std::cerr << "\t";
-    // std::cerr << "data = ";for(int ii=0;ii<ndata;ii++) std::cerr << data[ii]<< " "; std::cerr << "\n";
-    // std::cerr << "id >> type >> ntags >> physical >> elementary " << id << " " << type << " "<< ntags<< " " << physical<< " " << elementary<<"\n";
-    // std::cerr << "num_elm_follow = " << num_elm_follow << "\n";
-    if(ntags>2)
-    {
-      nparts = data[3];
-    }
-    else
-    {
-      nparts=0;
-    }
-    // std::cerr << "nparts="<<nparts<< " ntags="<<ntags<<"\n";
-    _npartsmax = std::max(_npartsmax,nparts);
-
-    _cellid2id[id]=i;
-  }
-  _elems.set_size(nelems, arma::sum(rowsizes));
-  file.seekg(elemstart);
-  rowstart[0] = 0;
-  int count=0;
-  for(int i=0; i<nelems; ++i)
-  {
-    rowstart[i+1] = rowstart[i] + rowsizes[i];
-    file.read( reinterpret_cast<char*>(&header), 3*sizeof( int ) );
-    type = header[0];
-    ntags = header[2];
-    int ndata = 1+ntags+_size_of_elem[type];
-    int data[ndata];
-    file.read( reinterpret_cast<char*>(&data), ndata*sizeof( int ) );
-    col[count++] = data[0];
-    col[count++] = header[0];
-    col[count++] = header[2];
-    for(int ii=1;ii<ndata;ii++)  {col[count++] = data[ii];}
-  }
+  _notWritten("_read_nodes_binaray");
 }
 
 /*---------------------------------------------------------*/
@@ -216,76 +385,150 @@ void ReaderGmshNew::_read_elements_ascii(std::ifstream& file)
   alat::armaivec& col = _elems.col();
   alat::armaivec& rowstart = _elems.rowstart();
 
-  std::string str;
-  int nelems;
-  file >> nelems;
-  std::getline(file, str);
-
-  std::streampos elemstart=file.tellg();
-
-  // std::cerr << "nelems " << nelems <<"\n";
-
-  int id, type, ntags, physical, elementary, nparts;
-  _npartsmax=0;
-  alat::armaivec rowsizes(nelems);
-  alat::armaivec header(3);
-  // int header[3];
-  for(int i=0; i<nelems; i++)
-  {
-    // file >> id >> type >> ntags >> physical >> elementary;
-    for(int ii=0;ii<3;ii++) file >> header[ii];
-    // header.load(file);
-    id = header[0];
-    type = header[1];
-    ntags = header[2];
-
-    // std::cerr << "id >> type >> ntags " << id << " " << type << " " << ntags <<"\n";
-    // assert(ntags==2);
-
-    int ndata = ntags+_size_of_elem[type];
-    // std::cerr << "ndata " << ndata <<"\n";
-    // int data[ndata];
-    alat::armaivec data(ndata);
-    for(int ii=0;ii<ndata;ii++) file >> data[ii];
-    // file >> data;
-    // data.load(file);
-    // std::cerr << "id >> type >> ntags >> data " << id << " " << type << " " << ntags << " " << data.t() <<"\n";
-    rowsizes[i] = ndata + 3;
-
-    if(ntags>2)
-    {
-      nparts = data[2];
-    }
-    else
-    {
-      nparts=0;
-    }
-    _npartsmax = std::max(_npartsmax,nparts);
-    _cellid2id[id]=i;
-  }
-  _elems.set_size(nelems, arma::sum(rowsizes));
-  file.seekg(elemstart);
+  int numEntityBlocks, numElements, minElementTag, maxElementTag;
+  file >> numEntityBlocks >> numElements >> minElementTag >> maxElementTag;
+  std::cerr << "numEntityBlocks numElements " << numEntityBlocks << " " << numElements << " "<< minElementTag << " " << maxElementTag<<"\n";
+  int entityDim, entityTag, elementType, numElementsBlock;
+  rowstart.set_size(numElements+1);
   rowstart[0] = 0;
-  int count=0;
-  for(int i=0; i<nelems; ++i)
+  int count = 0;
+  std::streampos elemstart = file.tellg();
+  for(int i = 0; i < numEntityBlocks; i++)
   {
-    rowstart[i+1] = rowstart[i] + rowsizes[i];
-    for(int ii=0;ii<rowsizes[i];ii++)
+    file >> entityDim >> entityTag >> elementType >> numElementsBlock;
+    std::cerr << "entityDim entityTag elementType numElementsBlock " << entityDim << " " << entityTag << " "<< elementType << " " << numElementsBlock<<"\n";
+    int nnodes = _size_of_elem[elementType];
+    alat::armaivec data(nnodes+1);
+    for(int ii = 0; ii < numElementsBlock; ii++)
     {
-      file >> col[count++];
+      for(int iii = 0; iii < nnodes+1; iii++)
+      {
+        file >> data[iii];
+      }
+      int id = data[0];
+      _cellid2id[id] = count;
+      rowstart[count+1] = rowstart[count] + nnodes +2;
+      count++;
     }
   }
+  int colsize = rowstart[numElements];
+  col.set_size(colsize);
+  file.seekg(elemstart);
+  colsize = 0;
+  for(int i = 0; i < numEntityBlocks; i++)
+  {
+    file >> entityDim >> entityTag >> elementType >> numElementsBlock;
+    int nnodes = _size_of_elem[elementType];
+    alat::armaivec data(nnodes+1);
+    for(int ii = 0; ii < numElementsBlock; ii++)
+    {
+      col[colsize] = elementType;
+      for(int iii = 0; iii < nnodes+1; iii++)
+      {
+        file >> col[colsize+iii+1];
+      }
+      colsize += nnodes+2;
+    }
+  }
+  // std::cerr << "_elems = " << _elems << "\n";
+}
+
+/*---------------------------------------------------------*/
+void ReaderGmshNew::_read_physicalnames_binaray(std::ifstream& file)
+{
+  _notWritten("_read_physicalnames_binaray");
+}
+
+/*---------------------------------------------------------*/
+void ReaderGmshNew::_read_physicalnames_ascii(std::ifstream& file)
+{
+  _notWritten("_read_physicalnames_ascii");
+}
+
+void ReaderGmshNew::_read_entities_binaray(std::ifstream& file)
+{
+  _notWritten("_read_entities_binaray");
+}
+
+void ReaderGmshNew::_read_partitionedentities_binaray(std::ifstream& file)
+{
+  _notWritten("_read_partitionedentities_binaray");
+}
+
+void ReaderGmshNew::_read_partitionedentities_ascii(std::ifstream& file)
+{
+  _notWritten("_read_partitionedentities_ascii");
+}
+
+void ReaderGmshNew::_read_periodic_binaray(std::ifstream& file)
+{
+  _notWritten("_read_periodic_binaray");
+}
+
+void ReaderGmshNew::_read_periodic_ascii(std::ifstream& file)
+{
+  _notWritten("_read_periodic_ascii");
+}
+
+void ReaderGmshNew::_read_ghostelements_binaray(std::ifstream& file)
+{
+  _notWritten("_read_ghostelements_binaray");
+}
+
+void ReaderGmshNew::_read_ghostelements_ascii(std::ifstream& file)
+{
+  _notWritten("_read_ghostelements_ascii");
+}
+
+void ReaderGmshNew::_read_nodedata_binaray(std::ifstream& file)
+{
+  _notWritten("_read_nodedata_binaray");
+}
+
+void ReaderGmshNew::_read_nodedata_ascii(std::ifstream& file)
+{
+  _notWritten("_read_nodedata_ascii");
+}
+
+void ReaderGmshNew::_read_elementdata_binaray(std::ifstream& file)
+{
+  _notWritten("_read_elementdata_binaray");
+}
+
+void ReaderGmshNew::_read_elementdata_ascii(std::ifstream& file)
+{
+  _notWritten("_read_elementdata_ascii");
+}
+
+void ReaderGmshNew::_read_elementnodedata_binaray(std::ifstream& file)
+{
+  _notWritten("_read_elementnodedata_binaray");
+}
+
+void ReaderGmshNew::_read_elementnodedata_ascii(std::ifstream& file)
+{
+  _notWritten("_read_elementnodedata_ascii");
+}
+
+void ReaderGmshNew::_read_interpolationscheme_binaray(std::ifstream& file)
+{
+  _notWritten("_read_interpolationscheme_binaray");
+}
+
+void ReaderGmshNew::_read_interpolationscheme_ascii(std::ifstream& file)
+{
+  _notWritten("_read_interpolationscheme_ascii");
 }
 
 /*---------------------------------------------------------*/
 void ReaderGmshNew::setMesh(MeshUnitInterface* mesh)
 {
   // std::cerr << "ReaderGmshNew::setMesh() _npartsmax="<<_npartsmax<<"\n";
-  if(_npartsmax)
-  {
-    _setMeshAndInterfaces(mesh);
-    return;
-  }
+// if(_npartsmax)
+// {
+//   _setMeshAndInterfaces(mesh);
+//   return;
+// }
   arma::mat& nodes = mesh->getNodesAndNodesOfCells()._nodes;
   alat::armaimat& nodes_of_cells = mesh->getNodesAndNodesOfCells()._nodes_of_cells;
   int gmshcell = mesh->getGmshCellType();
@@ -296,103 +539,63 @@ void ReaderGmshNew::setMesh(MeshUnitInterface* mesh)
   int n_nodes_per_side = mesh->getNNodesPerSide();
   int n_dim = mesh->getDimension();
   int n_nodes_per_side_side = 1;
-  if(n_dim==3) {n_nodes_per_side_side = 2;}
+  if(n_dim == 3)
+  {
+    n_nodes_per_side_side = 2;
+  }
 
   // std::cerr << "_elems " << _elems << "\n";
   // std::cerr << "_nodeid2id " << _nodeid2id << "\n";
 
   nodes = _nodes;
 
+  // alat::Map<int, alat::armaimat> color_to_bdry1, color_to_bdry2, color_to_bdry3;
+
+  if(n_dim == 3)
+  {
+    _volumetag.tag;
+  }
+  else
+  {
+    std::cerr << "_surfacetag.tag" << _surfacetag.tag << "\n";
+    std::cerr << "_surfacetag.physicaltag" << _surfacetag.physicaltag << "\n";
+    std::cerr << "_surfacetag.physicaltaglower" << _surfacetag.physicaltaglower << "\n";
+
+    std::cerr << "_curvetag.tag" << _curvetag.tag << "\n";
+    std::cerr << "_curvetag.physicaltag" << _curvetag.physicaltag << "\n";
+    std::cerr << "_curvetag.physicaltaglower" << _curvetag.physicaltaglower << "\n";
+  }
+  assert(0);
+
+
   // First round : find sizes
-  int countcells=0;
-  alat::IntMap color_to_sizebdry1, color_to_sizebdry2, color_to_sizebdry3;
-  for(int i=0;i<_elems.n(); i++)
+  int countcells = 0;
+  for(int i = 0; i < _elems.n(); i++)
   {
     int pos = _elems.rowstart(i);
-    int type = _elems.col(pos+1);
-    int physical = _elems.col(pos+3);
-    if(type==gmshcell) {countcells++;}
-    else if(type==gmshside)
+    int type = _elems.col(pos);
+    int id = _elems.col(pos+1);
+    if(type == gmshcell)
     {
-      if(color_to_sizebdry1.hasKey(physical)) color_to_sizebdry1[physical]++;
-      else color_to_sizebdry1[physical]=1;
-    }
-    else if(type==gmshsideside)
-    {
-      if(color_to_sizebdry2.hasKey(physical)) color_to_sizebdry2[physical]++;
-      else color_to_sizebdry2[physical]=1;
-    }
-    else if(type==gmshsidesideside)
-    {
-      if(color_to_sizebdry3.hasKey(physical)) color_to_sizebdry3[physical]++;
-      else color_to_sizebdry3[physical]=1;
+      countcells++;
     }
   }
   nodes_of_cells.set_size(n_nodes_per_cell, countcells);
-  alat::IntMap bdry1count, bdry2count, bdry3count;
-  alat::IntMap::const_iterator p;
-  for(p=color_to_sizebdry1.begin(); p!=color_to_sizebdry1.end();p++)
-  {
-    color_to_bdry1[p->first].set_size(n_nodes_per_side, p->second);
-    bdry1count[p->first]=0;
-  }
-  for(p=color_to_sizebdry2.begin(); p!=color_to_sizebdry2.end();p++)
-  {
-    color_to_bdry2[p->first].set_size(n_nodes_per_side_side, p->second);
-    bdry2count[p->first]=0;
-  }
-  for(p=color_to_sizebdry3.begin(); p!=color_to_sizebdry3.end();p++)
-  {
-    color_to_bdry3[p->first].set_size(1, p->second);
-    bdry3count[p->first]=0;
-  }
-
   // Second round : save elements
-  countcells=0;
-  for(int i=0;i<_elems.n(); i++)
+  countcells = 0;
+  for(int i = 0; i < _elems.n(); i++)
   {
     int pos = _elems.rowstart(i);
-    int id = _elems.col(pos);
-    int type = _elems.col(pos+1);
-    int ntags = _elems.col(pos+2);
-    assert(ntags==2);
-    int physical = _elems.col(pos+3);
-    int elementary = _elems.col(pos+4);
-    if(type==gmshcell)
+    int type = _elems.col(pos);
+    int id = _elems.col(pos+1);
+    if(type == gmshcell)
     {
       assert( _size_of_elem[type] == n_nodes_per_cell);
-      for(int ii=0;ii<n_nodes_per_cell;ii++)
+      for(int ii = 0; ii < n_nodes_per_cell; ii++)
       {
-        nodes_of_cells(ii,countcells) = _nodeid2id[_elems.col(pos+5+ii)];
+        nodes_of_cells(ii, countcells) = _nodeid2id[_elems.col(pos+2+ii)];
       }
       countcells++;
-    }
-    else if(type==gmshside)
-    {
-      assert( _size_of_elem[type] == n_nodes_per_side);
-      for(int ii=0;ii<n_nodes_per_side;ii++)
-      {
-        color_to_bdry1[physical](ii,bdry1count[physical])=_nodeid2id[_elems.col(pos+5+ii)];
-      }
-      bdry1count[physical]++;
-    }
-    else if(type==gmshsideside)
-    {
-      assert( _size_of_elem[type] == n_nodes_per_side_side);
-      for(int ii=0;ii<n_nodes_per_side_side;ii++)
-      {
-        color_to_bdry2[physical](ii,bdry2count[physical])=_nodeid2id[_elems.col(pos+5+ii)];
-      }
-      bdry2count[physical]++;
-    }
-    else if(type==gmshsidesideside)
-    {
-      assert( _size_of_elem[type] == 1);
-      for(int ii=0;ii<1;ii++)
-      {
-        color_to_bdry3[physical](ii,bdry3count[physical])=_nodeid2id[_elems.col(pos+5+ii)];
-      }
-      bdry3count[physical]++;
     }
   }
   // std::cerr << "nodes_of_cells " << nodes_of_cells.t()<<"\n";
@@ -404,170 +607,5 @@ void ReaderGmshNew::setMesh(MeshUnitInterface* mesh)
 /*---------------------------------------------------------*/
 void ReaderGmshNew::_setMeshAndInterfaces(MeshUnitInterface* mesh)
 {
-  arma::mat& nodes = mesh->getNodesAndNodesOfCells()._nodes;
-  alat::armaimat& nodes_of_cells = mesh->getNodesAndNodesOfCells()._nodes_of_cells;
-  int gmshcell = mesh->getGmshCellType();
-  int gmshside = mesh->getGmshSideType();
-  int gmshsideside = mesh->getGmshSideSideType();
-  int gmshsidesideside = mesh->getGmshSideSideSideType();
-  int n_nodes_per_cell = mesh->getNNodesPerCell();
-  int n_nodes_per_side = mesh->getNNodesPerSide();
-  int n_dim = mesh->getDimension();
-  int n_nodes_per_side_side = 1;
-  if(n_dim==3) {n_nodes_per_side_side = 2;}
-
-  nodes = _nodes;
-
-  // First round : find sizes
-  int countcells=0;
-  alat::IntMap color_to_sizebdry1, color_to_sizebdry2, color_to_sizebdry3;
-  alat::IntMap partion_to_sizecells;
-  for(int i=0;i<_elems.n(); i++)
-  {
-    // std::cerr << "_elem(i) = ";
-    // for(int pos2=_elems.rowstart(i); pos2 < _elems.rowstop(i); pos2++)
-    // {
-    //   std::cerr << " " << _elems.col(pos2);
-    // }
-    // std::cerr << "\n";
-    int pos = _elems.rowstart(i);
-    int type = _elems.col(pos+1);
-    int ntags = _elems.col(pos+2);
-    int physical = _elems.col(pos+3);
-    if(ntags<=2)
-    {
-      _error_string("_setMeshAndInterfaces", "unexpected ntags=2");
-    }
-    int nparts = _elems.col(pos+5);
-    assert(ntags=nparts+3);
-    alat::armaivec parts(nparts);
-    for(int ii=0;ii<nparts;ii++) {parts[ii] = _elems.col(pos+6+ii);}
-    // std::cerr << "i nparts ntags physical parts " << i << " " << nparts<< " " << ntags << " " << physical << " " << parts.t();
-    if(type==gmshcell)
-    {
-      countcells++;
-      for(int ii=0;ii<nparts;ii++)
-      {
-        if(parts[ii]<0)
-        {
-          int partition = parts[ii];
-          if(partion_to_sizecells.hasKey(partition)) partion_to_sizecells[partition]++;
-          else partion_to_sizecells[partition]=1;
-        }
-      }
-    }
-    else if(type==gmshside)
-    {
-      if(color_to_sizebdry1.hasKey(physical)) color_to_sizebdry1[physical]++;
-      else color_to_sizebdry1[physical]=1;
-    }
-    else if(type==gmshsideside)
-    {
-      if(color_to_sizebdry2.hasKey(physical)) color_to_sizebdry2[physical]++;
-      else color_to_sizebdry2[physical]=1;
-    }
-    else if(type==gmshsidesideside)
-    {
-      if(color_to_sizebdry3.hasKey(physical)) color_to_sizebdry3[physical]++;
-      else color_to_sizebdry3[physical]=1;
-    }
-  }
-  // std::cerr << "countcells=" << countcells << "\n";
-  // std::cerr << "color_to_sizebdry1=" << color_to_sizebdry1 << "\n";
-  // std::cerr << "color_to_sizebdry2=" << color_to_sizebdry2 << "\n";
-  // std::cerr << "color_to_sizebdry3=" << color_to_sizebdry3 << "\n";
-  // std::cerr << "partion_to_sizecells=" << partion_to_sizecells << "\n";
-
-  nodes_of_cells.set_size(n_nodes_per_cell, countcells);
-  alat::IntMap bdry1count, bdry2count, bdry3count, partscount;
-  alat::IntMap::const_iterator p;
-  for(p=color_to_sizebdry1.begin(); p!=color_to_sizebdry1.end();p++)
-  {
-    color_to_bdry1[p->first].set_size(n_nodes_per_side, p->second);
-    bdry1count[p->first]=0;
-  }
-  for(p=color_to_sizebdry2.begin(); p!=color_to_sizebdry2.end();p++)
-  {
-    color_to_bdry2[p->first].set_size(n_nodes_per_side_side, p->second);
-    bdry2count[p->first]=0;
-  }
-  for(p=color_to_sizebdry3.begin(); p!=color_to_sizebdry3.end();p++)
-  {
-    color_to_bdry3[p->first].set_size(1, p->second);
-    bdry3count[p->first]=0;
-  }
-  for(p=partion_to_sizecells.begin(); p!=partion_to_sizecells.end();p++)
-  {
-    partition_to_cells[p->first].set_size(p->second);
-    partscount[p->first]=0;
-  }
-
-  // Second round : save elements
-  countcells=0;
-  for(int i=0;i<_elems.n(); i++)
-  {
-    int pos = _elems.rowstart(i);
-    int id = _elems.col(pos);
-    int type = _elems.col(pos+1);
-    int ntags = _elems.col(pos+2);
-    int physical = _elems.col(pos+3);
-    int elementary = _elems.col(pos+4);
-    int nparts = _elems.col(pos+5);
-    assert(ntags=nparts+3);
-    alat::armaivec parts(nparts);
-    for(int ii=0;ii<nparts;ii++) {parts[ii] = _elems.col(pos+6+ii);}
-    int poscell = pos + ntags + 3;
-
-    if(type==gmshcell)
-    {
-      assert( _size_of_elem[type] == n_nodes_per_cell);
-      for(int ii=0;ii<n_nodes_per_cell;ii++)
-      {
-        nodes_of_cells(ii,countcells) = _nodeid2id[_elems.col(poscell+ii)];
-      }
-      for(int ii=0;ii<nparts;ii++)
-      {
-        if(parts[ii]<0)
-        {
-          int partition = parts[ii];
-          partition_to_cells[partition][partscount[partition]++] = countcells;
-          if(partion_to_sizecells.hasKey(partition)) partion_to_sizecells[partition]++;
-          else partion_to_sizecells[partition]=1;
-        }
-      }
-      countcells++;
-    }
-    else if(type==gmshside)
-    {
-      assert( _size_of_elem[type] == n_nodes_per_side);
-      for(int ii=0;ii<n_nodes_per_side;ii++)
-      {
-        color_to_bdry1[physical](ii,bdry1count[physical])=_nodeid2id[_elems.col(poscell+ii)];
-      }
-      bdry1count[physical]++;
-    }
-    else if(type==gmshsideside)
-    {
-      assert( _size_of_elem[type] == n_nodes_per_side_side);
-      for(int ii=0;ii<n_nodes_per_side_side;ii++)
-      {
-        color_to_bdry2[physical](ii,bdry2count[physical])=_nodeid2id[_elems.col(poscell+ii)];
-      }
-      bdry2count[physical]++;
-    }
-    else if(type==gmshsidesideside)
-    {
-      assert( _size_of_elem[type] == 1);
-      for(int ii=0;ii<1;ii++)
-      {
-        color_to_bdry3[physical](ii,bdry3count[physical])=_nodeid2id[_elems.col(poscell+ii)];
-      }
-      bdry3count[physical]++;
-    }
-  }
-  // std::cerr << "color_to_bdry1=" << color_to_bdry1 << "\n";
-  // std::cerr << "color_to_bdry2=" << color_to_bdry2 << "\n";
-  // std::cerr << "color_to_bdry3=" << color_to_bdry3 << "\n";
-  // std::cerr << "partition_to_cells=" << partition_to_cells << "\n";
-  // std::cerr << "nodes_of_cells=" << nodes_of_cells << "\n";
+  assert(0);
 }

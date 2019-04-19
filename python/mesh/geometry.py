@@ -65,17 +65,17 @@ class Geometry(pygmsh.built_in.Geometry):
     filenamemsh = os.path.join(outdir,name+'.msh')
     # cmd = [self.gmsh_executable, '-'+str(self.dim), filenamegeo, '-o', filenamemsh]
     cmd = [self.gmsh_executable]
-    cmd += ["-{:1d}".format(self.dim)]
-    cmd += ["{}".format(filenamegeo)]
-    cmd += ["-o"]
-    cmd += ["{}".format(filenamemsh)]
-    cmd += ["-format"]
-    cmd += ["{}".format("msh2")]
+    cmd.append("-{:1d}".format(self.dim))
+    cmd.append("{}".format(filenamegeo))
+    cmd.append("-o")
+    cmd.append("{}".format(filenamemsh))
+    # cmd.append("-format")
+    # cmd.append("{}".format("msh2"))
     if self.npartitions>0:
-      cmd += ['-part', str(self.npartitions), '-oneFilePerPart']
+      cmd.append('-part', str(self.npartitions), '-oneFilePerPart')
     # if self.datatype != 'ascii':
     #   cmd += ['-bin']
-    print("### Format is ASCII for the moment, need to work on format 4")
+    # print("### Format is ASCII for the moment, need to work on format 4")
     p = subprocess.Popen(cmd, stdin=None, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     stdout, stderr = p.communicate()
     # if verbose:
