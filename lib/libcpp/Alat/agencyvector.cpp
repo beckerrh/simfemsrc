@@ -17,7 +17,7 @@ AgencyVector& AgencyVector::operator=( const AgencyVector& vectoragency)
   assert(0);
   return *this;
 }
-std::string AgencyVector::getName() const
+std::string AgencyVector::getClassName() const
 {
   return "AgencyVector";
 }
@@ -37,7 +37,7 @@ alat::StringIntMap AgencyVector::statistics() const
   alat::StringIntMap numberofdecriptions;
   for(const_iterator p = begin(); p != end(); p++)
   {
-    std::string name = p->first.getName();
+    std::string name = p->first.getClassName();
     alat::StringVector bouts = alat::Tokenize(name, "_");
     // name = "";
     // int last = 1;

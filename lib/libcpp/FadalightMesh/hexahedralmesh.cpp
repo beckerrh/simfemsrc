@@ -304,9 +304,9 @@ void HexahedralMesh::writeHex(std::string filename) const
       file << color << std::endl;
     }
   }
-  const CurvedBoundaryInformation* curvedboundaryinformation = getCurvedBoundaryInformation();
-  assert(curvedboundaryinformation);
-  curvedboundaryinformation->writeCurvedBoundaryDescription(file);
+  // const CurvedBoundaryInformation* curvedboundaryinformation = getCurvedBoundaryInformation();
+  // assert(curvedboundaryinformation);
+  // curvedboundaryinformation->writeCurvedBoundaryDescription(file);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -374,10 +374,10 @@ void HexahedralMesh::readHex(std::string filename)
   }
   constructSidesFromCells(bstc);
 
-  CurvedBoundaryInformation* curvedboundaryinformation = getCurvedBoundaryInformation();
-  curvedboundaryinformation->readCurvedBoundaryDescription(file);
+  // CurvedBoundaryInformation* curvedboundaryinformation = getCurvedBoundaryInformation();
+  // curvedboundaryinformation->readCurvedBoundaryDescription(file);
   file.close();
-  curvedboundaryinformation->constructBoundaryInformation(this);
+  // curvedboundaryinformation->constructBoundaryInformation(this);
 }
 
 //

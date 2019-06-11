@@ -165,9 +165,9 @@ void QuadrilateralMesh::writeQuad(std::string filename) const
     }
   }
 
-  const CurvedBoundaryInformation* BD = getCurvedBoundaryInformation();
-  assert(BD);
-  BD->writeCurvedBoundaryDescription(file);
+  // const CurvedBoundaryInformation* BD = getCurvedBoundaryInformation();
+  // assert(BD);
+  // BD->writeCurvedBoundaryDescription(file);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -280,18 +280,18 @@ void QuadrilateralMesh::readQuad(std::string filename)
   }
 
 
-  CurvedBoundaryInformation* curvedboundaryinformation = getCurvedBoundaryInformation();
-  assert(curvedboundaryinformation);
+  // CurvedBoundaryInformation* curvedboundaryinformation = getCurvedBoundaryInformation();
+  // assert(curvedboundaryinformation);
 
   file.clear();
   file.seekg(afterboundaries);
 
-  curvedboundaryinformation->readCurvedBoundaryDescription(file);
+  // curvedboundaryinformation->readCurvedBoundaryDescription(file);
   file.close();
 
   constructSidesFromCells(bstc, istc);
 
-  curvedboundaryinformation->constructBoundaryInformation(this);
+  // curvedboundaryinformation->constructBoundaryInformation(this);
 }
 
 /*--------------------------------------------------------------------------*/

@@ -11,7 +11,7 @@ protected:
   double _b, _c;
 public:
   RDcosh(double diff, double alpha);
-  std::string getName() const;
+  std::string getClassName() const;
   void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
@@ -27,7 +27,7 @@ protected:
   double _diff;
 public:
   CDExpLayer(double diff);
-  std::string getName() const;
+  std::string getClassName() const;
   void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;

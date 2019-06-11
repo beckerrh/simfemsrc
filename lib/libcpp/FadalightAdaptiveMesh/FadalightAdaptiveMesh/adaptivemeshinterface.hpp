@@ -35,7 +35,7 @@ public:
     virtual tree<Edge*> & getEdges()=0;
     virtual tree<FaceInterface*> & getFaces()=0;
     virtual tree<VolumeInterface*> & getVolumes()=0;
-    virtual const FadalightMesh::CurvedBoundaryInformation* getCurvedBoundaries()=0;
+    // virtual const FadalightMesh::CurvedBoundaryInformation* getCurvedBoundaries()=0;
     virtual int& getLastNodeId()=0;
     virtual int& getLastEdgeId()=0;
     virtual int& getLastFaceId()=0;

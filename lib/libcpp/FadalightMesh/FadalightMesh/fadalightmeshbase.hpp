@@ -83,8 +83,8 @@ public:
     alat::Vector<Side>&   getSides();
     alat::Vector<SideCell>&  getSidesOfCells();
     alat::Vector<CellSide>&  getCellsOfSides();
-    CurvedBoundaryInformation* getCurvedBoundaryInformation();
-    const CurvedBoundaryInformation* getCurvedBoundaryInformation() const;
+    // CurvedBoundaryInformation* getCurvedBoundaryInformation();
+    // const CurvedBoundaryInformation* getCurvedBoundaryInformation() const;
     const alat::Vector<alat::Node>&   getNodes() const;
     const alat::Vector<Cell>&   getCells() const;
     const alat::Vector<Side>&   getSides() const;
@@ -120,7 +120,7 @@ public:
     // FadalightMesh::CurvedInteriorSideInfo* getCurvedInteriorSideInfo();
     const alat::armaivec& getBoundaryColors() const;
     const alat::armaivec& getBoundarySides(int color) const;
-    bool cellIsCurved(int iK) const;
+    // bool cellIsCurved(int iK) const;
     int findNeightborHangingCells(int iK, int iS, alat::Node pt);
     void readFadalightMesh(const std::string& basefilename);
     void writeFadalightMesh(const std::string& basefilename, arma::file_type datatype = arma::arma_binary) const;

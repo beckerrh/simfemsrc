@@ -57,9 +57,16 @@ class SimFemRun(object):
         args = parser.parse_args(sys.argv[2:])
         self._gmsh(vars(args))
 #------------------------------------------------------------------------
+    def getCompiler(self, parser):
+        parser.add_argument('--cleanlib', default = False, action="store_true", help='clean library (build)')
+        parser.add_argument('--clean', default = False, action="store_true", help='clean local dir')
+        self.compiler = SimFemCompile(simfemsourcedir=self.simfemsrcdir)
+        self.compiler.addArgumentsParser(parser,sysargs=sys.argv[2:])
+        args = parser.parse_args(sys.argv[2:])
+        return args
+        
     def compile(self):
         # print 'running compile'
-        self.compiler = SimFemCompile(simfemsourcedir=self.simfemsrcdir)
         parser = argparse.ArgumentParser(description='Run compile')
         parser.add_argument('scriptandargs', help='script and args to launch', nargs='*')
         parser.add_argument('--all', default = True, action="store_true", help='compile library and project')
@@ -67,42 +74,33 @@ class SimFemRun(object):
         parser.add_argument('--doc', default = False, action="store_true", help='generate doc')
         parser.add_argument('--external', default = False, action="store_true", help='external install')
         parser.add_argument('-installdir', default = "", type=str, help="install directory (if '' we use installdir)")
-        self.compiler.addArgumentsParser(parser,sysargs=sys.argv[2:])
-        args = parser.parse_args(sys.argv[2:])
+        args = self.getCompiler(parser)
         self._compile(vars(args))
 #------------------------------------------------------------------------
     def test(self):
         # print 'running test'
-        self.compiler = SimFemCompile(simfemsourcedir=self.simfemsrcdir)
         parser = argparse.ArgumentParser(description='Run test')
         parser.add_argument('scriptandargs', help='script and args to launch', nargs='*')
         parser.add_argument('-nmpi', default = 0, type=int, help='number of mpi processes')
         parser.add_argument('--py', default = False, action="store_true", help='test python')
         parser.add_argument('--cpp', default = False, action="store_true", help='test cpp')
-        self.compiler.addArgumentsParser(parser,sysargs=sys.argv[2:])
-        args = parser.parse_args(sys.argv[2:])
+        args = self.getCompiler(parser)
         self._test(vars(args))
 #------------------------------------------------------------------------
     def application(self):
         # print 'running test'
-        self.compiler = SimFemCompile(simfemsourcedir=self.simfemsrcdir)
         parser = argparse.ArgumentParser(description='Run application')
         parser.add_argument('scriptandargs', help='script and args to launch', nargs='*')
         parser.add_argument('-nmpi', default = 0, type=int, help='number of mpi processes')
         parser.add_argument('--cmake', default = False, action="store_true", help='generate cmake')
-        parser.add_argument('--clean', default = False, action="store_true", help='clean local dir')
         parser.add_argument('--py', default = False, action="store_true", help='python')
-        self.compiler.addArgumentsParser(parser,sysargs=sys.argv[2:])
-        args = parser.parse_args(sys.argv[2:])
+        args = self.getCompiler(parser)
         self._application(vars(args))
 #------------------------------------------------------------------------
     def progtest(self):
-        self.compiler = SimFemCompile(simfemsourcedir=self.simfemsrcdir)
         parser = argparse.ArgumentParser(description='Run progtest')
         parser.add_argument('scriptandargs', help='script and args to launch', nargs='*')
-        parser.add_argument('--clean', default = False, action="store_true", help='clean local dir')
-        self.compiler.addArgumentsParser(parser,sysargs=sys.argv[2:])
-        args = parser.parse_args(sys.argv[2:])
+        args = self.getCompiler(parser)
         self._progtest(vars(args))
 #------------------------------------------------------------------------
 #------------------------------------------------------------------------
@@ -147,11 +145,10 @@ class SimFemRun(object):
         else:
             geom.runGmsh(outdir=outdir)
 #------------------------------------------------------------------------
-    def _compilelibs(self):
-        self.compiler.compilelib(sourcedir=os.path.join(self.simfemsrcdir, 'python'))
-        self.compiler.compilelib(sourcedir=os.path.join(self.simfemsrcdir, 'lib'))
-        # self.compiler.compilelib(sourcedir=os.path.join(self.simfemsrcdir, 'libcpp'))
-        # self.compiler.compilelib(sourcedir=os.path.join(self.simfemsrcdir, 'libpy'))
+    def _compilelibs(self, clean):        
+        self.compiler.compile(sourcedir=os.path.join(self.simfemsrcdir, 'python'), clean=clean)
+        self.compiler.compile(sourcedir=os.path.join(self.simfemsrcdir, 'lib'), clean=clean)
+        self.compiler.compile(sourcedir=os.path.join(self.simfemsrcdir, 'bin'), clean=clean)
     def _compile(self, args):
         # print 'Running simfem _compile, args=%s' % args
         if args['external']:
@@ -161,11 +158,11 @@ class SimFemRun(object):
         if args['doc']:
             self.compiler.generateDoc()
             return
-        self._compilelibs()
+        self._compilelibs(args['cleanlib'])
         if args['project'] or args['all']:
             if 'CMakeLists.txt' not in os.listdir('.'):
-                raise KeyError("no local project to compile")
-            self.compiler.compiletest(sourcedir=os.getcwd())
+                raise KeyError("no local project to compile")            
+            self.compiler.compiletest(sourcedir=os.getcwd(), clean=args['clean'])
 #------------------------------------------------------------------------
 #------------------------------------------------------------------------
     def _convert(self, filename, replaceDict):
@@ -194,7 +191,7 @@ class SimFemRun(object):
         os.chdir(localdir)
         libpath = os.path.join(self.compiler.installdir, 'lib')
         simfempythonpath = os.path.join(self.simfemsrcdir, 'python')
-        self._compilelibs()
+        self._compilelibs(args['cleanlib'])
         replaceDict={}
         replaceDict['@simfempythonpath@'] = simfempythonpath
         replaceDict['@libpythonpath@'] = libpath

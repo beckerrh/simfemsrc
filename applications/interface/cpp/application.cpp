@@ -34,7 +34,7 @@ void CutExactSolutionQuadraticCircle::setPhi(const solvers::FunctionInterface* p
   _r02 = -_p[0];
 }
 
-std::string CutExactSolutionQuadraticCircle::getName() const {return "CutExactSolutionQuadraticCircle";}
+std::string CutExactSolutionQuadraticCircle::getClassName() const {return "CutExactSolutionQuadraticCircle";}
 void CutExactSolutionQuadraticCircle::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   (*_phi)(_p, x, y, z);
@@ -84,7 +84,7 @@ CutExactSolutionLinearStraight::CutExactSolutionLinearStraight(double xgamma, do
   _p2 = 2.0*k1/( (k2-k1)*xgamma + k1+k2);
 }
 
-std::string CutExactSolutionLinearStraight::getName() const {return "CutExactSolutionLinearStraight";}
+std::string CutExactSolutionLinearStraight::getClassName() const {return "CutExactSolutionLinearStraight";}
 void CutExactSolutionLinearStraight::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   if(x<=_xgamma)
@@ -123,7 +123,7 @@ CutExactSolutionQuadraticStraight::CutExactSolutionQuadraticStraight(double xgam
 {
 }
 
-std::string CutExactSolutionQuadraticStraight::getName() const {return "CutExactSolutionQuadraticStraight";}
+std::string CutExactSolutionQuadraticStraight::getClassName() const {return "CutExactSolutionQuadraticStraight";}
 void CutExactSolutionQuadraticStraight::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   if(x<=_xgamma)

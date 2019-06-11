@@ -13,7 +13,7 @@ protected:
   const solvers::FunctionInterface* _phi;
 public:
   CutExactSolutionQuadraticCircle(double K1, double k2);
-  std::string getName() const;
+  std::string getClassName() const;
   void setPhi(const solvers::FunctionInterface* phi);
   void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
@@ -31,7 +31,7 @@ protected:
   double _xgamma, _k1, _k2, _p1, _p2;
 public:
   CutExactSolutionLinearStraight(double xgamma, double K1, double k2);
-  std::string getName() const;
+  std::string getClassName() const;
   void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;
@@ -48,7 +48,7 @@ protected:
   double _xgamma, _k1, _k2;
 public:
   CutExactSolutionQuadraticStraight(double xgamma, double K1, double k2);
-  std::string getName() const;
+  std::string getClassName() const;
   void operator()(alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void x (alat::armavec& u, double x, double y, double z, double t = 0.) const;
   void y (alat::armavec& u, double x, double y, double z, double t = 0.) const;

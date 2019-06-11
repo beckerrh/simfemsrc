@@ -24,7 +24,7 @@ std::string Ghost::getClassName() const
 
 std::ostream& alat::operator<<(std::ostream& os, const Ghost& g)
 {
-  os << "(Name/type:) " << g.getName() <<"/"<< g.getType();
+  os << "(Name/type:) " << g.getClassName() <<"/"<< g.getType();
   return os;
 }
 
@@ -38,11 +38,11 @@ const std::string& Ghost::getType() const{return _type;}
 /*--------------------------------------------------------------------------*/
 bool Ghost::operator<(const Ghost& v) const
 {
-  if( getName() < v.getName() )
+  if( getClassName() < v.getClassName() )
   {
     return true;
   }
-  if( getName() > v.getName() )
+  if( getClassName() > v.getClassName() )
   {
     return false;
   }
@@ -59,5 +59,5 @@ bool Ghost::operator<(const Ghost& v) const
 
 bool Ghost::operator==(const Ghost& v) const
 {
-  return ( getType() == v.getType() ) && ( getName() == v.getName() );
+  return ( getType() == v.getType() ) && ( getClassName() == v.getClassName() );
 }

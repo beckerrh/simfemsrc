@@ -20,7 +20,7 @@ public:
     AgencyMatrix();
     AgencyMatrix( const AgencyMatrix& matrixagency);
     AgencyMatrix& operator=( const AgencyMatrix& matrixagency);
-    std::string getName() const;
+    std::string getClassName() const;
     std::ostream& printLoopInformation(std::ostream& os) const;
     void enrol(const alat::GhostMatrix& ghost);
     std::shared_ptr<const alat::MatrixAllVariables> operator()(const alat::GhostMatrix& ghost) const;

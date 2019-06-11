@@ -177,18 +177,18 @@ void Solver::loadSolution(std::string filename)
 void Solver::saveSolution(const alat::GhostVector ghost, int it) const
 {
   _chronometer.start("saveSolution");
-  std::string filename = _output_manager.getSolutionFileName(meshEnums::Plain, ghost.getName(), it);
+  std::string filename = _output_manager.getSolutionFileName(meshEnums::Plain, ghost.getClassName(), it);
   _plainmeshunitwithdata->saveSolution(ghost, filename);
   for(MeshUnitWithDataMap::const_iterator p=_boundarymeshunitswithdata.begin(); p!=_boundarymeshunitswithdata.end();p++)
   {
     std::stringstream ss;
-    ss << _output_manager.getSolutionFileName(meshEnums::Boundary, ghost.getName(), it)<< p->first;
+    ss << _output_manager.getSolutionFileName(meshEnums::Boundary, ghost.getClassName(), it)<< p->first;
     p->second->saveSolution(ghost, ss.str());
   }
   for(MeshUnitWithDataMap::const_iterator p=_interfacemeshunitswithdata.begin(); p!=_interfacemeshunitswithdata.end();p++)
   {
     std::stringstream ss;
-    ss << _output_manager.getSolutionFileName(meshEnums::Interface, ghost.getName(), it)<< p->first;
+    ss << _output_manager.getSolutionFileName(meshEnums::Interface, ghost.getClassName(), it)<< p->first;
     p->second->saveSolution(ghost, ss.str());
   }
   _chronometer.stop("saveSolution");

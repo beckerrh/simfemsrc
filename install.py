@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys, os
 from argparse import ArgumentParser
 from distutils.spawn import find_executable
 
 if any(x not in os.listdir('.') for x in ['doc', 'install.py']):
-	print 'has to be called from source directory !'
+	print('has to be called from source directory !')
 	sys.exit(1)
 
 packages="""
@@ -44,8 +44,12 @@ builddir = os.path.join(startdirup, 'simfemsrc.compile')
 compiler = SimFemCompile(installdir=installdir, builddir=builddir)
 compiler.addArgumentsParser(parser, sys.argv[1:])
 
-compiler.compilelib(sourcedir=os.path.join(startdir, 'python'))
-compiler.compilelib(sourcedir=os.path.join(startdir, 'lib'))
+# compiler.compile(sourcedir=os.path.join(startdir, 'python'), clean=True)
+# compiler.compile(sourcedir=os.path.join(startdir, 'lib'), clean=True)
+
+compiler.compile(sourcedir=os.path.join(startdir, 'python'))
+compiler.compile(sourcedir=os.path.join(startdir, 'lib'))
+compiler.compile(sourcedir=os.path.join(startdir, 'bin'))
 
 # import tools.simfempath as simfempath
 # simfempath.storeSourcePath(installdir=installdir, simfemsourcedir=startdir)

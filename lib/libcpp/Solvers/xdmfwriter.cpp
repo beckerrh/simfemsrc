@@ -49,7 +49,7 @@ void XdmfWriter::writeScalars(std::ofstream& file, const std::string& solutionfi
 {
   for(int ivar=0; ivar<vars.size(); ivar++)
   {
-    std::string name = vars[ivar].getName();
+    std::string name = vars[ivar].getClassName();
     int ncomp =  vars[ivar].getNcomp();
 
     for(int icomp=0;icomp<ncomp;icomp++)

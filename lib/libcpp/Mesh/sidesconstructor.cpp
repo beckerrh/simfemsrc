@@ -138,7 +138,7 @@ void SidesConstructor<NODESPERSIDE>::constructSidesFromCells(const MeshUnitInter
       }
       if(not foundinparts)
       {
-        if(debug) std::cerr<<"*** not found "<<ssort<< " for cell " << i << "\n";
+        if(debug) std::cerr<<"***constructSidesFromCells???*** not found "<<ssort<< " for cell " << i << "\n";
         // std::cerr << "bstc = " << bstc << "\n";
         // assert(0);
         bstc[ssort] = color_default;

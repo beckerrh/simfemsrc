@@ -3,7 +3,7 @@
 
 #include  <map>
 #include  <string>
-#include  "tree.hh"
+#include  "tree/tree.hh"
 
 /*--------------------------------------------------------------------------*/
 

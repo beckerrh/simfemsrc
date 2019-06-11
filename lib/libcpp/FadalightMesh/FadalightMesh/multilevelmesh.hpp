@@ -70,7 +70,7 @@ public:
     const alat::Node& getNodeOfSide(int is, int ii) const;
     const alat::Node& getNode(int i) const;
     FadalightMeshEnums::meshtype getType() const;
-    bool cellIsCurved(int iK) const;
+    // bool cellIsCurved(int iK) const;
     void getLocalIndicesOfSidesInCell(alat::armaivec& sideindex_a, alat::armaivec& sideindex_e) const;
     void getLocalIndicesOfSidesAndDiagonalsInCell(alat::armaivec& sideindex_a, alat::armaivec& sideindex_e) const;
   };

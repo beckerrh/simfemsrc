@@ -20,7 +20,7 @@ public:
     AgencyLinearSolver();
     AgencyLinearSolver( const AgencyLinearSolver& vectoragency);
     AgencyLinearSolver& operator=( const AgencyLinearSolver& vectoragency);
-    std::string getName() const;
+    std::string getClassName() const;
     std::ostream& printLoopInformation(std::ostream& os) const;
     void enrol(const alat::GhostLinearSolver& ghost);
     std::shared_ptr<const perulangan::LinearSolverInterface> operator()(const alat::GhostLinearSolver& ghost) const;

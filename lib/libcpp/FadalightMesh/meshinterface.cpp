@@ -319,13 +319,13 @@ void MeshInterface::createGeometryObject(std::string name)
   _notWritten("CreateGeometryObject");
 }
 
-/*--------------------------------------------------------------------------*/
-
-const FadalightMesh::CurvedBoundaryInformation* MeshInterface::getCurvedBoundaryInformation() const
-{
-  _notWritten("getCurvedBoundaryInformation");
-  return NULL;
-}
+// /*--------------------------------------------------------------------------*/
+//
+// const FadalightMesh::CurvedBoundaryInformation* MeshInterface::getCurvedBoundaryInformation() const
+// {
+//   _notWritten("getCurvedBoundaryInformation");
+//   return NULL;
+// }
 
 /*--------------------------------------------------------------------------*/
 
@@ -435,11 +435,11 @@ int MeshInterface::getBoundaryVtkType() const
 
 /*--------------------------------------------------------------------------*/
 
-bool MeshInterface::cellIsCurved(int iK) const
-{
-  _notWritten("cellIsCurved");
-  return 0;
-}
+// bool MeshInterface::cellIsCurved(int iK) const
+// {
+//   _notWritten("cellIsCurved");
+//   return 0;
+// }
 //
 // /*--------------------------------------------------------------------------*/
 //

@@ -179,11 +179,11 @@ public:
     }
 
     /// Renvoie les informations sur les bords courbes
-    const FadalightMesh::CurvedBoundaryInformation* getCurvedBoundaries()
-    {
-      return FadalightMesh::FadalightMeshBase2d<NODESPERCELL>::getCurvedBoundaryInformation();
-      // return _curvedboundaries;
-    }
+    // const FadalightMesh::CurvedBoundaryInformation* getCurvedBoundaries()
+    // {
+    //   return FadalightMesh::FadalightMeshBase2d<NODESPERCELL>::getCurvedBoundaryInformation();
+    //   // return _curvedboundaries;
+    // }
 
     /// renvoie la dernière identité de node utilisée
     int& getLastNodeId()

@@ -38,7 +38,7 @@ SparsityPatternFixArraySoft<N>& SparsityPatternFixArraySoft<N>::operator=(const 
 /*-------------------------------------------------------------*/
 
 template<int N>
-std::string SparsityPatternFixArraySoft<N>::getName() const
+std::string SparsityPatternFixArraySoft<N>::getClassName() const
 {
   return "SparsityPatternFixArraySoft";
 }

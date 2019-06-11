@@ -756,7 +756,7 @@ void BasicAdaptiveMesh3d<NODESPERCELL,SIDESPERCELL,EDGESPERCELL,NODESPERSIDE>::w
   reInitFadalightMesh();
   // Mise à jour des information sur les bords courbes
   // FadalightMeshBase3d<NODESPERCELL,SIDESPERCELL,EDGESPERCELL,NODESPERSIDE>::reInit();
-  FadalightMeshBase3d<NODESPERCELL,SIDESPERCELL,EDGESPERCELL,NODESPERSIDE>::getCurvedBoundaryInformation()->constructBoundaryInformation(this);
+  // FadalightMeshBase3d<NODESPERCELL,SIDESPERCELL,EDGESPERCELL,NODESPERSIDE>::getCurvedBoundaryInformation()->constructBoundaryInformation(this);
   // Ecriture du FadalightMesh
   FadalightMeshBase3d<NODESPERCELL,SIDESPERCELL,EDGESPERCELL,NODESPERSIDE>::writeFadalightMesh(name,datatype);
 }

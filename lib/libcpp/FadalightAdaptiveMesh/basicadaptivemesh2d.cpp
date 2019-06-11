@@ -562,7 +562,7 @@ void BasicAdaptiveMesh2d<NODESPERCELL>::writeFadalightMesh(std::string name, arm
     reInitFadalightMesh();
   // Mise à jour des information sur les bords courbes
     // FadalightMeshBase2d<NODESPERCELL>::reInit();
-    FadalightMeshBase2d<NODESPERCELL>::getCurvedBoundaryInformation()->constructBoundaryInformation(this);
+    // FadalightMeshBase2d<NODESPERCELL>::getCurvedBoundaryInformation()->constructBoundaryInformation(this);
     FadalightMeshBase2d<NODESPERCELL>::writeFadalightMesh(name,datatype);
 }
 

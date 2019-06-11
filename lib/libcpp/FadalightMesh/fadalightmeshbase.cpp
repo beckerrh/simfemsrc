@@ -54,7 +54,7 @@ FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::FadalightMeshB
   _geometryobjects_constructor = new GeometryObjectsConstructor;
   createGeometryObject("HangingNodeInfo");
   createGeometryObject("HangingSideInfo");
-  createGeometryObject("CurvedBoundaryInformation");
+  // createGeometryObject("CurvedBoundaryInformation");
 }
 
 /*---------------------------------------------------------*/
@@ -185,26 +185,26 @@ alat::Vector<typename FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPE
 }
 
 /*---------------------------------------------------------*/
-
-template<int DIM, int NODESPERCELL, int SIDESPERCELL, int NODESPERSIDE>
-CurvedBoundaryInformation* FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::getCurvedBoundaryInformation()
-{
-  FadalightMesh::GeometryObject* GO = getGeometryObject("CurvedBoundaryInformation");
-  CurvedBoundaryInformation* MO = dynamic_cast<CurvedBoundaryInformation*>( GO );
-  assert(MO);
-  return MO;
-}
-
-/*---------------------------------------------------------*/
-
-template<int DIM, int NODESPERCELL, int SIDESPERCELL, int NODESPERSIDE>
-const CurvedBoundaryInformation* FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::getCurvedBoundaryInformation() const
-{
-  const FadalightMesh::GeometryObject* GO = getGeometryObject("CurvedBoundaryInformation");
-  const CurvedBoundaryInformation* MO = dynamic_cast<const CurvedBoundaryInformation*>( GO );
-  assert(MO);
-  return MO;
-}
+//
+// template<int DIM, int NODESPERCELL, int SIDESPERCELL, int NODESPERSIDE>
+// CurvedBoundaryInformation* FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::getCurvedBoundaryInformation()
+// {
+//   FadalightMesh::GeometryObject* GO = getGeometryObject("CurvedBoundaryInformation");
+//   CurvedBoundaryInformation* MO = dynamic_cast<CurvedBoundaryInformation*>( GO );
+//   assert(MO);
+//   return MO;
+// }
+//
+// /*---------------------------------------------------------*/
+//
+// template<int DIM, int NODESPERCELL, int SIDESPERCELL, int NODESPERSIDE>
+// const CurvedBoundaryInformation* FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::getCurvedBoundaryInformation() const
+// {
+//   const FadalightMesh::GeometryObject* GO = getGeometryObject("CurvedBoundaryInformation");
+//   const CurvedBoundaryInformation* MO = dynamic_cast<const CurvedBoundaryInformation*>( GO );
+//   assert(MO);
+//   return MO;
+// }
 
 /*---------------------------------------------------------*/
 
@@ -497,13 +497,13 @@ const alat::armaivec& FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPE
   return getBoundaryInfo()->getSidesOfColor(color);
 }
 
-/*---------------------------------------------------------*/
-
-template<int DIM, int NODESPERCELL, int SIDESPERCELL, int NODESPERSIDE>
-bool FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::cellIsCurved(int iK) const
-{
-  return getCurvedBoundaryInformation()->cellIsCurved(iK);
-}
+// /*---------------------------------------------------------*/
+//
+// template<int DIM, int NODESPERCELL, int SIDESPERCELL, int NODESPERSIDE>
+// bool FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::cellIsCurved(int iK) const
+// {
+//   return getCurvedBoundaryInformation()->cellIsCurved(iK);
+// }
 
 /*---------------------------------------------------------*/
 
@@ -666,7 +666,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   for(int i = 0; i < n_geometric_objects; i++)
   {
     file>>name;
-    // std::cout << "FadalightMeshBase::readFadalightMesh() : creating geometric object: " << name << "\n";
+    std::cout << "FadalightMeshBase::readFadalightMesh() : creating geometric object: " << name << "\n";
     createGeometryObject(name);
     getGeometryObject(name)->load(dirname+"/"+name);
   }
@@ -686,6 +686,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   // std::cerr << "***nodes ok\n";
 
   //! read cells
+  // std::cerr << "===== reading cells\n";
   filename = dirname+"/cells";
   file.open( filename.c_str() );
   assert( file.is_open() );
@@ -695,6 +696,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   // std::cerr << "***cells ok\n";
 
   //! read sides
+  // std::cerr << "===== reading sides\n";
   filename = dirname+"/sides";
   file.open( filename.c_str() );
   assert( file.is_open() );
@@ -703,6 +705,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   // std::cerr << "***sides ok\n";
 
   //! read sides_of_cells
+  // std::cerr << "===== reading sides_of_cells\n";
   filename = dirname+"/sides_of_cells";
   file.open( filename.c_str() );
   assert( file.is_open() );
@@ -711,6 +714,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   // std::cerr << "***sides_of_cells ok\n";
 
   //! read cells_of_sides
+  // std::cerr << "===== reading cells_of_sides\n";
   filename = dirname+"/cells_of_sides";
   file.open( filename.c_str() );
   assert( file.is_open() );
@@ -719,13 +723,16 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   // std::cerr << "***cells_of_sides ok\n";
 
   //! read boundaryinfo
+  // std::cerr << "===== reading boundaryinfo\n";
   filename = dirname+"/boundaryinfo";
   _boundaryinfo.read(filename);
 
   //! read boundaryinfo
-  filename = dirname+"/curvedinteriorsideinfo";
-  _curvedinteriorsideinfo.read(filename);
+  // std::cerr << "===== reading curvedinteriorsideinfo\n";
+  // filename = dirname+"/curvedinteriorsideinfo";
+  // _curvedinteriorsideinfo.read(filename);
   // std::cerr << "***boundaryinfo ok\n";
+  std::cerr << "===== reading finished\n";
 }
 
 /*---------------------------------------------------------*/
@@ -758,7 +765,20 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::writeFada
   filename = dirname+"/name";
   file.open( filename.c_str() );
   assert( file.is_open() );
-  file<<getClassName()<<" "<<datatype<<endl;
+  file<<getClassName()<<" ";
+  if(datatype == arma::arma_ascii)
+  {
+    file<<"ascii"<<endl;    
+  }
+  else if(datatype == arma::arma_binary)
+  {
+    file<<"binary"<<endl;    
+  }
+  else
+  {
+    std::cerr << "unknown datatype " << datatype << "\n";
+    exit(1);
+  }
   file<<getInfo()<<endl;
   file.close();
 
@@ -769,40 +789,40 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::writeFada
   file<<_geometryobjects.size()<<"\n";
   for(std::map<std::string, FadalightMesh::GeometryObject*>::const_iterator p = _geometryobjects.begin(); p != _geometryobjects.end(); p++)
   {
-    // std::cerr << "FadalightMeshBase writing " << p->first << " =? " << p->second->getClassName() << "\n";
+    std::cerr << "FadalightMeshBase writing " << p->first << " =? " << p->second->getClassName() << "\n";
     file<<p->first<<"\n";
     p->second->save(dirname+"/"+p->second->getClassName(), datatype);
   }
   file.close();
 
   /*** Temporary process for block structured meshes */
-  filename = dirname+"/CurvedBoundaryInformation";
-  if( !alat::_FileExists(filename) )
-  {
-    assert(0);
-    alat::armaivec curvedinfo;
-    std::cerr<<"getNCells :::"<<getNCells()<<std::endl;
-    curvedinfo.set_size(getNCells());
-    curvedinfo.fill(-1);
-    file.open( filename.c_str() );
-    file << "0\n\n";
-    curvedinfo.save(file, datatype);
-    file << "0 ascii\n";
-    file << "1 ascii\n";
-    file << 0;
-    file.close();
-
-    filename = dirname+"/geometry_objects.desc";
-    file.open( filename.c_str() );
-    file<<( _geometryobjects.size()+1 )<<"\n";
-    for(std::map<std::string, FadalightMesh::GeometryObject*>::const_iterator p = _geometryobjects.begin(); p != _geometryobjects.end(); p++)
-    {
-      file<<p->first<<"\n";
-      p->second->save(dirname+"/"+p->second->getClassName(), datatype);
-    }
-    file<<"CurvedBoundaryInformation\n";
-    file.close();
-  }
+  // filename = dirname+"/CurvedBoundaryInformation";
+  // if( !alat::_FileExists(filename) )
+  // {
+  //   assert(0);
+  //   alat::armaivec curvedinfo;
+  //   std::cerr<<"getNCells :::"<<getNCells()<<std::endl;
+  //   curvedinfo.set_size(getNCells());
+  //   curvedinfo.fill(-1);
+  //   file.open( filename.c_str() );
+  //   file << "0\n\n";
+  //   curvedinfo.save(file, datatype);
+  //   file << "0 ascii\n";
+  //   file << "1 ascii\n";
+  //   file << 0;
+  //   file.close();
+  //
+  //   filename = dirname+"/geometry_objects.desc";
+  //   file.open( filename.c_str() );
+  //   file<<( _geometryobjects.size()+1 )<<"\n";
+  //   for(std::map<std::string, FadalightMesh::GeometryObject*>::const_iterator p = _geometryobjects.begin(); p != _geometryobjects.end(); p++)
+  //   {
+  //     file<<p->first<<"\n";
+  //     p->second->save(dirname+"/"+p->second->getClassName(), datatype);
+  //   }
+  //   file<<"CurvedBoundaryInformation\n";
+  //   file.close();
+  // }
   /*************************************************/
 
   //! write nodes
@@ -849,8 +869,8 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::writeFada
   _boundaryinfo.write(filename, datatype);
 
   //! write curvedinteriorsideinfo
-  filename = dirname+"/curvedinteriorsideinfo";
-  _curvedinteriorsideinfo.write(filename, datatype);
+  // filename = dirname+"/curvedinteriorsideinfo";
+  // _curvedinteriorsideinfo.write(filename, datatype);
 }
 
 /*--------------------------------------------------------------------------*/
@@ -887,10 +907,10 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::writeSimp
       file<<color<<'\n';
     }
   }
-  const CurvedBoundaryInformation* BD = getCurvedBoundaryInformation();
-  assert(BD);
-  BD->writeCurvedBoundaryDescription(file);
-  file.close();
+  // const CurvedBoundaryInformation* BD = getCurvedBoundaryInformation();
+  // assert(BD);
+  // BD->writeCurvedBoundaryDescription(file);
+  // file.close();
 }
 
 //     assert(disc);
@@ -961,6 +981,9 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::construct
   //! Assumption: no hanging nodes !!
   //!
   //! BoundarInfo::reInit is done here !
+
+
+  std::cerr << "constructSidesFromCells() bstc = " << bstc << "\n";
 
   // helpers
   typedef map<Side, alat::FixArray<2, int> >  SideToInfo;
@@ -1061,7 +1084,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::construct
         typename map<Side, int>::const_iterator pb = bstc.find(ssort);
         if( pb == bstc.end() )
         {
-          cerr<<"*** not found "<<ssort<<"\n";
+          cerr<<"***constructSidesFromCells*** not found "<<ssort<<"\n";
           bstc[ssort] = color_default;
           nadditionalboundarysides++;
         }

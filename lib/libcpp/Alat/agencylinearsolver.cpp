@@ -17,7 +17,7 @@ AgencyLinearSolver& AgencyLinearSolver::operator=( const AgencyLinearSolver& vec
   assert(0);
   return *this;
 }
-std::string AgencyLinearSolver::getName() const
+std::string AgencyLinearSolver::getClassName() const
 {
   return "AgencyLinearSolver";
 }
@@ -37,7 +37,7 @@ alat::StringIntMap AgencyLinearSolver::statistics() const
   alat::StringIntMap numberofdecriptions;
   for(const_iterator p = begin(); p != end(); p++)
   {
-    std::string name = p->first.getName();
+    std::string name = p->first.getClassName();
     alat::StringVector bouts = alat::Tokenize(name, "_");
     // name = "";
     // int last = 1;

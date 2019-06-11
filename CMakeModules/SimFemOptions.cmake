@@ -24,3 +24,5 @@ endif()
 
 #----------- matrix-storage --------------
 #add_definitions(-DSPARSITYPATTERNLONG)
+
+# SET(SIMFEMCPPLIBRARY ${SIMFEM_INSTALL_DIR}/lib/libSimFem${CMAKE_BUILD_TYPE}.dylib)

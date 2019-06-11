@@ -100,7 +100,7 @@ std::string MeshUnitWithData::getInfo() const
   ss << "*System* ";
   for(int ivar=0; ivar<_vars.size(); ivar++)
   {
-    ss << _vars[ivar].getName() << " " << _vars[ivar].getNcomp() << " ";
+    ss << _vars[ivar].getClassName() << " " << _vars[ivar].getNcomp() << " ";
     ss << _fems[ivar]->getInfo() <<  "\t";
   }
   ss << "\n*Application* " << _application->getInfo();
@@ -111,7 +111,7 @@ std::string MeshUnitWithData::getInfo() const
   ss << "\n*Data* ";
   for(int ivar=0; ivar<_varsdata.size(); ivar++)
   {
-    ss << _varsdata[ivar].getName() << " " << _varsdata[ivar].getNcomp() << " ";
+    ss << _varsdata[ivar].getClassName() << " " << _varsdata[ivar].getNcomp() << " ";
     ss << _femsdata[ivar]->getInfo() <<  "\t";
   }
   ss << "\n*PdeParts* ";
@@ -271,8 +271,8 @@ void MeshUnitWithData::initMeshAndApplication(mesh::MeshUnitInterface* mesh, con
   for(int ivar=0; ivar<nvars; ivar++)
   {
     // _vars[ivar].init(mesh);
-    _varnames[ivar] = _vars[ivar].getName();
-    _var2index[_vars[ivar].getName()] = ivar;
+    _varnames[ivar] = _vars[ivar].getClassName();
+    _var2index[_vars[ivar].getClassName()] = ivar;
     ncomps[ivar] = _vars[ivar].getNcomp();
   }
   // std::cerr << "MeshUnitWithData::init() _varnames=" << _varnames << "\n";
@@ -285,8 +285,8 @@ void MeshUnitWithData::initMeshAndApplication(mesh::MeshUnitInterface* mesh, con
   for(int ivar=0; ivar<nvarsdata; ivar++)
   {
     // _vars[ivar].init(mesh);
-    _varnamesdata[ivar] = _varsdata[ivar].getName();
-    _var2indexdata[_varsdata[ivar].getName()] = ivar;
+    _varnamesdata[ivar] = _varsdata[ivar].getClassName();
+    _var2indexdata[_varsdata[ivar].getClassName()] = ivar;
     ncompsdata[ivar] = _varsdata[ivar].getNcomp();
   }
   // Model and Application
@@ -490,7 +490,7 @@ void MeshUnitWithData::initFemAndMemoryAndDataAndPdeParts()
   }
   for(alat::AgencyLinearSolver::iterator p=_linearsolveragency.begin();p!=_linearsolveragency.end();p++)
   {
-    const std::string& name = p->first.getName();
+    const std::string& name = p->first.getClassName();
     const std::string& type = p->first.getType();
     const alat::GhostMatrix& ghostmatrix = p->first.getMatrix();
     // std::cerr << "ghostmatrix=" <<ghostmatrix<<"\n";

@@ -13,10 +13,9 @@ class PackageInstall(object):
 
         command = "tar tzf " + sourcepath
         proc = subprocess.Popen(command.split(), stdout=subprocess.PIPE, bufsize=1)
-        with proc.stdout:
-            for line in iter(proc.stdout.readline, b''):
-                self.packagename = line.split('\n')[0].split('/')[0].strip('/')
-        print 'self.packagename', self.packagename
+        for line in proc.stdout:
+            self.packagename = line.decode('ascii').rstrip().split('/')[0]
+        print('self.packagename', self.packagename)
         returncode = proc.wait()
         if returncode:
           raise ValueError("could not determine packagename from " + sourcepath)
@@ -29,6 +28,7 @@ class PackageInstall(object):
         if(os.path.isdir(self.builddircomp)) : shutil.rmtree(self.builddircomp)
         os.makedirs(self.builddircomp)
 
+          
     def install_make(self, add):
         print("self.builddir=", self.builddir)
         os.chdir(self.builddir)
@@ -46,14 +46,14 @@ class PackageInstall(object):
         subprocess.call(command, shell=True)
 
     def install_configure(self, configureoptions):
-        print 'configureoptions', configureoptions
-        print 'self.builddir', self.builddir
-        print 'os.getcwd()', os.getcwd()
+        print('configureoptions', configureoptions)
+        print('self.builddir', self.builddir)
+        print('os.getcwd()', os.getcwd())
         os.chdir(self.builddir)
         command = "./configure --prefix=%s %s" %(self.installdir, configureoptions)
-        print 'command', command
+        print('command', command)
         subprocess.call(command, shell=True)
         command = "make -j4 install"
-        print 'command', command
+        print('command', command)
         subprocess.call(command, shell=True)
         # shutil.copy('lib'+self.name+'.a', self.install_dir+'/lib' )

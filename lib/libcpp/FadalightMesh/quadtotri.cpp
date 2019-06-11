@@ -127,6 +127,7 @@ const QuadrilateralMesh& QuadToTri::getQuadrilateralMesh() const
 /*--------------------------------------------------------------------------*/
 void QuadToTri::convertMesh(const FadalightMesh::MeshInterface& M, std::string type)
 {
+  std::cerr << "QuadToTri::convertMesh()\n";
   const FadalightMesh::QuadrilateralMesh* quadmesh = dynamic_cast<const FadalightMesh::QuadrilateralMesh*>( &M );
   assert(quadmesh);
   // std::cerr << "QuadToTri::convertMesh() " << quadmesh->getInfileName() << " type= "<< type << "\n";
@@ -143,10 +144,12 @@ void QuadToTri::convertMesh(const FadalightMesh::MeshInterface& M, std::string t
   FadalightMesh::TriangleMesh::BoundarySideToColor bstc;
   const FadalightMesh::BoundaryInfo* BI = _quadmesh.getBoundaryInfo();
   const alat::armaivec& colors = BI->getColors();
+  std::cerr << "QuadToTri::convertMesh() colors="<<colors<<"\n";
   for(int ic = 0; ic < colors.size(); ic++)
   {
     int color = colors[ic];
     const alat::armaivec& bic = BI->getSidesOfColor(color);
+    std::cerr << "QuadToTri::convertMesh() bic="<<bic<<"\n";
     for(int i = 0; i < bic.size(); i++)
     {
       const TriangleMesh::Side& SQ = _quadmesh.getSide(bic[i]);
@@ -159,12 +162,13 @@ void QuadToTri::convertMesh(const FadalightMesh::MeshInterface& M, std::string t
       bstc[S] = color;
     }
   }
+  std::cerr << "QuadToTri::convertMesh() bstc="<<bstc<<"\n";
   constructSidesFromCells(bstc);
-  if( _quadmesh.geometryObjectExists("CurvedBoundaryInformation") )
-  {
-    const FadalightMesh::CurvedBoundaryInformation* BD = _quadmesh.getCurvedBoundaryInformation();
-    getCurvedBoundaryInformation()->constructBoundaryInformation(this);
-  }
+  // if( _quadmesh.geometryObjectExists("CurvedBoundaryInformation") )
+  // {
+  //   const FadalightMesh::CurvedBoundaryInformation* BD = _quadmesh.getCurvedBoundaryInformation();
+  //   getCurvedBoundaryInformation()->constructBoundaryInformation(this);
+  // }
   // std::cerr << "QuadToTri::convertMesh() nnodes(quad) " << quadmesh->getNNodes() << " nnodes= "<< getNNodes()  << "\n";
 }
 

@@ -30,7 +30,7 @@ protected:
    tree<FaceInterface*> & _getFaces(){return _adaptive_mesh->getFaces();}
    tree<VolumeInterface*> & _getVolumes(){return _adaptive_mesh->getVolumes();}
    /// fonction d'accés aux informations sur les bords courbes
-   const FadalightMesh::CurvedBoundaryInformation* _getCurvedBoundaries(){return _adaptive_mesh->getCurvedBoundaries();}
+   // const FadalightMesh::CurvedBoundaryInformation* _getCurvedBoundaries(){return _adaptive_mesh->getCurvedBoundaries();}
    /// fonction d'accès à la dernière identité de node affectée
    int& _getLastNodeId(){return _adaptive_mesh->getLastNodeId();}
    /// fonction d'accès à la dernière identité de node affectée

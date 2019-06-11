@@ -17,7 +17,7 @@ AgencyMatrix& AgencyMatrix::operator=( const AgencyMatrix& matrixagency)
   assert(0);
   return *this;
 }
-std::string AgencyMatrix::getName() const
+std::string AgencyMatrix::getClassName() const
 {
   return "AgencyMatrix";
 }
@@ -37,7 +37,7 @@ alat::StringIntMap AgencyMatrix::statistics() const
   alat::StringIntMap numberofdecriptions;
   for(const_iterator p = begin(); p != end(); p++)
   {
-    std::string name = p->first.getName();
+    std::string name = p->first.getClassName();
     alat::StringVector bouts = alat::Tokenize(name, "_");
     // name = "";
     // int last = 1;

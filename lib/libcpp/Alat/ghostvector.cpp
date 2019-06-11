@@ -22,6 +22,6 @@ std::string GhostVector::getClassName() const
 
 std::ostream& alat::operator<<(std::ostream& os, const GhostVector& g)
 {
-  os << "(Name/type:) " << g.getName() <<"/"<< g.getType();
+  os << "(Name/type:) " << g.getClassName() <<"/"<< g.getType();
   return os;
 }

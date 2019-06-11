@@ -144,12 +144,12 @@ public:
     // std::cerr <<  Vector<T>::size() << " datatype "  << datatype << " " << std::endl;
     if(datatype == arma::arma_binary)
     {
-      out<<Vector<T>::size()<<"binary"<<std::endl;
+      out<<Vector<T>::size()<<" binary"<<std::endl;
       writeBin(out);
     }
     else
     {
-      out<<Vector<T>::size()<<"ascii"<<std::endl;
+      out<<Vector<T>::size()<<" ascii"<<std::endl;
       out<<*this;
     }
     return out;

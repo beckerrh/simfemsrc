@@ -50,10 +50,10 @@ alat::Vector<FadalightMesh::MeshInterface*>& MultiLevelMesh::getMeshes()
 
 /*--------------------------------------------------------------------------*/
 
-bool MultiLevelMesh::cellIsCurved(int iK) const
-{
-  return _meshes[_activelevel]->cellIsCurved(iK);
-}
+// bool MultiLevelMesh::cellIsCurved(int iK) const
+// {
+//   return _meshes[_activelevel]->cellIsCurved(iK);
+// }
 
 int MultiLevelMesh::getNLevels() const
 {

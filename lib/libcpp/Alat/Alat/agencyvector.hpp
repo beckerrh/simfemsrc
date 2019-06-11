@@ -20,7 +20,7 @@ public:
     AgencyVector();
     AgencyVector( const AgencyVector& vectoragency);
     AgencyVector& operator=( const AgencyVector& vectoragency);
-    std::string getName() const;
+    std::string getClassName() const;
     std::ostream& printLoopInformation(std::ostream& os) const;
     void enrol(const alat::GhostVector& ghost);
     std::shared_ptr<const alat::VectorAllVariables> operator()(const alat::GhostVector& ghost) const;

@@ -81,7 +81,7 @@ public:
     virtual const FadalightMesh::GeometryObject* getGeometryObject(std::string name) const;
     virtual FadalightMesh::GeometryObject* getGeometryObject(std::string name);
     virtual void createGeometryObject(std::string name);
-    virtual const FadalightMesh::CurvedBoundaryInformation* getCurvedBoundaryInformation() const;
+    // virtual const FadalightMesh::CurvedBoundaryInformation* getCurvedBoundaryInformation() const;
     virtual void read(std::string filename);
     virtual void write(std::string filename) const;
     virtual void readFadalightMesh(const std::string& basefilename);
@@ -95,7 +95,7 @@ public:
 
     virtual int getVtkType() const;
     virtual int getBoundaryVtkType() const;
-    virtual bool cellIsCurved(int iK) const;
+    // virtual bool cellIsCurved(int iK) const;
     virtual int findNeightborHangingCells(int iK, int iS, alat::Node pt);
     virtual int getLocalNodeIndiceOfSide(int ii, int isl) const;
     virtual int getCouplingOffset(int iS) const;

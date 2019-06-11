@@ -34,13 +34,11 @@ class SimFemCompile(object):
 #------------------------------------------------------------------------
     def addArgumentsParser(self, parser, sysargs=''):
         parser.add_argument('-t', default = self.CMAKE_BUILD_TYPES[0], help='build type', choices=self.CMAKE_BUILD_TYPES)
-        parser.add_argument('--cleanlib', default = False, action="store_true", help='clean library (build)')
         parser.add_argument('--debug', default = False, action="store_true", help='debug compile')
         parser.add_argument('--verbose', default = False, action="store_true", help='compile blabbing')
         parser.add_argument('--nopy', default = False, action="store_true", help='without python wrapping')
         args = vars(parser.parse_args(sysargs))
         self.build_type = args['t']
-        self.cleanlib = args['cleanlib']
         self.debug = args['debug']
         self.withoutpy = args['nopy']
         # print("args['nopy']", args['nopy'])
@@ -69,7 +67,7 @@ class SimFemCompile(object):
             module.install(externalsdir=externalsdir, installdir=self.installdir, builddir=self.builddir)
 
 #------------------------------------------------------------------------
-    def compilelib(self, sourcedir):
+    def compile(self, sourcedir, clean = False):
         assert self.installdir and self.builddir
         builddir = os.path.join(self.builddir, os.path.basename(sourcedir))
         builddir = os.path.join(builddir, self.build_type)
@@ -78,7 +76,7 @@ class SimFemCompile(object):
             print ('compile: self.installdir', self.installdir)
             print ('compile: self.builddir', self.builddir)
             print ('compile: builddir', builddir)
-        if self.cleanlib:
+        if clean:
             shutil.rmtree(builddir, ignore_errors=True)
         try:
             os.makedirs(builddir)
@@ -98,7 +96,7 @@ class SimFemCompile(object):
         returncode = runsubprocess.run(command, options=self.runoptions)
         os.chdir(startdir)
 #------------------------------------------------------------------------
-    def compiletest(self, sourcedir, localbuilddir="build"):
+    def compiletest(self, sourcedir, localbuilddir="build", clean = False):
         assert self.simfemsourcedir
         assert self.simfeminstalldir
         if localbuilddir is None:
@@ -109,6 +107,9 @@ class SimFemCompile(object):
             print ('compile: localinstalldir', localinstalldir)
             print ('compile: localbuilddir', localbuilddir)
         builddir = os.path.join(localbuilddir, self.build_type)
+        # print("##### clean", clean, builddir)
+        if clean:
+            shutil.rmtree(builddir, ignore_errors=True)
         startdir = os.getcwd()
         if not os.path.isdir(builddir):
             os.makedirs(builddir)

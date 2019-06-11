@@ -77,14 +77,14 @@ const alat::SparsityPatternFixArray<2>& CurvedBoundaryInformation::curvedCellInd
   return _spfa;
 }
 
-bool CurvedBoundaryInformation::cellIsCurved(int iK) const
-{
-  if( iK >= _celliscurved.size() )
-  {
-    _error_string("cellIsCurved", "iK,_celliscurved.size() =", iK, _celliscurved.size());
-  }
-  return _celliscurved[iK] != -1;
-}
+// bool CurvedBoundaryInformation::cellIsCurved(int iK) const
+// {
+//   if( iK >= _celliscurved.size() )
+//   {
+//     _error_string("cellIsCurved", "iK,_celliscurved.size() =", iK, _celliscurved.size());
+//   }
+//   return _celliscurved[iK] != -1;
+// }
 
 int CurvedBoundaryInformation::rowstart(int iK) const
 {

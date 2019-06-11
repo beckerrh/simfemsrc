@@ -23,7 +23,7 @@ std::string GhostLinearSolver::getClassName() const
 
 std::ostream& alat::operator<<(std::ostream& os, const GhostLinearSolver& g)
 {
-  os << "(Name/type/matrix:) " << g.getName() <<"/"<< g.getType()<<"/"<< g.getMatrix();
+  os << "(Name/type/matrix:) " << g.getClassName() <<"/"<< g.getType()<<"/"<< g.getMatrix();
   return os;
 }
 const alat::GhostMatrix& GhostLinearSolver::getMatrix() const {return _matrix;}

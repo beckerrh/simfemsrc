@@ -22,6 +22,6 @@ std::string GhostMatrix::getClassName() const
 
 std::ostream& alat::operator<<(std::ostream& os, const GhostMatrix& g)
 {
-  os << "(Name/type:) " << g.getName() <<"/"<< g.getType();
+  os << "(Name/type:) " << g.getClassName() <<"/"<< g.getType();
   return os;
 }

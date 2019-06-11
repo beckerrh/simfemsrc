@@ -22,7 +22,7 @@ public:
     SparsityPatternFixArraySoft(int n);
     SparsityPatternFixArraySoft& operator=(const SparsityPatternFixArraySoft& S);
 
-    std::string getName() const;
+    std::string getClassName() const;
 
     int ntotal() const;
     int rowsize(int i) const;

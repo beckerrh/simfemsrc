@@ -104,25 +104,25 @@ void Refiner2d::adaptMesh(std::string filename)
 /*--------------------------------------------------------------------------*/
 void Refiner2d::_refine()
 {
-  const FadalightMesh::CurvedBoundaryInformation* curvedboundaryinformation = _getCurvedBoundaries();
+  // const FadalightMesh::CurvedBoundaryInformation* curvedboundaryinformation = _getCurvedBoundaries();
   _getCellMapOk() = false;
   _getNumberingOk() = false;
   // put nodes on boundary
-  if(curvedboundaryinformation)
-  {
-  for(edge_leafpointer e = _getEdges().begin_leaf(); e != _getEdges().end_leaf(); e++)
-  {
-    int color = ( *e )->boundaryid();
-    if( curvedboundaryinformation->boundaryColorIsCurved(color) )
-    {
-      const FadalightMesh::CurvedBoundaryDescriptionInterface* BDI =  curvedboundaryinformation->get(color);
-      for(int ii = 0; ii < 2; ii++)
-      {
-        BDI->newton( ( *e )->node(ii)->getNode() );
-      }
-    }
-  }
-  }
+  // if(curvedboundaryinformation)
+  // {
+  // for(edge_leafpointer e = _getEdges().begin_leaf(); e != _getEdges().end_leaf(); e++)
+  // {
+  //   int color = ( *e )->boundaryid();
+  //   if( curvedboundaryinformation->boundaryColorIsCurved(color) )
+  //   {
+  //     const FadalightMesh::CurvedBoundaryDescriptionInterface* BDI =  curvedboundaryinformation->get(color);
+  //     for(int ii = 0; ii < 2; ii++)
+  //     {
+  //       BDI->newton( ( *e )->node(ii)->getNode() );
+  //     }
+  //   }
+  // }
+  // }
   //edge refinement
 
   for(edge_leafpointer e = _getEdges().begin_leaf(); e != _getEdges().end_leaf(); e++)
@@ -134,18 +134,18 @@ void Refiner2d::_refine()
     _edgerefiner.refine( e, _getLastNodeId(), _getLastEdgeId() );
     std::vector<Node*>& newnodes = _edgerefiner.getNewNodes();
     std::vector<Edge*>& newedges = _edgerefiner.getNewEdges();
-    if(curvedboundaryinformation)
-    {
-    int color = ( *e )->boundaryid();
-    if( curvedboundaryinformation->boundaryColorIsCurved(color) )
-    {
-      const FadalightMesh::CurvedBoundaryDescriptionInterface* BDI = curvedboundaryinformation->get(color);
-      for(int ii = 0; ii < newnodes.size(); ii++)
-      {
-        BDI->newton( newnodes[ii]->getNode() );
-      }
-    }
-    }
+    // if(curvedboundaryinformation)
+    // {
+    // int color = ( *e )->boundaryid();
+    // if( curvedboundaryinformation->boundaryColorIsCurved(color) )
+    // {
+    //   const FadalightMesh::CurvedBoundaryDescriptionInterface* BDI = curvedboundaryinformation->get(color);
+    //   for(int ii = 0; ii < newnodes.size(); ii++)
+    //   {
+    //     BDI->newton( newnodes[ii]->getNode() );
+    //   }
+    // }
+    // }
     for(std::vector<Node*>::iterator it = newnodes.begin(); it != newnodes.end(); it++)
     {
       _getNodes().insert(*it);

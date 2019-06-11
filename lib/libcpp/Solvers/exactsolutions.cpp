@@ -6,7 +6,7 @@ using namespace std;
 
 /*---------------------------------------------------------*/
 ConstantSolution::ConstantSolution(double d) : _d(d) {}
-string ConstantSolution::getName() const{return "ConstantSolution";}
+string ConstantSolution::getClassName() const{return "ConstantSolution";}
 void ConstantSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const{u[0] = _d;}
 void ConstantSolution::x (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
 void ConstantSolution::y (alat::armavec& u, double x, double y, double z, double t) const{u[0] = 0.0;}
@@ -18,7 +18,7 @@ void ConstantSolution::zz(alat::armavec& u, double x, double y, double z, double
 
 /*---------------------------------------------------------*/
 LinearSolution::LinearSolution(double a, double b, double c, double d) : _a(a), _b(b), _c(c), _d(d) {}
-string LinearSolution::getName() const{return "LinearSolution";}
+string LinearSolution::getClassName() const{return "LinearSolution";}
 void LinearSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _a+_b*x+_c*y+_d*z;
@@ -32,7 +32,7 @@ void LinearSolution::zz(alat::armavec& u, double x, double y, double z, double t
 
 /*---------------------------------------------------------*/
 QuadraticSolution::QuadraticSolution(double a, double b, double c, double d, double e, double f, double g, double h, double i) : _a(a), _b(b), _c(c), _d(d), _e(e), _f(f), _g(g), _h(h), _i(i) {}
-string QuadraticSolution::getName() const{return "QuadraticSolution";}
+string QuadraticSolution::getClassName() const{return "QuadraticSolution";}
 void QuadraticSolution::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = _a+_b*x+_c*y+_d*x*x+_e*y*y+_f*x*y + _g*x*z + _h*y*z + _i*z*z;
@@ -56,7 +56,7 @@ void QuadraticSolution::zz(alat::armavec& u, double vx, double vy, double vz, do
 /*---------------------------------------------------------*/
 CubicSolution::CubicSolution(double a, double b, double c, double d, double e, double f, double g, double h, double i, double j, double k, double l, double m, double n, double o, double p, double r, double s, double t, double u) : _a(a), _b(b), _c(c), _d(d), _e(e), _f(f), _g(g), _h(h), _i(i), _j(j), _k(k), _l(l), _m(m), _n(n), _o(o), _p(p), _r(r), _s(s), _t(t), _u(u) {}
 
-string CubicSolution::getName() const
+string CubicSolution::getClassName() const
 {
   return "CubicSolution";
 }
@@ -98,7 +98,7 @@ void CubicSolution::zz(alat::armavec& u, double x, double y, double z, double t)
 
 /*---------------------------------------------------------*/
 CosinusSolution::CosinusSolution(double a, double b, double c, double d) : _a(a), _b(b), _c(c), _d(d) {}
-string CosinusSolution::getName() const
+string CosinusSolution::getClassName() const
 {
   return "CosinusSolution";
 }
@@ -142,7 +142,7 @@ void ExponentialSolution::_init(double x, double y, double z) const
   _rz = zm;
 }
 ExponentialSolution::ExponentialSolution(double x0, double y0, double z0, double eps) : solvers::FunctionInterface(), _x0(x0), _y0(y0), _z0(z0), _eps(eps) {}
-string ExponentialSolution::getName() const
+string ExponentialSolution::getClassName() const
 {
   return "ExponentialSolution";
 }
@@ -195,7 +195,7 @@ double LDomainSolution::_theta(double x, double y, double z) const
   }
 }
 
-string LDomainSolution::getName() const
+string LDomainSolution::getClassName() const
 {
   return "LDomainSolution";
 }
@@ -220,7 +220,7 @@ void LDomainSolution::y(alat::armavec& u, double x, double y, double z, double t
 
 /*---------------------------------------------------------*/
 
-string SlitDomainSolution::getName() const
+string SlitDomainSolution::getClassName() const
 {
   return "SlitDomainSolution";
 }

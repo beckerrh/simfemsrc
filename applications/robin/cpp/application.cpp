@@ -9,7 +9,7 @@ RDcosh::RDcosh(double diff, double alpha) : solvers::FunctionInterface()
   _b = sqrt(alpha/diff);
   _c = -1.0/cosh(_b);
 }
-std::string RDcosh::getName() const {return "RDcosh";}
+std::string RDcosh::getClassName() const {return "RDcosh";}
 void RDcosh::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = 1.0+_c*cosh(_b*x);
@@ -33,7 +33,7 @@ CDExpLayer::CDExpLayer(double diff) : solvers::FunctionInterface()
 {
   _diff = diff;
 }
-std::string CDExpLayer::getName() const {return "CDExpLayer";}
+std::string CDExpLayer::getClassName() const {return "CDExpLayer";}
 void CDExpLayer::operator()(alat::armavec& u, double x, double y, double z, double t) const
 {
   u[0] = (1.0+y)*( 1.0-exp((x-1)/_diff) )/( 1.0-exp(-2.0/_diff) );
