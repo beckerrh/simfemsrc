@@ -648,7 +648,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::readFadal
   file.close();
   if(datatype == "ascii")
   {
-    std::cout<<"FadalightMeshBase::readFadalightMesh() \'" << getClassName()<< "\' reading "<<basefilename<<" : "<<datatype<<"\n";
+    std::cout<<"FadalightMeshBase::readFadalightMesh() \'" << getClassName()<< "\' reading "<<basefilename<<"\n";//" : "<<datatype<<"\n"
   }
 
   //! read geometry-objects decription file and geometry objects
@@ -742,7 +742,7 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::writeFada
 {
   if(datatype == arma::arma_ascii)
   {
-    std::cout<<"FadalightMeshBase::writeFadalightMesh() \'" << getClassName()<< "\' writing "<<basefilename<<" : "<<datatype<<"\n";
+    std::cout<<"FadalightMeshBase::writeFadalightMesh() \'" << getClassName()<< "\' writing "<<basefilename<<"\n";//" : "<<datatype<<"\n"
   }
   //! create directory
   string dirname = basefilename+".fadalightmesh";
@@ -768,15 +768,16 @@ void FadalightMeshBase<DIM, NODESPERCELL, SIDESPERCELL, NODESPERSIDE>::writeFada
   file<<getClassName()<<" ";
   if(datatype == arma::arma_ascii)
   {
-    file<<"ascii"<<endl;    
+    file<<"ascii"<<endl;
   }
   else if(datatype == arma::arma_binary)
   {
-    file<<"binary"<<endl;    
+    file<<"binary"<<endl;
   }
   else
   {
-    std::cerr << "unknown datatype " << datatype << "\n";
+    // std::cerr << "unknown datatype " << datatype << "\n";
+    std::cerr << "unknown datatype "  << "\n";
     exit(1);
   }
   file<<getInfo()<<endl;

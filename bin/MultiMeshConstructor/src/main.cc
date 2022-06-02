@@ -84,16 +84,17 @@ int main(int argc, char** argv)
   }
   if (M->getClassName()=="FadalightMesh::HexahedralMesh")
   {
-    FadalightAdaptiveMesh::Coarsener3d* coarsener = dynamic_cast<FadalightAdaptiveMesh::Coarsener3d*>( AM );
-    FadalightAdaptiveMesh::MultiMeshCreator3d multimeshcreator(coarsener);
-    if(datatype=="ascii")
-    {
-      multimeshcreator.createMultiMesh(infilename, nlevels, ncells, arma::arma_ascii);      
-    }
-    else
-    {
-      multimeshcreator.createMultiMesh(infilename, nlevels, ncells);      
-    }
+    assert(0);
+    // FadalightAdaptiveMesh::Coarsener3d* coarsener = dynamic_cast<FadalightAdaptiveMesh::Coarsener3d*>( AM );
+    // FadalightAdaptiveMesh::MultiMeshCreator3d multimeshcreator(coarsener);
+    // if(datatype=="ascii")
+    // {
+    //   multimeshcreator.createMultiMesh(infilename, nlevels, ncells, arma::arma_ascii);
+    // }
+    // else
+    // {
+    //   multimeshcreator.createMultiMesh(infilename, nlevels, ncells);
+    // }
 
   }
   else
@@ -102,11 +103,11 @@ int main(int argc, char** argv)
     FadalightAdaptiveMesh::MultiMeshCreator multimeshcreator(coarsener);
     if(datatype=="ascii")
     {
-      multimeshcreator.createMultiMesh(infilename, nlevels, ncells, arma::arma_ascii);      
+      multimeshcreator.createMultiMesh(infilename, nlevels, ncells, arma::arma_ascii);
     }
     else
     {
-      multimeshcreator.createMultiMesh(infilename, nlevels, ncells);      
+      multimeshcreator.createMultiMesh(infilename, nlevels, ncells);
     }
   }
 

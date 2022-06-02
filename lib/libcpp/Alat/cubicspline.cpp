@@ -158,6 +158,7 @@ double CubicSpline::_newtonInterval(double t0, double t1, CubicSplineNewtonInfo&
     }
   }
   assert(0);
+  return 0;
 }
 
 /*--------------------------------------------------------------------------*/

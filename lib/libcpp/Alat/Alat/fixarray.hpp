@@ -85,12 +85,14 @@ public:
   {
     if(datatype == arma::arma_binary)
     {
-      out<<datatype<<"binary"<<std::endl;
+      // out<<datatype<<"binary"<<std::endl;
+      out<<"binary"<<std::endl;
       writeBin(out);
     }
     else
     {
-      out<<datatype<<"ascii"<<std::endl;
+      // out<<datatype<<"ascii"<<std::endl;
+      out<<"ascii"<<std::endl;
       out<<*this;
     }
     return out;

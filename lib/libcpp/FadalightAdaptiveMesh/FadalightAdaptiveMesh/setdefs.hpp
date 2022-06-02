@@ -11,7 +11,7 @@ namespace FadalightAdaptiveMesh
 {
   struct NodeCompare
     {
-      bool operator()(const Node* N, const Node* M)
+      bool operator()(const Node* N, const Node* M) const
       {
         return N->id() < M->id();
       }

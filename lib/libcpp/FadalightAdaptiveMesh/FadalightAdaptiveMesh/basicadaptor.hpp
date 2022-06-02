@@ -5,7 +5,7 @@
 #include  "meshadaptorinterface.hpp"
 #include  "edgerefiner.hpp"
 #include  "facerefinerinterface.hpp"
-#include  "hexrefiner.hpp"
+// #include  "hexrefiner.hpp"
 /*--------------------------------------------------------------------------*/
 
 namespace FadalightAdaptiveMesh
@@ -20,7 +20,7 @@ protected:
 /// outil de raffinement des faces de type abstrait à spécialiser en fonction des types de faces
    FaceRefinerInterface* _facerefiner;
 /// outil de raffinement des faces de type abstrait à spécialiser en fonction des types de faces
-   HexRefiner* _volumerefiner;
+   // HexRefiner* _volumerefiner;
 
    /// fonction d'accés à l'ensemble des nodes
    NodeSet & _getNodes(){return _adaptive_mesh->getNodes();}

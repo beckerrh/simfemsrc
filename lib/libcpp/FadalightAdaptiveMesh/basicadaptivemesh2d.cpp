@@ -95,7 +95,8 @@ void BasicAdaptiveMesh2d<NODESPERCELL>::writeAdaptiveMesh(std::string name, arma
   if(datatype == arma::arma_ascii)
   {
     datatypestring = "ascii";
-    std::cout<<"AdaptiveMesh::write() writing  (fadalightmeshadaptive) "<<name<<" : "<<datatype<<"\n";
+    std::cout<<"AdaptiveMesh::write() writing  (fadalightmeshadaptive) "<<name<<"\n";
+    // std::cout<<"AdaptiveMesh::write() writing  (fadalightmeshadaptive) "<<name<<"\n";//" : "<<datatype<<"\n"
   }
   else
   {
