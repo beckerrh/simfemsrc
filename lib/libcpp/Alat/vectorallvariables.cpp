@@ -90,7 +90,7 @@ void VectorAllVariables::savehdf5(const std::string& filename, const alat::Strin
   for(int i=0;i<size();i++)
   {
     // arma::hdf5_name spec(filename+".h5", names[i],arma::hdf5_opts::append+arma::hdf5_opts::trans);
-    arma::hdf5_name spec(filename+".h5", names[i],arma::hdf5_opts::append);
+    arma::hdf5_name spec(filename+".h5", names[i], arma::hdf5_opts::append);
     (*this)[i]->savehdf5(spec);
   }
 }
